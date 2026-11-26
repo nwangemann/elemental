@@ -25,6 +25,14 @@ export interface AppState {
    */
   panelClosed: boolean;
   setPanelClosed: (closed: boolean) => void;
+  /** Atomic number of the last tile the character stood on, kept while it is off the table. */
+  lastTile: number | null;
+  /** True while the character is on the ground beside the table (ADR 0009), not on a tile. */
+  offTable: boolean;
+  setOffTable: (off: boolean) => void;
+  /** The latest request to walk back to `lastTile` (R, Home or the button); the scene carries it out. */
+  returnSeq: number;
+  requestReturn: () => void;
 }
 
 /**
@@ -37,10 +45,16 @@ export const useAppStore = create<AppState>()((set) => ({
   setActiveTile: (activeTile) =>
     set((s) => ({
       activeTile,
+      lastTile: activeTile?.number ?? s.lastTile,
       panelClosed: activeTile?.number === s.activeTile?.number ? s.panelClosed : false,
     })),
   flight: null,
   flyTo: (number) => set((s) => ({ flight: { number, seq: (s.flight?.seq ?? 0) + 1 } })),
   panelClosed: false,
   setPanelClosed: (panelClosed) => set({ panelClosed }),
+  lastTile: null,
+  offTable: false,
+  setOffTable: (offTable) => set({ offTable }),
+  returnSeq: 0,
+  requestReturn: () => set((s) => ({ returnSeq: s.returnSeq + 1 })),
 }));

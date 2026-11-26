@@ -92,3 +92,24 @@ test('the keyboard alone tours tiles and reads a panel', async ({ page }) => {
   await page.keyboard.press('Escape');
   await expect(help).toBeHidden();
 });
+
+test('walking off the table and pressing R returns to the last tile', async ({ page }) => {
+  await page.goto('/');
+  const status = page.locator('[data-tile]');
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+
+  // Hydrogen sits on the left edge: walk left off it onto the ground.
+  await page.keyboard.down('ArrowLeft');
+  await expect(status).toHaveAttribute('data-off', 'true', { timeout: 5_000 });
+  await page.keyboard.up('ArrowLeft');
+  await expect(status).toHaveText('Off the table. Press R to return.');
+  await expect(status).toHaveAttribute('data-tile', '');
+  await expect(page.getByRole('button', { name: /back to the table/i })).toBeVisible({
+    timeout: 5_000,
+  });
+
+  await page.keyboard.press('r');
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 10_000 });
+  await expect(status).toHaveAttribute('data-off', 'false');
+  await expect(page.getByRole('button', { name: /back to the table/i })).toBeHidden();
+});

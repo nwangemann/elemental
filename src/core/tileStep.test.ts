@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { TILES } from './layout.ts';
-import { nearestTile, stepDirectionForCode, stepTile } from './tileStep.ts';
+import { KEY_MAP } from './input.ts';
+import {
+  isReturnCode,
+  nearestTile,
+  RETURN_KEYS,
+  stepDirectionForCode,
+  stepTile,
+} from './tileStep.ts';
 
 const at = (n: number) => TILES[n - 1]!;
 
@@ -63,5 +70,20 @@ describe('stepDirectionForCode', () => {
     expect(stepDirectionForCode('KeyJ')).toBe('left');
     expect(stepDirectionForCode('KeyL')).toBe('right');
     expect(stepDirectionForCode('KeyW')).toBeNull();
+  });
+});
+
+describe('isReturnCode', () => {
+  it('maps R and Home and nothing else', () => {
+    expect(isReturnCode('KeyR')).toBe(true);
+    expect(isReturnCode('Home')).toBe(true);
+    expect(isReturnCode('KeyE')).toBe(false);
+  });
+
+  it('does not overlap the walking or stepping keys', () => {
+    for (const code of RETURN_KEYS) {
+      expect(KEY_MAP[code]).toBeUndefined();
+      expect(stepDirectionForCode(code)).toBeNull();
+    }
   });
 });

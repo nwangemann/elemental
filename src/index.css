@@ -466,8 +466,31 @@ kbd {
   border-color: #6e7681;
 }
 
+.back-to-table {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid #6e7681;
+  border-radius: 6px;
+  background: rgb(22 27 34 / 92%);
+  color: #e6edf3;
+  font: inherit;
+  cursor: pointer;
+  transform: translateX(-50%);
+}
+
+.back-to-table:hover {
+  border-color: #79c0ff;
+}
+
 .explore-open:focus-visible,
 .keys-open:focus-visible,
+.back-to-table:focus-visible,
 .keyhelp button:focus-visible {
   outline: 2px solid #79c0ff;
   outline-offset: 2px;

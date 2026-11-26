@@ -1,5 +1,6 @@
 import { Suspense, lazy, useCallback, useRef } from 'react';
 import type { PerfReport } from './scene/PerfProbe.tsx';
+import { BackToTable } from './ui/BackToTable.tsx';
 import { KeyHelp } from './ui/KeyHelp.tsx';
 import { TileStatus } from './ui/TileStatus.tsx';
 
@@ -61,6 +62,7 @@ export function App() {
         <ElementPanel />
       </Suspense>
       <KeyHelp />
+      <BackToTable />
       <TileStatus />
       {showPerf && <output ref={perf} className="perf" aria-live="off" />}
       {TunePanel && (

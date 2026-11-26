@@ -8,6 +8,7 @@ A walkable periodic table. A small figure strolls across a 3D table of the eleme
 
 - Walk: WASD or the arrow keys; hold Shift to walk slowly.
 - Step tile to tile: I, J, K, L (up, left, down, right).
+- Back to the table: R or Home walks the figure back to the last tile it stood on; after a couple of seconds on the ground a "Back to the table" button appears too.
 - Element panel: Enter or Space opens it and moves focus into it; Esc closes it.
 - All keys: press `?` or the Keys button.
 - Walk somewhere: click or tap a tile and the figure walks to it. Any key or the joystick takes over.

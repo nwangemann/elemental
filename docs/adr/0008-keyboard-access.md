@@ -10,6 +10,7 @@ The standards ask for a scene that is playable with the keyboard alone: walking,
 ## Decision
 
 - **I, J, K and L step one tile up, left, down or right** (`core/tileStep.ts`, by `KeyboardEvent.code`). They are laid out like the arrows, sit beside WASD without overlapping it, and work on any layout. A step skips gaps and empty cells (H → He; Be → B), takes up and down through the gap row into and out of the f-block, and goes to the nearest tile of the next row when a column has nothing further on (Fr → La). A step sets the existing walk target, so the character walks and stops on the tile's centre; presses during a walk chain from the tile it is heading for.
+- **R or Home walks back to the table** (`RETURN_KEYS` in `core/tileStep.ts`, by code), to the last tile the character stood on (`lastTile` in the store). Added with the walkable ground of ADR 0009: a player who wanders onto the ground always has one key home. A "Back to the table" button in the shell does the same for pointers, shown after two seconds off the tiles, and the tile status says "Off the table. Press R to return."
 - **The arrows keep walking freely.** Turning them into steps while the scene has focus would make the same key do two things depending on focus.
 - **Enter or Space opens the panel and moves focus into it; Esc closes it** and returns focus to the scene. "Closed" is store state (`panelClosed`) for the current tile only: stepping onto another tile opens the panel again, as before. Enter and Space only count when focus is on the scene or nowhere, so they still press focused buttons.
 - **The scene is one focus stop**: the canvas wrapper takes `tabIndex=0`, `role="application"` (screen readers pass keys through), a label that names the main keys, and the live tile status as its description. It shows a focus ring when reached by keyboard.
@@ -18,4 +19,4 @@ The standards ask for a scene that is playable with the keyboard alone: walking,
 ## Consequences
 
 - Steps across a wide gap (Be → B) are long walks of a few seconds; a jump is what the explorer is for.
-- Keys added later must stay clear of WASD, IJKL, Enter, Space, Esc, `/` and `?`, and appear in the key map list in `ui/KeyHelp.tsx`.
+- Keys added later must stay clear of WASD, IJKL, R, Home, Enter, Space, Esc, `/` and `?`, and appear in the key map list in `ui/KeyHelp.tsx`.

@@ -17,6 +17,7 @@ import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
 import { Labels } from './Labels.tsx';
 import { PerfProbe, type PerfReport } from './PerfProbe.tsx';
 import { TapToWalk } from './TapToWalk.tsx';
+import { ReturnHandler } from './ReturnHandler.tsx';
 import { TileActivator } from './TileActivator.tsx';
 import { TileRings } from './TileRings.tsx';
 import { TileStepper } from './TileStepper.tsx';
@@ -75,6 +76,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         <TapToWalk target={target} />
         <TileStepper controller={controller} target={target} />
         <FlightHandler controller={controller} target={target} />
+        <ReturnHandler controller={controller} target={target} />
         <TileActivator activation={activation} controller={controller} ledge={ledge} />
         <Tiles key={`tiles-${version}`} activation={activation} />
         <TileRings key={`rings-${version}`} activation={activation} />

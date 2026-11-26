@@ -13,6 +13,7 @@ const KEY_GROUPS: readonly { title: string; rows: readonly [keys: string[], acti
         [['↑', '←', '↓', '→'], 'Walk'],
         [['Shift'], 'Hold to walk slowly'],
         [['I', 'J', 'K', 'L'], 'Step to the next tile up, left, down or right'],
+        [['R', 'Home'], 'Walk back to the last tile from the ground'],
         [['+', '−'], 'Zoom in or out'],
       ],
     },

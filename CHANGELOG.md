@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Getting back: R or Home walks the figure back to the last tile it stood on, and after two seconds on the ground a "Back to the table" button appears. The status tells screen-reader users how to return.
 - Explorer: `⌘K`, `/` or the Explore button opens a palette that searches elements by name, symbol or number (forgiving of typos), sorts them by number, name, mass, discovery year, density, electronegativity or melting point, and filters by family, state, block, period and group. Choosing one puts the character on that tile and the camera glides there. Every element has a link (`#/Au`), and the address follows the tile you stand on.
 - Click or tap a tile and the character walks straight to it, slowing to a stop on its centre. On touch screens an on-screen joystick walks it at any speed; it sits above the panel sheet on phones. The keyboard always takes over, then the joystick, then a clicked target.
 - Element families have themes: a tile wakes into its family's surface when the character steps on it (brushed transition metals, chalky alkaline earths, glassy metalloids, glowing noble gases, pulsing actinides and more), and the panel takes its accent from the same theme. All tiles still draw in one call.

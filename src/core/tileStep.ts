@@ -25,6 +25,18 @@ export function stepDirectionForCode(code: string): StepDirection | null {
 }
 
 /**
+ * Return keys by `KeyboardEvent.code`: R (any layout, by position) and Home. Either walks the
+ * character back to the last tile it stood on, which is how a player who wandered onto the ground
+ * gets back to the table.
+ */
+export const RETURN_KEYS: ReadonlySet<string> = new Set(['KeyR', 'Home']);
+
+/** True for a key code that returns the character to the table. */
+export function isReturnCode(code: string): boolean {
+  return RETURN_KEYS.has(code);
+}
+
+/**
  * The tile nearest to world point (x, z): the one whose centre is closest. Used when the
  * character stands between tiles or off the table, so a step still has somewhere to start.
  */
