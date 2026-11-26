@@ -75,6 +75,35 @@ body {
   border: 0;
 }
 
+/* Touch joystick, bottom left; shown only with a coarse pointer (scene/Joystick.tsx). */
+.joystick {
+  position: fixed;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid rgb(230 237 243 / 25%);
+  background: rgb(13 17 23 / 35%);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 150ms linear;
+}
+
+.joystick[data-active='true'] {
+  background: rgb(13 17 23 / 55%);
+}
+
+.joystick-knob {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgb(230 237 243 / 75%);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 40%);
+  pointer-events: none;
+}
+
 /* Element panel. `--accent` and `--accent-ink` come from the element's family (accentTokens). */
 .panel {
   --accent: #a5b8cc;
@@ -224,6 +253,11 @@ body {
     bottom: 0.5rem;
     width: calc(100vw - 1rem);
     max-height: 45dvh;
+  }
+
+  /* Sit above the bottom sheet so the thumb never lands on the panel. */
+  .joystick {
+    bottom: calc(45dvh + 1rem);
   }
 
   .panel[data-open='false'] {

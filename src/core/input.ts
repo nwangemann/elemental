@@ -26,7 +26,10 @@ export interface InputState {
 }
 
 export interface MoveIntent {
-  /** Direction in world x/z, length 0 or 1 (diagonals are normalised). */
+  /**
+   * Direction in world x/z, length 0–1; the length scales speed. Keys give 0 or 1 (diagonals are
+   * normalised); the joystick and the walk-target approach give values in between.
+   */
   x: number;
   z: number;
   slow: boolean;

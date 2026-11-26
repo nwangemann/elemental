@@ -63,6 +63,12 @@ export const CONFIG_DEFAULTS = {
     leanAmount: 0.025,
     maxLean: 0.25,
     leanRate: 10,
+    /** Click/tap-to-walk (see `core/steering.ts`): stop distance and slow-down distance, units. */
+    arriveRadius: 0.06,
+    slowRadius: 0.6,
+    /** On-screen joystick: travel to full speed in px, and the dead zone as a fraction of it. */
+    stickRadius: 48,
+    stickDeadZone: 0.12,
   },
   camera: {
     fov: 40,
@@ -135,6 +141,10 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     leanAmount: { min: 0, max: 0.1, step: 0.005 },
     maxLean: { min: 0, max: 0.6, step: 0.01 },
     leanRate: { min: 1, max: 30, step: 0.5 },
+    arriveRadius: { min: 0.01, max: 0.5, step: 0.01 },
+    slowRadius: { min: 0.05, max: 3, step: 0.05 },
+    stickRadius: { min: 20, max: 120, step: 1 },
+    stickDeadZone: { min: 0, max: 0.5, step: 0.01 },
   },
   camera: {
     fov: { min: 15, max: 90, step: 1 },

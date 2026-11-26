@@ -14,6 +14,7 @@ import { speedOf, stepController, tableBounds, type ControllerState } from '../c
 import { createGait, createPose, poseOf, stepGait } from '../core/gait.ts';
 import { createIntent, moveIntent, type InputState } from '../core/input.ts';
 import { TABLE_SIZE } from '../core/layout.ts';
+import { steer, type Stick, type WalkTarget } from '../core/steering.ts';
 import { CHARACTER_COLOR, EYE_COLOR } from '../core/palette.ts';
 
 /** Longest frame step fed to the controller and gait, so a background tab does not jump. */
@@ -29,18 +30,24 @@ export const CHARACTER_FRAME_PRIORITY = -1;
  * The procedural bean: a capsule body with eyes, stub arms and two feet. Geometry comes from
  * `CONFIG.character` at mount. Every frame it reads the held keys, steps `core/controller.ts`
  * (position, heading, lean) and `core/gait.ts` (breathing, walk cycle) and writes the results to
- * refs. Faces +z at heading 0. `controller` and `input` are owned by the parent, so a remount
- * (the tuning panel changing sizes) keeps the character where it is. It stands on the tile
+ * refs. Keys win over the touch joystick, which wins over a clicked walk target
+ * (`core/steering.ts`). Faces +z at heading 0. `controller`, `input`, `stick` and `target` are
+ * owned by the parent, so a remount (the tuning panel changing sizes) keeps the character where
+ * it is. It stands on the tile
  * under it and rides it up as it activates; the height is smoothed, so stepping straight from
  * one raised tile onto the next dips gently instead of dropping.
  */
 export function Character({
   controller,
   input,
+  stick,
+  target,
   activation,
 }: {
   controller: ControllerState;
   input: InputState;
+  stick: Stick;
+  target: WalkTarget;
   activation: Activation;
 }) {
   const c = CONFIG.character;
@@ -93,7 +100,9 @@ export function Character({
   useFrame((_, delta) => {
     const dt = Math.min(delta, MAX_DT);
     const p = CONFIG.character;
-    stepController(controller, moveIntent(input, intent), dt, p, bounds);
+    moveIntent(input, intent);
+    steer(intent, stick, target, controller.x, controller.z, p);
+    stepController(controller, intent, dt, p, bounds);
     stepGait(gait, speedOf(controller), dt, p);
     poseOf(gait, p, pose);
     const t = CONFIG.tiles;

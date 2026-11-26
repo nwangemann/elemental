@@ -4,11 +4,14 @@ import { createActivation } from '../core/activation.ts';
 import { CONFIG } from '../core/config.ts';
 import { createController } from '../core/controller.ts';
 import { TABLE_SIZE, TILES } from '../core/layout.ts';
+import { createStick, createWalkTarget } from '../core/steering.ts';
 import { CameraRig } from './CameraRig.tsx';
 import { Character } from './Character.tsx';
+import { Joystick } from './Joystick.tsx';
 import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
 import { Labels } from './Labels.tsx';
 import { PerfProbe, type PerfReport } from './PerfProbe.tsx';
+import { TapToWalk } from './TapToWalk.tsx';
 import { TileActivator } from './TileActivator.tsx';
 import { TileRings } from './TileRings.tsx';
 import { Tiles } from './Tiles.tsx';
@@ -25,33 +28,41 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
   const input = useKeyboardInput();
   const controller = useMemo(() => createController(SPAWN.x, SPAWN.z), []);
   const activation = useMemo(() => createActivation(), []);
+  const stick = useMemo(() => createStick(), []);
+  const target = useMemo(() => createWalkTarget(), []);
   return (
-    <Canvas
-      className="scene"
-      dpr={[1, 2]}
-      camera={{ fov: CONFIG.camera.fov, position: [...CONFIG.camera.position] }}
-      aria-hidden
-    >
-      <color attach="background" args={[SKY_COLOR]} />
-      <fog attach="fog" args={[SKY_COLOR, 30, 70]} />
-      <hemisphereLight args={['#dfe8ff', '#202630', 1.2]} />
-      <directionalLight position={[6, 14, 8]} intensity={1.6} />
-      <mesh rotation-x={-Math.PI / 2}>
-        <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
-        <meshStandardMaterial color={GROUND_COLOR} roughness={1} />
-      </mesh>
-      <CameraRig controller={controller} />
-      <TileActivator activation={activation} controller={controller} />
-      <Tiles key={`tiles-${version}`} activation={activation} />
-      <TileRings key={`rings-${version}`} activation={activation} />
-      <Labels key={`labels-${version}`} activation={activation} />
-      <Character
-        key={`character-${version}`}
-        controller={controller}
-        input={input}
-        activation={activation}
-      />
-      {onPerf && <PerfProbe onReport={onPerf} />}
-    </Canvas>
+    <>
+      <Canvas
+        className="scene"
+        dpr={[1, 2]}
+        camera={{ fov: CONFIG.camera.fov, position: [...CONFIG.camera.position] }}
+        aria-hidden
+      >
+        <color attach="background" args={[SKY_COLOR]} />
+        <fog attach="fog" args={[SKY_COLOR, 30, 70]} />
+        <hemisphereLight args={['#dfe8ff', '#202630', 1.2]} />
+        <directionalLight position={[6, 14, 8]} intensity={1.6} />
+        <mesh rotation-x={-Math.PI / 2}>
+          <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
+          <meshStandardMaterial color={GROUND_COLOR} roughness={1} />
+        </mesh>
+        <CameraRig controller={controller} />
+        <TapToWalk target={target} />
+        <TileActivator activation={activation} controller={controller} />
+        <Tiles key={`tiles-${version}`} activation={activation} />
+        <TileRings key={`rings-${version}`} activation={activation} />
+        <Labels key={`labels-${version}`} activation={activation} />
+        <Character
+          key={`character-${version}`}
+          controller={controller}
+          input={input}
+          stick={stick}
+          target={target}
+          activation={activation}
+        />
+        {onPerf && <PerfProbe onReport={onPerf} />}
+      </Canvas>
+      <Joystick stick={stick} />
+    </>
   );
 }
