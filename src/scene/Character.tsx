@@ -8,13 +8,12 @@ import {
   type Mesh,
 } from 'three';
 import { tileTop, type Activation } from '../core/activation.ts';
-import { GROUND, surfaceAt } from '../core/boundary.ts';
+import { BOUNDARY, GROUND, outerBounds, surfaceAt } from '../core/boundary.ts';
 import { CONFIG } from '../core/config.ts';
-import { speedOf, stepController, tableBounds, type ControllerState } from '../core/controller.ts';
+import { speedOf, stepController, type ControllerState } from '../core/controller.ts';
 import { createGait, createPose, poseOf, stepGait } from '../core/gait.ts';
 import { createIntent, moveIntent, type InputState } from '../core/input.ts';
 import { isAirborne, stepLedge, type LedgeState } from '../core/ledge.ts';
-import { TABLE_SIZE } from '../core/layout.ts';
 import { steer, type Stick, type WalkTarget } from '../core/steering.ts';
 import { CHARACTER_COLOR, EYE_COLOR } from '../core/palette.ts';
 
@@ -64,10 +63,7 @@ export function Character({
   const gait = useMemo(() => createGait(), []);
   const pose = useMemo(() => createPose(), []);
   const intent = useMemo(() => createIntent(), []);
-  const bounds = useMemo(
-    () => tableBounds(TABLE_SIZE.width, TABLE_SIZE.depth, c.radius),
-    [c.radius],
-  );
+  const bounds = useMemo(() => outerBounds(BOUNDARY.margin, c.radius), [c.radius]);
   const skin = useMemo(
     () => new MeshStandardMaterial({ color: CHARACTER_COLOR, roughness: 0.6 }),
     [],

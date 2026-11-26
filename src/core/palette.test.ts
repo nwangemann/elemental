@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { CATEGORIES } from './elements/categories.ts';
-import { CATEGORY_COLORS, LABEL_COLOR, contrastRatio, luminance } from './palette.ts';
+import {
+  CATEGORY_COLORS,
+  GROUND_COLOR,
+  LABEL_COLOR,
+  SKY_COLOR,
+  contrastRatio,
+  luminance,
+} from './palette.ts';
 
 const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 
@@ -32,6 +39,18 @@ describe('CATEGORY_COLORS', () => {
         const d = Math.hypot(...colors[i]!.map((c, k) => c - colors[j]![k]!));
         expect(d).toBeGreaterThan(40);
       }
+    }
+  });
+});
+
+describe('GROUND_COLOR', () => {
+  it('reads against the sky, so the walkable area and its edge show', () => {
+    expect(contrastRatio(GROUND_COLOR, SKY_COLOR)).toBeGreaterThanOrEqual(1.4);
+  });
+
+  it('stays dark enough for every family colour to stand out on it', () => {
+    for (const c of CATEGORIES) {
+      expect(contrastRatio(CATEGORY_COLORS[c], GROUND_COLOR)).toBeGreaterThanOrEqual(3);
     }
   });
 });

@@ -87,4 +87,16 @@ describe('camera', () => {
     const s = createCamera(0, 0, { ...P, distance: 1000 });
     expect(s.distance).toBe(P.maxDistance);
   });
+
+  it('holds the focus inside the given bounds while the character walks past them', () => {
+    const s = createCamera(0, 0, P);
+    const focus = { minX: -4, maxX: 4, minZ: -3, maxZ: 3 };
+    run(600, () => stepCamera(s, 9, -7, 2.6, -2.6, 1 / 60, P, focus));
+    expect(s.focusX.value).toBeCloseTo(4, 2);
+    expect(s.focusZ.value).toBeCloseTo(-3, 2);
+    // Inside the bounds it follows as before.
+    run(600, () => stepCamera(s, 1, 2, 0, 0, 1 / 60, P, focus));
+    expect(s.focusX.value).toBeCloseTo(1, 2);
+    expect(s.focusZ.value).toBeCloseTo(2, 2);
+  });
 });

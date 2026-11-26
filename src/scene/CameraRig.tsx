@@ -1,5 +1,6 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
+import { outerBounds } from '../core/boundary.ts';
 import { CONFIG } from '../core/config.ts';
 import {
   cameraPose,
@@ -24,7 +25,7 @@ const LINE_PX = 16;
 /**
  * The third-person camera: steps `core/camera.ts` after the character each frame (the character's
  * frame runs at a lower priority) and applies the pose. Zoom comes from the wheel, a two-finger
- * pinch on the canvas, and `+`/`-`. The establishing shot is skipped under reduced motion.
+ * pinch on the canvas, and `+`/`-`. The focus stays within `focusMargin` of the table's footprint. The establishing shot is skipped under reduced motion.
  */
 export function CameraRig({ controller }: { controller: ControllerState }) {
   const canvas = useThree((s) => s.gl.domElement);
@@ -35,6 +36,8 @@ export function CameraRig({ controller }: { controller: ControllerState }) {
     return c;
   }, [controller]);
   const pose = useMemo(() => createPose(), []);
+  const focusMargin = CONFIG.camera.focusMargin;
+  const focus = useMemo(() => outerBounds(focusMargin, 0), [focusMargin]);
 
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {
@@ -100,6 +103,7 @@ export function CameraRig({ controller }: { controller: ControllerState }) {
       controller.vz,
       Math.min(delta, MAX_DT),
       p,
+      focus,
     );
     // The camera config's own position and target are the overview pose.
     cameraPose(cam, p, p, pose);

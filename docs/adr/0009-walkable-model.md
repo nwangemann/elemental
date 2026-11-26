@@ -32,4 +32,5 @@ Until now the character walked a flat rectangle at tile height: the controller c
 
 - The scene needs a vertical state for drops and hops, activation that waits for the figure to be on top, a soft outer limit with a visible edge, and a way back to the last tile after wandering off. These are separate steps on the plan.
 - The ground must read as ground against the sky, or the margin looks like a void.
+- As built, the outer limit is a soft band (`edgeBand` 0.6 inside the limit: outward speed falls to zero, a push of up to `edgePush` eases the figure back), with a hard clamp behind it as a guarantee. The visible edge is the ground itself: a low plinth covering exactly the walkable area, lighter than the sky, so no extra draw call. The camera's focus stays within `focusMargin` (0.5) of the table, so the table stays in frame at the limit.
 - `tileAtPoint`'s hysteresis stays for which tile is active; `surfaceAt` answers what holds the figure up. The two agree on tile tops and differ only within a body's width of an edge.

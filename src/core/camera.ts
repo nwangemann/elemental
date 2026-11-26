@@ -1,10 +1,12 @@
+import type { Bounds } from './controller.ts';
 import { stepSpring, damp, type Spring } from './damp.ts';
 
 /**
  * The third-person camera as pure maths: a focus point that follows the character on critically
  * damped springs (with a little look-ahead along its velocity), a zoom distance eased toward a
  * clamped target, and an establishing shot that blends from the overview pose into the follow
- * pose. The camera keeps a fixed heading (looking toward −z), so keyboard directions stay
+ * pose. The focus is held inside given bounds, so walking out to the outer limit keeps the table
+ * in frame. The camera keeps a fixed heading (looking toward −z), so keyboard directions stay
  * screen-relative. Allocation-free; the step and pose functions write into objects they are given.
  */
 
@@ -15,6 +17,8 @@ export interface CameraParams {
   lookAhead: number;
   /** Height of the focus point above the ground, world units. */
   focusHeight: number;
+  /** How far past the table's footprint the focus may go, world units (see `focusBounds`). */
+  focusMargin: number;
   /** Angle of the view above the horizon, degrees. */
   pitch: number;
   /** Starting distance from the focus point, and its limits. */
@@ -86,7 +90,11 @@ export function introProgress(s: CameraState, p: CameraParams): number {
   return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
-/** Advances follow, zoom and intro by `dt` seconds toward a character at (x, z) moving (vx, vz). */
+/**
+ * Advances follow, zoom and intro by `dt` seconds toward a character at (x, z) moving (vx, vz).
+ * The spring's goal (position plus look-ahead) is clamped to `focus`, so the view stops at the
+ * edge while the character walks on into the margin.
+ */
 export function stepCamera(
   s: CameraState,
   x: number,
@@ -95,10 +103,17 @@ export function stepCamera(
   vz: number,
   dt: number,
   p: CameraParams,
+  focus?: Readonly<Bounds>,
 ): void {
   if (dt <= 0) return;
-  stepSpring(s.focusX, x + vx * p.lookAhead, p.followRate, dt);
-  stepSpring(s.focusZ, z + vz * p.lookAhead, p.followRate, dt);
+  let gx = x + vx * p.lookAhead;
+  let gz = z + vz * p.lookAhead;
+  if (focus) {
+    gx = clamp(gx, focus.minX, focus.maxX);
+    gz = clamp(gz, focus.minZ, focus.maxZ);
+  }
+  stepSpring(s.focusX, gx, p.followRate, dt);
+  stepSpring(s.focusZ, gz, p.followRate, dt);
   s.zoomTarget = clamp(s.zoomTarget, p.minDistance, p.maxDistance);
   s.distance = damp(s.distance, s.zoomTarget, p.zoomRate, dt);
   s.introTime += dt;

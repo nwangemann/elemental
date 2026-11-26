@@ -78,6 +78,9 @@ export const CONFIG_DEFAULTS = {
     /** Body squash on landing (fraction of height) and its recovery, 1/s. */
     landSquash: 0.12,
     squashRecover: 9,
+    /** Outer limit (see `core/controller.ts`): soft band width, units, and push-back, units/s². */
+    edgeBand: 0.6,
+    edgePush: 6,
   },
   camera: {
     fov: 40,
@@ -89,6 +92,8 @@ export const CONFIG_DEFAULTS = {
     followRate: 5,
     lookAhead: 0.3,
     focusHeight: 0.4,
+    /** How far past the table's footprint the focus point may go, units, so the table stays in frame. */
+    focusMargin: 0.5,
     /** View angle above the horizon, degrees, and distance to the focus point with its limits. */
     pitch: 48,
     distance: 8,
@@ -160,6 +165,8 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     hopDuration: { min: 0.05, max: 1, step: 0.01 },
     landSquash: { min: 0, max: 0.4, step: 0.01 },
     squashRecover: { min: 1, max: 30, step: 0.5 },
+    edgeBand: { min: 0, max: 1.5, step: 0.05 },
+    edgePush: { min: 0, max: 30, step: 0.5 },
   },
   camera: {
     fov: { min: 15, max: 90, step: 1 },
@@ -168,6 +175,7 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     followRate: { min: 0.5, max: 20, step: 0.5 },
     lookAhead: { min: 0, max: 1.5, step: 0.05 },
     focusHeight: { min: 0, max: 2, step: 0.05 },
+    focusMargin: { min: 0, max: 3, step: 0.05 },
     pitch: { min: 10, max: 89, step: 1 },
     distance: { min: 2, max: 40, step: 0.5 },
     minDistance: { min: 1, max: 20, step: 0.5 },

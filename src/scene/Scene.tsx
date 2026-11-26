@@ -1,12 +1,13 @@
 import { Canvas } from '@react-three/fiber';
 import { useMemo } from 'react';
 import { createActivation } from '../core/activation.ts';
+import { BOUNDARY, outerBounds } from '../core/boundary.ts';
 import { CONFIG } from '../core/config.ts';
 import { createController } from '../core/controller.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
 import { parseDeepLink } from '../core/explorer.ts';
 import { createLedge } from '../core/ledge.ts';
-import { TABLE_SIZE, TILES } from '../core/layout.ts';
+import { TILES } from '../core/layout.ts';
 import { createStick, createWalkTarget } from '../core/steering.ts';
 import { CameraRig } from './CameraRig.tsx';
 import { Character } from './Character.tsx';
@@ -28,7 +29,14 @@ function spawnTile() {
   const linked = parseDeepLink(window.location.hash, ELEMENTS);
   return TILES[(linked?.number ?? 1) - 1]!;
 }
-const GROUND_SIZE = Math.max(TABLE_SIZE.width, TABLE_SIZE.depth) * 4;
+/**
+ * The ground is a low plinth covering the walkable area (the table plus `BOUNDARY.margin`), so
+ * the outer limit shows as its edge, with the sky beyond. One mesh, as the old plane was.
+ */
+const GROUND_EDGE = outerBounds(BOUNDARY.margin, 0);
+const GROUND_W = GROUND_EDGE.maxX - GROUND_EDGE.minX;
+const GROUND_D = GROUND_EDGE.maxZ - GROUND_EDGE.minZ;
+const GROUND_THICKNESS = 0.4;
 
 export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => void }) {
   // Tiles and labels are built once from CONFIG; remount them when the tuning panel changes it.
@@ -59,8 +67,8 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         <fog attach="fog" args={[SKY_COLOR, 30, 70]} />
         <hemisphereLight args={['#dfe8ff', '#202630', 1.2]} />
         <directionalLight position={[6, 14, 8]} intensity={1.6} />
-        <mesh rotation-x={-Math.PI / 2}>
-          <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
+        <mesh position-y={-GROUND_THICKNESS / 2}>
+          <boxGeometry args={[GROUND_W, GROUND_THICKNESS, GROUND_D]} />
           <meshStandardMaterial color={GROUND_COLOR} roughness={1} />
         </mesh>
         <CameraRig controller={controller} />

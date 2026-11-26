@@ -4,7 +4,9 @@ import type { MoveIntent } from './input.ts';
 /**
  * Kinematic character controller on the table plane: velocity eases toward the input direction,
  * the body turns toward where it travels and leans into turns, and the position stays inside a
- * rectangle. Pure and allocation-free; `stepController` mutates the state it is given.
+ * rectangle. Near the rectangle's edge a soft band slows outward travel and pushes the body back,
+ * so the limit feels like a gentle slope rather than a wall. Pure and allocation-free;
+ * `stepController` mutates the state it is given.
  */
 
 export interface ControllerParams {
@@ -24,6 +26,13 @@ export interface ControllerParams {
   maxLean: number;
   /** How fast the lean follows its target, 1/s. */
   leanRate: number;
+  /**
+   * Width of the soft band inside each bounds edge, world units. Across it the outward speed
+   * allowed falls from `moveSpeed` to 0, and a push-back grows from 0 to `edgePush`.
+   */
+  edgeBand: number;
+  /** Push back toward the inside at the very edge, units/s². */
+  edgePush: number;
 }
 
 /** Axis-aligned limits for the character's centre. */
@@ -94,8 +103,11 @@ export function stepController(
   s.vx = damp(s.vx, intent.x * top, rate, dt);
   s.vz = damp(s.vz, intent.z * top, rate, dt);
 
+  s.vx = soften(s.x, s.vx, bounds.minX, bounds.maxX, dt, p);
+  s.vz = soften(s.z, s.vz, bounds.minZ, bounds.maxZ, dt, p);
   s.x += s.vx * dt;
   s.z += s.vz * dt;
+  // The band should keep the body inside; the clamp is the guarantee (a teleport, a long frame).
   if (s.x < bounds.minX || s.x > bounds.maxX) {
     s.x = Math.min(bounds.maxX, Math.max(bounds.minX, s.x));
     s.vx = 0;
@@ -114,4 +126,22 @@ export function stepController(
   const omega = wrapAngle(s.heading - before) / dt;
   const target = Math.max(-p.maxLean, Math.min(p.maxLean, p.leanAmount * omega * speed));
   s.lean = damp(s.lean, target, p.leanRate, dt);
+}
+
+/**
+ * One axis of the soft edge: how deep `pos` is into the band at either limit (0 at the band's
+ * inner side, 1 at the limit) caps the outward velocity at `moveSpeed × (1 − depth)` and adds a
+ * push of `edgePush × depth` back inside. Returns the new velocity.
+ */
+function soften(pos: number, v: number, min: number, max: number, dt: number, p: ControllerParams) {
+  const band = Math.min(p.edgeBand, (max - min) / 2);
+  if (!(band > 0)) return v;
+  const hi = Math.min(1, Math.max(0, (pos - (max - band)) / band));
+  const lo = Math.min(1, Math.max(0, (min + band - pos) / band));
+  if (hi > 0) {
+    v = Math.min(v, p.moveSpeed * (1 - hi)) - p.edgePush * hi * dt;
+  } else if (lo > 0) {
+    v = Math.max(v, -p.moveSpeed * (1 - lo)) + p.edgePush * lo * dt;
+  }
+  return v;
 }

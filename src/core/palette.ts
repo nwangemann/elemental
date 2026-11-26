@@ -22,8 +22,11 @@ export const CATEGORY_COLORS: Readonly<Record<Category, string>> = {
 /** Ink for tile labels; dark so it reads on every family colour. */
 export const LABEL_COLOR = '#11151c';
 
-/** The ground the table stands on. */
-export const GROUND_COLOR = '#161b22';
+/**
+ * The ground the table stands on: a cool slate, lighter than the sky so the walkable area and
+ * its edge read against the background, still dark enough for the tiles to stand out on it.
+ */
+export const GROUND_COLOR = '#2c3442';
 
 /** Background behind the scene (also the fog colour). */
 export const SKY_COLOR = '#0d1117';
