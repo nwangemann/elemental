@@ -1,0 +1,45 @@
+{
+  "name": "elemental",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "lint": "oxlint --deny-warnings",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test --trace off",
+    "docs:check": "node scripts/docs-check.mjs",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run docs:check",
+    "prepare": "husky || true"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "husky": "^9.1.7",
+    "oxlint": "^1.90.0",
+    "prettier": "^3.10.1",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.6",
+    "vitest": "^5.1.2"
+  },
+  "description": "Walk a little figure across a 3D periodic table; each element wakes up as you step onto it. Built with three.js and React Three Fiber.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  }
+}
