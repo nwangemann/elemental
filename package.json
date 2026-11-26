@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test --trace off",
     "docs:check": "node scripts/docs-check.mjs",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run docs:check",
+    "size:check": "node scripts/size-check.mjs",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run docs:check && npm run size:check",
     "data": "node scripts/build-elements.ts && prettier --write src/data/elements.json",
     "prepare": "husky || true"
   },

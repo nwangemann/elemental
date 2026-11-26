@@ -30,4 +30,5 @@
 ## Testing
 
 - Unit tests (`*.test.ts` next to the code) cover `src/core`. The normalizer is tested against small recorded responses in `src/core/elements/__fixtures__/`; another test validates the whole committed dataset.
+- `scripts/size-check.mjs` builds the app and fails `npm run check` if the gzipped JavaScript passes 400 KB.
 - `e2e/smoke.spec.ts` builds the app, serves it with `vite preview` and checks it loads in Chromium.

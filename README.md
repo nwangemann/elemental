@@ -26,7 +26,7 @@ Then open http://localhost:5173.
 ## Check it
 
 ```bash
-npm run check      # types, lint, formatting, unit tests, docs
+npm run check      # types, lint, formatting, unit tests, docs, bundle size
 npm run test:e2e   # production build in headless Chromium
 ```
 
