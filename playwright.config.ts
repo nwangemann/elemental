@@ -3,6 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 // Smoke tests run against the production build, served by `vite preview`.
 export default defineConfig({
   testDir: 'e2e',
+  // Measurements run separately with `npm run perf` (playwright.perf.config.ts).
+  testIgnore: '**/perf/**',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   reporter: process.env.CI ? 'github' : 'list',

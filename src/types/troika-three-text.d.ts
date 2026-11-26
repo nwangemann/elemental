@@ -22,6 +22,8 @@ declare module 'troika-three-text' {
       | 'bottom';
     color: ColorRepresentation | null;
     sdfGlyphSize: number | null;
+    /** False builds glyph SDFs in troika's worker pool instead of on the main thread's GPU path. */
+    gpuAccelerateSDF: boolean;
     /** Lays out the text off the main thread; renders once done. */
     sync(callback?: () => void): void;
     dispose(): void;

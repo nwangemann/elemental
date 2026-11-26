@@ -18,6 +18,9 @@ function label(text: string, size: number): Text {
   // fonts for glyphs this one lacks, so the Latin-only labels never touch the network.
   t.font = fontUrl;
   t.fontSize = size;
+  // Build glyph SDFs in troika's worker pool. The GPU path reads each glyph back with a blocking
+  // readPixels on the main thread, which held the first frame back by about a second (ADR 0010).
+  t.gpuAccelerateSDF = false;
   t.color = LABEL_COLOR;
   t.rotation.x = FLAT;
   return t;
@@ -49,6 +52,7 @@ export function Labels({ activation }: { activation: Activation }) {
     const g = group.current;
     if (!g) return;
     const batch = new BatchedText();
+    batch.gpuAccelerateSDF = false;
     batch.color = LABEL_COLOR;
     const members: Text[] = [];
     const pairs: [Text, Text][] = [];

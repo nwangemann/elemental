@@ -7,12 +7,15 @@ import {
   createCamera,
   createPose,
   skipIntro,
+  snapFocus,
   stepCamera,
   zoomBy,
   zoomByFactor,
 } from '../core/camera.ts';
 import type { ControllerState } from '../core/controller.ts';
 import { zoomStepsForKey } from '../core/input.ts';
+import { TILES } from '../core/layout.ts';
+import { useAppStore } from '../state/store.ts';
 import { isTextEntry } from './useKeyboardInput.ts';
 
 /** Longest frame step fed to the camera, so a background tab does not jump. */
@@ -22,22 +25,36 @@ const WHEEL_PX_PER_STEP = 100;
 /** `deltaMode` 1 reports lines; treat one line as this many pixels. */
 const LINE_PX = 16;
 
+const prefersReducedMotion = () =>
+  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
 /**
  * The third-person camera: steps `core/camera.ts` after the character each frame (the character's
  * frame runs at a lower priority) and applies the pose. Zoom comes from the wheel, a two-finger
- * pinch on the canvas, and `+`/`-`. The focus stays within `focusMargin` of the table's footprint. The establishing shot is skipped under reduced motion.
+ * pinch on the canvas, and `+`/`-`. The focus stays within `focusMargin` of the table's footprint. Under reduced motion the establishing shot is skipped and a fly-to
+ * cuts to its tile instead of gliding.
  */
 export function CameraRig({ controller }: { controller: ControllerState }) {
   const canvas = useThree((s) => s.gl.domElement);
   const cam = useMemo(() => {
     const c = createCamera(controller.x, controller.z, CONFIG.camera);
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)
-      skipIntro(c, CONFIG.camera);
+    if (prefersReducedMotion()) skipIntro(c, CONFIG.camera);
     return c;
   }, [controller]);
   const pose = useMemo(() => createPose(), []);
   const focusMargin = CONFIG.camera.focusMargin;
   const focus = useMemo(() => outerBounds(focusMargin, 0), [focusMargin]);
+
+  // Under reduced motion a fly-to is a cut: the focus jumps to the tile with the character.
+  useEffect(
+    () =>
+      useAppStore.subscribe((s, prev) => {
+        if (!s.flight || s.flight === prev.flight || !prefersReducedMotion()) return;
+        const tile = TILES[s.flight.number - 1];
+        if (tile) snapFocus(cam, tile.x, tile.z, focus);
+      }),
+    [cam, focus],
+  );
 
   useEffect(() => {
     const onWheel = (e: WheelEvent) => {

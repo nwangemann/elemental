@@ -34,10 +34,11 @@ export function App() {
     if (!el) return;
     const mean = r.meanMs.toFixed(1);
     const p95 = r.p95Ms.toFixed(1);
-    el.textContent = `${r.calls} draw calls · ${r.triangles} tris · ${mean} ms mean · ${p95} ms p95`;
+    el.textContent = `${r.calls} draw calls · ${r.triangles} tris · ${mean} ms mean · ${p95} ms p95 · ${r.dpr}× px`;
     el.dataset.calls = String(r.calls);
     el.dataset.mean = mean;
     el.dataset.p95 = p95;
+    el.dataset.dpr = String(r.dpr);
   }, []);
 
   return (

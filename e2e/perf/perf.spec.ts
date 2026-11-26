@@ -1,0 +1,133 @@
+/// <reference lib="dom" />
+// This spec runs timing code inside the page, so it needs the DOM types the other e2e files avoid.
+import { expect, test, type Page } from '@playwright/test';
+
+// `npm run perf`: load and frame-time numbers for the production build (see docs/performance.md).
+// Not part of `npm run test:e2e`; run it before and after work that could cost load or frame time.
+
+/** Time to first move target (ADR 0003) on the throttled "fast connection" profile. */
+const FIRST_MOVE_BUDGET_MS = 2000;
+/** Fast connection: 20 Mbps down, 5 Mbps up, 40 ms round trip. */
+/** Cold-cache loads per run; the report gives each and the median first move. */
+const RUNS = 3;
+const FAST = { latency: 40, downloadThroughput: (20e6 / 8) | 0, uploadThroughput: (5e6 / 8) | 0 };
+
+interface LoadNumbers {
+  firstPaint: number;
+  sceneChunkStart: number;
+  sceneChunkEnd: number;
+  firstFrame: number;
+  firstMove: number;
+}
+
+// Records when the scene first reports a tile (the character can walk from then on), and wraps
+// requestAnimationFrame so each frame's work, GPU included (`gl.finish`), can be timed on demand.
+const INIT = () => {
+  const w = window as unknown as Record<string, unknown>;
+  w.perfFirstMove = 0;
+  w.perfFirstFrame = 0;
+  w.perfFrames = null;
+  new MutationObserver((_, obs) => {
+    const s = document.getElementById('tile-status');
+    if (s?.dataset.tile) {
+      w.perfFirstMove = performance.now();
+      obs.disconnect();
+    }
+  }).observe(document, { subtree: true, attributes: true, attributeFilter: ['data-tile'] });
+  const raf = window.requestAnimationFrame.bind(window);
+  window.requestAnimationFrame = (cb) =>
+    raf((t) => {
+      if (!w.perfFirstFrame && document.querySelector('canvas'))
+        w.perfFirstFrame = performance.now();
+      const frames = w.perfFrames as number[] | null;
+      if (!frames) return cb(t);
+      const start = performance.now();
+      cb(t);
+      const gl = document.querySelector('canvas')?.getContext('webgl2');
+      gl?.finish();
+      frames.push(performance.now() - start);
+    });
+};
+
+async function loadNumbers(page: Page): Promise<LoadNumbers> {
+  await expect(page.locator('#tile-status')).not.toHaveAttribute('data-tile', '', {
+    timeout: 20_000,
+  });
+  return page.evaluate(() => {
+    const scene = performance
+      .getEntriesByType('resource')
+      .find((e) => /\/Scene-[^/]+\.js$/.test(e.name)) as PerformanceResourceTiming | undefined;
+    const paint = performance.getEntriesByName('first-contentful-paint')[0];
+    const w = window as unknown as { perfFirstMove: number; perfFirstFrame: number };
+    return {
+      firstPaint: Math.round(paint?.startTime ?? 0),
+      sceneChunkStart: Math.round(scene?.startTime ?? 0),
+      sceneChunkEnd: Math.round(scene?.responseEnd ?? 0),
+      firstFrame: Math.round(w.perfFirstFrame),
+      firstMove: Math.round(w.perfFirstMove),
+    };
+  });
+}
+
+const quantile = (sorted: number[], q: number) =>
+  sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))] ?? 0;
+
+test('load: time to first move', async ({ page }) => {
+  // A fresh browser also starts its GPU process on the first WebGL page, which a visitor's
+  // running browser has already done. Pay that on a blank page first.
+  await page.goto('about:blank');
+  await page.evaluate(() => document.createElement('canvas').getContext('webgl2')?.finish());
+
+  await page.addInitScript(INIT);
+  const client = await page.context().newCDPSession(page);
+  await client.send('Network.enable');
+  await client.send('Network.setCacheDisabled', { cacheDisabled: true });
+  await client.send('Network.emulateNetworkConditions', { offline: false, ...FAST });
+  const runs: LoadNumbers[] = [];
+  for (let i = 0; i < RUNS; i++) {
+    await page.goto('/');
+    runs.push(await loadNumbers(page));
+  }
+  const firstMoves = runs.map((r) => r.firstMove).toSorted((a, b) => a - b);
+  const median = quantile(firstMoves, 0.5);
+  console.log(`perf:load ${JSON.stringify({ medianFirstMove: median, runs })}`);
+  expect(median).toBeLessThan(FIRST_MOVE_BUDGET_MS);
+});
+
+test('frame work while walking', async ({ page }) => {
+  await page.addInitScript(INIT);
+  await page.goto('/?perf&quality=off');
+  await expect(page.locator('#tile-status')).toHaveAttribute('data-tile', '1', {
+    timeout: 20_000,
+  });
+  // Let the establishing shot finish so the walk measures the normal follow view.
+  await page.waitForTimeout(3_500);
+  await page.evaluate(() => ((window as unknown as { perfFrames: number[] }).perfFrames = []));
+  for (const [key, ms] of [
+    ['ArrowDown', 2500],
+    ['ArrowRight', 3000],
+    ['ArrowUp', 1500],
+    ['ArrowLeft', 2000],
+  ] as const) {
+    await page.keyboard.down(key);
+    await page.waitForTimeout(ms);
+    await page.keyboard.up(key);
+  }
+  const frames = await page.evaluate(
+    () => (window as unknown as { perfFrames: number[] }).perfFrames,
+  );
+  const overlay = page.locator('output.perf');
+  const sorted = frames.toSorted((a, b) => a - b);
+  const result = {
+    frames: sorted.length,
+    medianMs: +quantile(sorted, 0.5).toFixed(2),
+    p95Ms: +quantile(sorted, 0.95).toFixed(2),
+    maxMs: +(sorted.at(-1) ?? 0).toFixed(2),
+    drawCalls: Number(await overlay.getAttribute('data-calls')),
+    dpr: Number(await overlay.getAttribute('data-dpr')),
+  };
+  console.log(`perf:frames ${JSON.stringify(result)}`);
+  expect(result.frames).toBeGreaterThan(100);
+  // Frame work, not interval: it must leave most of a 60 Hz frame free.
+  expect(result.p95Ms).toBeLessThan(8);
+});

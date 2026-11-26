@@ -83,6 +83,17 @@ export function skipIntro(s: CameraState, p: CameraParams): void {
   s.introTime = Math.max(s.introTime, p.introDelay + p.introDuration);
 }
 
+/**
+ * Puts the follow focus on (x, z) at once, at rest, clamped to `focus`: a cut instead of a glide,
+ * used for fly-to under reduced motion.
+ */
+export function snapFocus(s: CameraState, x: number, z: number, focus?: Readonly<Bounds>): void {
+  s.focusX.value = focus ? clamp(x, focus.minX, focus.maxX) : x;
+  s.focusZ.value = focus ? clamp(z, focus.minZ, focus.maxZ) : z;
+  s.focusX.velocity = 0;
+  s.focusZ.velocity = 0;
+}
+
 /** How far the establishing shot has gone, 0 (overview) to 1 (following), eased in and out. */
 export function introProgress(s: CameraState, p: CameraParams): number {
   if (p.introDuration <= 0) return s.introTime >= p.introDelay ? 1 : 0;

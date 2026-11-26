@@ -10,6 +10,8 @@ export interface PerfReport {
   /** Milliseconds between frames, capped by the display's refresh rate. */
   meanMs: number;
   p95Ms: number;
+  /** The renderer's device pixel ratio (the quality governor may lower it). */
+  dpr: number;
 }
 
 /**
@@ -19,7 +21,7 @@ export interface PerfReport {
 export function PerfProbe({ onReport }: { onReport: (report: Readonly<PerfReport>) => void }) {
   const stats = useRef(new FrameStats());
   const sinceReport = useRef(0);
-  const report = useRef<PerfReport>({ calls: 0, triangles: 0, meanMs: 0, p95Ms: 0 });
+  const report = useRef<PerfReport>({ calls: 0, triangles: 0, meanMs: 0, p95Ms: 0, dpr: 1 });
 
   useFrame(({ gl }, delta) => {
     stats.current.push(delta * 1000);
@@ -30,6 +32,7 @@ export function PerfProbe({ onReport }: { onReport: (report: Readonly<PerfReport
     // Read before this frame renders, so these describe the previous frame.
     r.calls = gl.info.render.calls;
     r.triangles = gl.info.render.triangles;
+    r.dpr = gl.getPixelRatio();
     r.meanMs = stats.current.mean();
     r.p95Ms = stats.current.percentile(0.95);
     onReport(r);

@@ -17,6 +17,7 @@ import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
 import { Labels } from './Labels.tsx';
 import { PerfProbe, type PerfReport } from './PerfProbe.tsx';
 import { TapToWalk } from './TapToWalk.tsx';
+import { QualityGovernor } from './QualityGovernor.tsx';
 import { ReturnHandler } from './ReturnHandler.tsx';
 import { TileActivator } from './TileActivator.tsx';
 import { TileRings } from './TileRings.tsx';
@@ -90,6 +91,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           activation={activation}
           ledge={ledge}
         />
+        <QualityGovernor />
         {onPerf && <PerfProbe onReport={onPerf} />}
       </Canvas>
       <Joystick stick={stick} />

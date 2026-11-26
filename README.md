@@ -41,6 +41,7 @@ Then open http://localhost:5173.
 ```bash
 npm run check      # types, lint, formatting, unit tests, docs, bundle size
 npm run test:e2e   # production build in headless Chromium
+npm run perf       # time to first move and frame work, see docs/performance.md
 ```
 
 ## Docs
@@ -48,6 +49,7 @@ npm run test:e2e   # production build in headless Chromium
 - [Architecture](docs/architecture.md)
 - [Decisions (ADRs)](docs/adr/)
 - [Standards](docs/standards.md)
+- [Performance](docs/performance.md)
 - [Dependencies](docs/dependencies.md)
 - [Data sources](docs/data-sources.md)
 - [How it was built with an AI agent](docs/ai-workflow.md)

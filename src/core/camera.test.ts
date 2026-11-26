@@ -5,6 +5,7 @@ import {
   createPose,
   introProgress,
   skipIntro,
+  snapFocus,
   stepCamera,
   zoomBy,
   zoomByFactor,
@@ -98,5 +99,18 @@ describe('camera', () => {
     run(600, () => stepCamera(s, 1, 2, 0, 0, 1 / 60, P, focus));
     expect(s.focusX.value).toBeCloseTo(1, 2);
     expect(s.focusZ.value).toBeCloseTo(2, 2);
+  });
+});
+
+describe('snapFocus', () => {
+  it('cuts the focus to a point at rest, clamped to the bounds', () => {
+    const s = createCamera(0, 0, CONFIG_DEFAULTS.camera);
+    s.focusX.velocity = 3;
+    snapFocus(s, 5, -2);
+    expect([s.focusX.value, s.focusZ.value, s.focusX.velocity, s.focusZ.velocity]).toEqual([
+      5, -2, 0, 0,
+    ]);
+    snapFocus(s, 50, -50, { minX: -10, maxX: 10, minZ: -8, maxZ: 8 });
+    expect([s.focusX.value, s.focusZ.value]).toEqual([10, -8]);
   });
 });
