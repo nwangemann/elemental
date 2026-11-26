@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The character walks with WASD or the arrow keys (Shift to walk slowly): it speeds up and slows down smoothly, turns to face where it goes, leans into turns and stops at the table's edge.
 - A procedural bean character stands on hydrogen: it breathes when idle and has a walk cycle driven by speed.
 - The app bundle no longer includes zod (357 KB gzipped, down from 381 KB).
 - Dev-only tuning panel: `?tune` on the dev server shows live sliders for tile, label and camera settings.

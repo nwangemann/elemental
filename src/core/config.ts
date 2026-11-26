@@ -38,8 +38,18 @@ export const CONFIG_DEFAULTS = {
     stepSquash: 0.04,
     footLift: 0.06,
     armSwing: 0.7,
-    /** Dev only: walk in place at this speed to tune the cycle; the controller replaces it. */
-    previewSpeed: 0,
+    /** Controller (see `core/controller.ts`): top speed in units/s and the Shift fraction. */
+    moveSpeed: 2.6,
+    slowFactor: 0.4,
+    /** Velocity response while keys are held and after release, 1/s. */
+    accelRate: 7,
+    decelRate: 9,
+    /** Turn toward travel direction, 1/s. */
+    turnRate: 12,
+    /** Lean into turns: amount per (rad/s × units/s), cap in radians, response in 1/s. */
+    leanAmount: 0.025,
+    maxLean: 0.25,
+    leanRate: 10,
   },
   camera: {
     fov: 40,
@@ -81,7 +91,14 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     stepSquash: { min: 0, max: 0.2, step: 0.005 },
     footLift: { min: 0, max: 0.2, step: 0.005 },
     armSwing: { min: 0, max: 1.5, step: 0.05 },
-    previewSpeed: { min: 0, max: 6, step: 0.1 },
+    moveSpeed: { min: 0.5, max: 8, step: 0.1 },
+    slowFactor: { min: 0.1, max: 1, step: 0.05 },
+    accelRate: { min: 1, max: 30, step: 0.5 },
+    decelRate: { min: 1, max: 30, step: 0.5 },
+    turnRate: { min: 1, max: 40, step: 0.5 },
+    leanAmount: { min: 0, max: 0.1, step: 0.005 },
+    maxLean: { min: 0, max: 0.6, step: 0.01 },
+    leanRate: { min: 1, max: 30, step: 0.5 },
   },
   camera: {
     fov: { min: 15, max: 90, step: 1 },

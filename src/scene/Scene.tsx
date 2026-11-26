@@ -1,6 +1,8 @@
 import { Canvas } from '@react-three/fiber';
+import { useMemo } from 'react';
 import { CONFIG } from '../core/config.ts';
-import { TABLE_SIZE } from '../core/layout.ts';
+import { createController } from '../core/controller.ts';
+import { TABLE_SIZE, TILES } from '../core/layout.ts';
 import { CameraRig } from './CameraRig.tsx';
 import { Character } from './Character.tsx';
 import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
@@ -8,12 +10,17 @@ import { Labels } from './Labels.tsx';
 import { PerfProbe, type PerfReport } from './PerfProbe.tsx';
 import { Tiles } from './Tiles.tsx';
 import { useConfigVersion } from './useConfigVersion.ts';
+import { useKeyboardInput } from './useKeyboardInput.ts';
 
+/** The character starts on hydrogen. */
+const SPAWN = TILES[0]!;
 const GROUND_SIZE = Math.max(TABLE_SIZE.width, TABLE_SIZE.depth) * 4;
 
 export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => void }) {
   // Tiles and labels are built once from CONFIG; remount them when the tuning panel changes it.
   const version = useConfigVersion();
+  const input = useKeyboardInput();
+  const controller = useMemo(() => createController(SPAWN.x, SPAWN.z), []);
   return (
     <Canvas
       className="scene"
@@ -32,7 +39,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
       <CameraRig />
       <Tiles key={`tiles-${version}`} />
       <Labels key={`labels-${version}`} />
-      <Character key={`character-${version}`} />
+      <Character key={`character-${version}`} controller={controller} input={input} />
       {onPerf && <PerfProbe onReport={onPerf} />}
     </Canvas>
   );

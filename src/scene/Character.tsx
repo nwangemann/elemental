@@ -8,24 +8,34 @@ import {
   type Mesh,
 } from 'three';
 import { CONFIG } from '../core/config.ts';
+import { speedOf, stepController, tableBounds, type ControllerState } from '../core/controller.ts';
 import { createGait, createPose, poseOf, stepGait } from '../core/gait.ts';
-import { TILES } from '../core/layout.ts';
+import { createIntent, moveIntent, type InputState } from '../core/input.ts';
+import { TABLE_SIZE } from '../core/layout.ts';
 import { CHARACTER_COLOR, EYE_COLOR } from '../core/palette.ts';
 
-/** Where the character stands until the controller moves it: on hydrogen. */
-const SPAWN = TILES[0]!;
-/** Longest frame step fed to the gait, so a background tab does not jump the cycle. */
+/** Longest frame step fed to the controller and gait, so a background tab does not jump. */
 const MAX_DT = 0.1;
 /** Feet are flattened, slightly long spheres. */
 const FOOT_SCALE: [number, number, number] = [1, 0.55, 1.35];
 
 /**
  * The procedural bean: a capsule body with eyes, stub arms and two feet. Geometry comes from
- * `CONFIG.character` at mount; breathing and the walk cycle are applied every frame from
- * `core/gait.ts` by mutating refs. Faces +z.
+ * `CONFIG.character` at mount. Every frame it reads the held keys, steps `core/controller.ts`
+ * (position, heading, lean) and `core/gait.ts` (breathing, walk cycle) and writes the results to
+ * refs. Faces +z at heading 0. `controller` and `input` are owned by the parent, so a remount
+ * (the tuning panel changing sizes) keeps the character where it is.
  */
-export function Character() {
+export function Character({
+  controller,
+  input,
+}: {
+  controller: ControllerState;
+  input: InputState;
+}) {
   const c = CONFIG.character;
+  const root = useRef<Group>(null);
+  const tilt = useRef<Group>(null);
   const body = useRef<Group>(null);
   const leftArm = useRef<Group>(null);
   const rightArm = useRef<Group>(null);
@@ -34,6 +44,11 @@ export function Character() {
 
   const gait = useMemo(() => createGait(), []);
   const pose = useMemo(() => createPose(), []);
+  const intent = useMemo(() => createIntent(), []);
+  const bounds = useMemo(
+    () => tableBounds(TABLE_SIZE.width, TABLE_SIZE.depth, c.radius),
+    [c.radius],
+  );
   const skin = useMemo(
     () => new MeshStandardMaterial({ color: CHARACTER_COLOR, roughness: 0.6 }),
     [],
@@ -65,8 +80,17 @@ export function Character() {
   );
 
   useFrame((_, delta) => {
-    stepGait(gait, CONFIG.character.previewSpeed, Math.min(delta, MAX_DT), CONFIG.character);
-    poseOf(gait, CONFIG.character, pose);
+    const dt = Math.min(delta, MAX_DT);
+    const p = CONFIG.character;
+    stepController(controller, moveIntent(input, intent), dt, p, bounds);
+    stepGait(gait, speedOf(controller), dt, p);
+    poseOf(gait, p, pose);
+    if (root.current) {
+      root.current.position.set(controller.x, CONFIG.tiles.height, controller.z);
+      root.current.rotation.y = controller.heading;
+    }
+    // Positive lean (turning toward +heading, the character's left) tips the top toward +x.
+    if (tilt.current) tilt.current.rotation.z = -controller.lean;
     const b = body.current;
     if (b) {
       b.position.y = bodyY + pose.bob;
@@ -83,25 +107,31 @@ export function Character() {
   });
 
   return (
-    <group position={[SPAWN.x, CONFIG.tiles.height, SPAWN.z]}>
-      <group ref={body} position-y={bodyY}>
-        <mesh material={skin}>
-          <capsuleGeometry args={[c.radius, c.height - c.radius * 2, 8, 20]} />
-        </mesh>
-        {[eyeX, -eyeX].map((x) => (
-          <mesh key={x} material={ink} position={[x, eyeY, eyeZ]} scale={[1, 1.4, 0.6]}>
-            <sphereGeometry args={[c.radius * 0.11, 12, 8]} />
+    <group
+      ref={root}
+      position={[controller.x, CONFIG.tiles.height, controller.z]}
+      rotation-y={controller.heading}
+    >
+      <group ref={tilt}>
+        <group ref={body} position-y={bodyY}>
+          <mesh material={skin}>
+            <capsuleGeometry args={[c.radius, c.height - c.radius * 2, 8, 20]} />
           </mesh>
-        ))}
-        <group ref={leftArm} position={[shoulderX, shoulderY, 0]}>
-          <mesh material={skin} position-y={-armLength / 2} geometry={armGeometry} />
+          {[eyeX, -eyeX].map((x) => (
+            <mesh key={x} material={ink} position={[x, eyeY, eyeZ]} scale={[1, 1.4, 0.6]}>
+              <sphereGeometry args={[c.radius * 0.11, 12, 8]} />
+            </mesh>
+          ))}
+          <group ref={leftArm} position={[shoulderX, shoulderY, 0]}>
+            <mesh material={skin} position-y={-armLength / 2} geometry={armGeometry} />
+          </group>
+          <group ref={rightArm} position={[-shoulderX, shoulderY, 0]}>
+            <mesh material={skin} position-y={-armLength / 2} geometry={armGeometry} />
+          </group>
         </group>
-        <group ref={rightArm} position={[-shoulderX, shoulderY, 0]}>
-          <mesh material={skin} position-y={-armLength / 2} geometry={armGeometry} />
-        </group>
+        <mesh ref={leftFoot} material={skin} geometry={footGeometry} scale={FOOT_SCALE} />
+        <mesh ref={rightFoot} material={skin} geometry={footGeometry} scale={FOOT_SCALE} />
       </group>
-      <mesh ref={leftFoot} material={skin} geometry={footGeometry} scale={FOOT_SCALE} />
-      <mesh ref={rightFoot} material={skin} geometry={footGeometry} scale={FOOT_SCALE} />
     </group>
   );
 }
