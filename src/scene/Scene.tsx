@@ -36,7 +36,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
         <meshStandardMaterial color={GROUND_COLOR} roughness={1} />
       </mesh>
-      <CameraRig />
+      <CameraRig controller={controller} />
       <Tiles key={`tiles-${version}`} />
       <Labels key={`labels-${version}`} />
       <Character key={`character-${version}`} controller={controller} input={input} />

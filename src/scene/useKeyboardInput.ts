@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { applyKey, clearInput, createInput, type InputState } from '../core/input.ts';
 
 /** True when the key event belongs to a text field, so movement keys must not be taken. */
-function isTextEntry(target: EventTarget | null): boolean {
+export function isTextEntry(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
   return (
     target.isContentEditable ||

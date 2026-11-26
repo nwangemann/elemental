@@ -2,7 +2,12 @@
 
 A walkable periodic table. A small figure strolls across a 3D table of the elements; each tile wakes up as you step onto it (gold turns to polished gold, neon glows like a sign) and opens that element's data. An explorer jumps straight to any element by name, symbol, number or property.
 
-> Status: early development. The table is drawn (all 118 tiles with labels); the walking figure comes next.
+> Status: early development. The table is drawn (all 118 tiles with labels) and a small figure walks across it with a follow camera; tiles reacting to the figure come next.
+
+## Controls
+
+- Walk: WASD or the arrow keys; hold Shift to walk slowly.
+- Zoom: mouse wheel, two-finger pinch, or `+` / `-`.
 
 ## Stack
 

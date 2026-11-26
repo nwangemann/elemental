@@ -18,6 +18,8 @@ body {
 .scene {
   position: fixed !important;
   inset: 0;
+  /* The camera handles pinch and wheel itself; the page must not zoom or scroll. */
+  touch-action: none;
 }
 
 .hud {

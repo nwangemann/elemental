@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { applyKey, clearInput, createInput, createIntent, KEY_MAP, moveIntent } from './input.ts';
+import {
+  applyKey,
+  clearInput,
+  createInput,
+  createIntent,
+  KEY_MAP,
+  moveIntent,
+  zoomStepsForKey,
+} from './input.ts';
 
 function intentFor(...codes: string[]) {
   const s = createInput();
@@ -49,5 +57,15 @@ describe('input', () => {
     expect(moveIntent(s, createIntent()).slow).toBe(true);
     clearInput(s);
     expect(moveIntent(s, createIntent())).toEqual({ x: 0, z: 0, slow: false });
+  });
+});
+
+describe('zoom keys', () => {
+  it('zooms in on + and =, out on - and _, and ignores other keys', () => {
+    expect(zoomStepsForKey('+')).toBe(-1);
+    expect(zoomStepsForKey('=')).toBe(-1);
+    expect(zoomStepsForKey('-')).toBe(1);
+    expect(zoomStepsForKey('_')).toBe(1);
+    expect(zoomStepsForKey('w')).toBe(0);
   });
 });

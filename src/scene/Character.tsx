@@ -18,6 +18,8 @@ import { CHARACTER_COLOR, EYE_COLOR } from '../core/palette.ts';
 const MAX_DT = 0.1;
 /** Feet are flattened, slightly long spheres. */
 const FOOT_SCALE: [number, number, number] = [1, 0.55, 1.35];
+/** Frame priority: below the default 0, so the character moves before the camera follows it. */
+export const CHARACTER_FRAME_PRIORITY = -1;
 
 /**
  * The procedural bean: a capsule body with eyes, stub arms and two feet. Geometry comes from
@@ -104,7 +106,7 @@ export function Character({
     if (rightFoot.current) {
       rightFoot.current.position.set(-footX, footY + pose.rightFootLift, pose.rightFootForward);
     }
-  });
+  }, CHARACTER_FRAME_PRIORITY);
 
   return (
     <group

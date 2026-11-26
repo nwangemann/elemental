@@ -72,3 +72,19 @@ export function moveIntent(state: InputState, out: MoveIntent): MoveIntent {
   out.slow = isHeld(state, 'slow');
   return out;
 }
+
+/**
+ * Zoom keys by `KeyboardEvent.key` (the character typed, since `+` and `-` sit on different
+ * physical keys across layouts). Values are zoom steps: negative zooms in, positive out.
+ */
+export const ZOOM_KEYS: Readonly<Record<string, number>> = {
+  '+': -1,
+  '=': -1,
+  '-': 1,
+  _: 1,
+};
+
+/** Zoom steps for a key, or 0 when the key does not zoom. */
+export function zoomStepsForKey(key: string): number {
+  return ZOOM_KEYS[key] ?? 0;
+}

@@ -53,10 +53,25 @@ export const CONFIG_DEFAULTS = {
   },
   camera: {
     fov: 40,
-    /** Overview position (the establishing shot arrives with the camera step). */
+    /** Overview position, where the establishing shot starts. */
     position: [0, 17, 15] as [number, number, number],
     /** Point the overview camera looks at. */
     target: [0, 0, 0] as [number, number, number],
+    /** Follow camera (see `core/camera.ts`): spring frequency 1/s and look-ahead in seconds. */
+    followRate: 5,
+    lookAhead: 0.3,
+    focusHeight: 0.4,
+    /** View angle above the horizon, degrees, and distance to the focus point with its limits. */
+    pitch: 48,
+    distance: 8,
+    minDistance: 3,
+    maxDistance: 24,
+    /** Log-distance per key press or 100 px of wheel, and how fast zoom eases, 1/s. */
+    zoomStep: 0.18,
+    zoomRate: 10,
+    /** Establishing shot: seconds on the overview, then seconds to glide down. */
+    introDelay: 0.5,
+    introDuration: 2,
   },
 };
 
@@ -104,6 +119,17 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     fov: { min: 15, max: 90, step: 1 },
     position: { min: -40, max: 40, step: 0.5 },
     target: { min: -20, max: 20, step: 0.5 },
+    followRate: { min: 0.5, max: 20, step: 0.5 },
+    lookAhead: { min: 0, max: 1.5, step: 0.05 },
+    focusHeight: { min: 0, max: 2, step: 0.05 },
+    pitch: { min: 10, max: 89, step: 1 },
+    distance: { min: 2, max: 40, step: 0.5 },
+    minDistance: { min: 1, max: 20, step: 0.5 },
+    maxDistance: { min: 5, max: 60, step: 0.5 },
+    zoomStep: { min: 0.02, max: 0.6, step: 0.01 },
+    zoomRate: { min: 1, max: 30, step: 0.5 },
+    introDelay: { min: 0, max: 3, step: 0.1 },
+    introDuration: { min: 0, max: 6, step: 0.1 },
   },
 };
 
