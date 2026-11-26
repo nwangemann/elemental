@@ -2,6 +2,7 @@ import { Canvas } from '@react-three/fiber';
 import { CONFIG } from '../core/config.ts';
 import { TABLE_SIZE } from '../core/layout.ts';
 import { CameraRig } from './CameraRig.tsx';
+import { Character } from './Character.tsx';
 import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
 import { Labels } from './Labels.tsx';
 import { PerfProbe, type PerfReport } from './PerfProbe.tsx';
@@ -31,6 +32,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
       <CameraRig />
       <Tiles key={`tiles-${version}`} />
       <Labels key={`labels-${version}`} />
+      <Character key={`character-${version}`} />
       {onPerf && <PerfProbe onReport={onPerf} />}
     </Canvas>
   );

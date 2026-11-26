@@ -28,6 +28,8 @@ The preview pane runs `requestAnimationFrame` at about 30 Hz, so the overlay's f
 
 ## Gotchas
 
+- To drive `CONFIG` from the page console, import `config.ts` at the exact URL the app loaded (after an edit Vite adds `?t=…`; list it with `performance.getEntriesByType('resource')`). Another URL gives a second module instance whose `setConfig` changes nothing on screen.
+
 - Prettier realigns markdown tables. A scripted edit that matches an old row text silently does nothing; find the row by its first cell, then run Prettier. `docs:check` catches a missing dependency row at commit time.
 - `npm run data` hits PubChem and Wikidata live. Run it only when refreshing data; tests use the fixtures in `src/core/elements/__fixtures__/`.
 - Scripts run with Node 24's built-in TypeScript support, so imports inside `src/core` use explicit `.ts` extensions.

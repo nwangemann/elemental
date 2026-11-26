@@ -23,10 +23,30 @@ export const CONFIG_DEFAULTS = {
     /** Lift above the tile top, to avoid z-fighting. */
     lift: 0.002,
   },
+  character: {
+    /** Body height (capsule, end to end) and radius, world units. */
+    height: 0.62,
+    radius: 0.2,
+    /** Speed at which the walk cycle is fully blended in, units/s. */
+    walkSpeed: 2.2,
+    /** Distance per full walk cycle (two steps). */
+    strideLength: 0.9,
+    blendRate: 8,
+    breathRate: 0.35,
+    breathAmount: 0.025,
+    bobHeight: 0.035,
+    stepSquash: 0.04,
+    footLift: 0.06,
+    armSwing: 0.7,
+    /** Dev only: walk in place at this speed to tune the cycle; the controller replaces it. */
+    previewSpeed: 0,
+  },
   camera: {
     fov: 40,
     /** Overview position (the establishing shot arrives with the camera step). */
     position: [0, 17, 15] as [number, number, number],
+    /** Point the overview camera looks at. */
+    target: [0, 0, 0] as [number, number, number],
   },
 };
 
@@ -49,9 +69,24 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     numberInset: { min: 0, max: 0.3, step: 0.01 },
     lift: { min: 0, max: 0.02, step: 0.001 },
   },
+  character: {
+    height: { min: 0.3, max: 1.2, step: 0.01 },
+    radius: { min: 0.1, max: 0.4, step: 0.01 },
+    walkSpeed: { min: 0.5, max: 6, step: 0.1 },
+    strideLength: { min: 0.3, max: 2, step: 0.05 },
+    blendRate: { min: 1, max: 30, step: 0.5 },
+    breathRate: { min: 0, max: 1.5, step: 0.05 },
+    breathAmount: { min: 0, max: 0.1, step: 0.005 },
+    bobHeight: { min: 0, max: 0.15, step: 0.005 },
+    stepSquash: { min: 0, max: 0.2, step: 0.005 },
+    footLift: { min: 0, max: 0.2, step: 0.005 },
+    armSwing: { min: 0, max: 1.5, step: 0.05 },
+    previewSpeed: { min: 0, max: 6, step: 0.1 },
+  },
   camera: {
     fov: { min: 15, max: 90, step: 1 },
     position: { min: -40, max: 40, step: 0.5 },
+    target: { min: -20, max: 20, step: 0.5 },
   },
 };
 

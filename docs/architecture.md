@@ -18,7 +18,8 @@
 - `layout.ts`: where each tile sits. An 18 × 10 grid (groups as columns, periods as rows; the two f-block rows sit under groups 3–16 after one empty row), centred on the origin of the x–z ground plane. Converts world ↔ grid and finds the tile under a point in O(1) without allocating. The lookup takes the current tile for hysteresis: a tile is kept until the character is `LAYOUT.hysteresis` past its edge, which is wider than the gap, so walking along a boundary does not flicker. Tile size, gap and margin live in `LAYOUT`.
 
 - `config.ts`: visual and feel parameters (tile height and material, label sizes, camera). `CONFIG_DEFAULTS` holds the shipped values and `CONFIG_RANGES` the slider bounds. The app reads `CONFIG`, a mutable copy; `setConfig` changes one value, bumps a version and notifies subscribers. Per-frame code reads `CONFIG` every frame and needs no subscription. Objects built once from it (tile geometry, the label batch) are remounted by `Scene` when the version changes.
-- `palette.ts`: the family colours, label ink, ground and sky, and WCAG contrast helpers. Tests check that label ink meets AA on every family colour.
+- `gait.ts`: the character's procedural motion. `stepGait` advances time, the walk phase (one cycle per `strideLength` travelled, so feet do not slide at any speed) and a walk blend that follows speed; `poseOf` turns that into body bob, squash and stretch (volume kept), foot swing and lift, and arm swing, written into a reused object. Idle breathing fades out as the walk fades in.
+- `palette.ts`: the family colours, label ink, ground and sky, the character's body and eyes, and WCAG contrast helpers. Tests check that label ink meets AA on every family colour.
 - `frame-stats.ts`: rolling mean and percentile of frame times, allocation-free on push.
 
 ## Scene
@@ -26,7 +27,8 @@
 - `Scene.tsx`: the canvas, background and fog, a hemisphere and a directional light, and the ground plane.
 - `Tiles.tsx`: all 118 tiles as one `InstancedMesh`, positioned from `TILES` and coloured from `CATEGORY_COLORS`.
 - `Labels.tsx`: each tile's symbol and atomic number as troika SDF text, merged into one `BatchedText`.
-- `CameraRig.tsx`: applies the camera's field of view and overview position from `CONFIG` each frame, a stand-in until the follow camera.
+- `CameraRig.tsx`: applies the camera's field of view, overview position and target from `CONFIG` each frame, a stand-in until the follow camera.
+- `Character.tsx`: the procedural bean (capsule body, eyes, stub arms, two feet; 7 draw calls) standing on hydrogen. Sizes come from `CONFIG.character` at mount; each frame it steps the gait and applies the pose to refs. Until the controller exists, `CONFIG.character.previewSpeed` (0 by default, tunable with `?tune`) drives the walk cycle in place.
 - `useConfigVersion.ts`: re-renders on `CONFIG` changes and returns its version, used as a `key`.
 - `PerfProbe.tsx`: with `?perf` in the URL, an overlay shows draw calls, triangles and mean and p95 frame time twice a second. The same numbers are on the overlay's `data-calls`, `data-mean` and `data-p95` attributes for scripts.
 

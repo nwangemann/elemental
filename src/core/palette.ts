@@ -44,3 +44,9 @@ export function contrastRatio(a: string, b: string): number {
   const lb = luminance(b);
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }
+
+/** The character's body: a warm cream that reads against every family colour and the ground. */
+export const CHARACTER_COLOR = '#f5ead6';
+
+/** The character's eyes. */
+export const EYE_COLOR = '#11151c';

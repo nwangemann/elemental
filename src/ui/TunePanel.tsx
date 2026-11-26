@@ -40,6 +40,7 @@ function useGroup(group: ConfigGroup) {
 export default function TunePanel() {
   const setTiles = useGroup('tiles');
   const setLabels = useGroup('labels');
+  const setCharacter = useGroup('character');
   const setCamera = useGroup('camera');
 
   useControls('actions', {
@@ -52,6 +53,7 @@ export default function TunePanel() {
       resetConfig();
       setTiles(CONFIG.tiles);
       setLabels(CONFIG.labels);
+      setCharacter(CONFIG.character);
       setCamera(CONFIG.camera);
     }),
   });
