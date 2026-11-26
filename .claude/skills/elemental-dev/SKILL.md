@@ -18,11 +18,15 @@ Node 24+ must be on PATH. If `node` is not found, add your Node install's `bin` 
 
 ## Preview pane
 
-The workspace `.claude/launch.json` defines `elemental-web` on port 5174, so it does not clash with another Vite app on 5173.
+The repo's `.claude/launch.json` defines `elemental-web` on port 5174, so it does not clash with another Vite app on 5173. Open `http://localhost:5174/?perf` for the draw-call and frame-time overlay.
+
+The preview pane runs `requestAnimationFrame` at about 30 Hz, so the overlay's frame interval reads about 30 ms there whatever the scene costs. To measure the scene's own frame work, time each rAF callback with `gl.finish()` from the page's JavaScript console instead.
 
 ## Gotchas
 
 - Prettier realigns markdown tables. A scripted edit that matches an old row text silently does nothing; find the row by its first cell, then run Prettier. `docs:check` catches a missing dependency row at commit time.
 - `npm run data` hits PubChem and Wikidata live. Run it only when refreshing data; tests use the fixtures in `src/core/elements/__fixtures__/`.
 - Scripts run with Node 24's built-in TypeScript support, so imports inside `src/core` use explicit `.ts` extensions.
-
+- Commits run `npm run check` in the Husky hook, so `git commit` also needs Node on PATH (`export PATH=~/.local/node/bin:$PATH &&`), or the hook fails with `npm: command not found`.
+- troika-three-text cannot parse woff2. Import fonts as `.woff` (or ttf/otf); a woff2 font fails silently in the scene and only logs a console error.
+- `npm run check` ends with `size:check`, which builds the app (about a second) and fails above 400 KB of gzipped JS.
