@@ -432,3 +432,117 @@ kbd {
   color: #9da7b3;
   font-variant-numeric: tabular-nums;
 }
+
+/* Keyboard access (ui/KeyHelp.tsx, the focusable scene and panel). */
+#scene:focus-visible {
+  outline: 3px solid #79c0ff;
+  outline-offset: -3px;
+}
+
+.panel:focus-visible {
+  outline: 2px solid var(--accent, #79c0ff);
+  outline-offset: -2px;
+}
+
+.keys-open {
+  position: fixed;
+  top: 6.75rem;
+  left: 1.25rem;
+  z-index: 1;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  background: rgb(22 27 34 / 90%);
+  color: #e6edf3;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.keys-open:hover {
+  border-color: #6e7681;
+}
+
+.explore-open:focus-visible,
+.keys-open:focus-visible,
+.keyhelp button:focus-visible {
+  outline: 2px solid #79c0ff;
+  outline-offset: 2px;
+}
+
+.keyhelp {
+  width: min(30rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 4rem);
+  padding: 0 1.25rem 1rem;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  background: #161b22;
+  color: #e6edf3;
+  box-shadow: 0 12px 48px rgb(0 0 0 / 55%);
+}
+
+.keyhelp::backdrop {
+  background: rgb(1 4 9 / 55%);
+}
+
+.keyhelp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.keyhelp-head h2 {
+  margin: 0.9rem 0 0.4rem;
+  font-size: 1rem;
+}
+
+.keyhelp-head button {
+  padding: 0.1rem 0.5rem;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: #9da7b3;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.keyhelp h3 {
+  margin: 0.9rem 0 0.4rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9da7b3;
+}
+
+.keyhelp dl {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.keyhelp dl div {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+.keyhelp dt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.keyhelp dd {
+  margin: 0;
+}
+
+.keyhelp-note {
+  margin: 1rem 0 0;
+  font-size: 0.75rem;
+  color: #9da7b3;
+}

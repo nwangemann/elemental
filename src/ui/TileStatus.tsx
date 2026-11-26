@@ -7,7 +7,7 @@ import { useAppStore } from '../state/store.ts';
 export function TileStatus() {
   const tile = useAppStore((s) => s.activeTile);
   return (
-    <p className="visually-hidden" role="status" data-tile={tile?.number ?? ''}>
+    <p id="tile-status" className="visually-hidden" role="status" data-tile={tile?.number ?? ''}>
       {tile ? `Standing on ${tile.name}` : ''}
     </p>
   );

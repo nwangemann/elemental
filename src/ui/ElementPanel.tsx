@@ -1,4 +1,12 @@
-import { useId, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type RefObject,
+} from 'react';
 import {
   CATEGORY_LABELS,
   overviewFacts,
@@ -15,20 +23,65 @@ const TABS = [
   { id: 'properties', label: 'Properties', facts: propertyFacts },
 ] as const;
 
+/** True when a key press is aimed at the table rather than a control: nothing, or the scene, has focus. */
+function onTable(target: EventTarget | null): boolean {
+  return target === document.body || (target instanceof HTMLElement && target.id === 'scene');
+}
+
+/**
+ * Enter or Space on the table opens the panel and moves focus into it; Esc closes it and puts
+ * focus back on the table. Enter and Space on a focused control keep their usual meaning.
+ */
+function usePanelKeys(panel: RefObject<HTMLElement | null>, focusNext: { current: boolean }) {
+  useEffect(() => {
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const { activeTile, panelClosed, setPanelClosed } = useAppStore.getState();
+      if ((e.key === 'Enter' || e.key === ' ') && onTable(e.target)) {
+        if (!activeTile) return;
+        e.preventDefault();
+        if (panelClosed) {
+          focusNext.current = true;
+          setPanelClosed(false);
+        } else panel.current?.focus();
+      } else if (e.key === 'Escape') {
+        const inPanel = panel.current?.contains(e.target as Node) ?? false;
+        if (!inPanel && (panelClosed || !activeTile || !onTable(e.target))) return;
+        e.preventDefault();
+        if (inPanel) document.getElementById('scene')?.focus();
+        setPanelClosed(true);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [panel, focusNext]);
+}
+
 /**
  * The element panel: slides in while the character stands on a tile and shows that element's
- * overview and properties, coloured with the family's accent. Loaded as its own chunk with the
- * element data, so the shell stays small (docs/adr/0005-element-panel-data.md).
+ * overview and properties, coloured with the family's accent. Esc closes it on the current tile
+ * and Enter or Space opens it again (`usePanelKeys`). Loaded as its own chunk with the element
+ * data, so the shell stays small (docs/adr/0005-element-panel-data.md).
  */
 export function ElementPanel() {
   const number = useAppStore((s) => s.activeTile?.number ?? null);
+  const closed = useAppStore((s) => s.panelClosed);
+  const panel = useRef<HTMLElement>(null);
+  const focusNext = useRef(false);
+  usePanelKeys(panel, focusNext);
   // Keep showing the last element while the panel slides out.
   const [shown, setShown] = useState<Element | null>(null);
   const current = number === null ? null : (elementByNumber(number) ?? null);
   if (current && current !== shown) setShown(current);
 
+  const open = current !== null && !closed;
+  // Reopened from the keyboard: focus once `inert` is gone.
+  useEffect(() => {
+    if (open && focusNext.current) panel.current?.focus();
+    focusNext.current = false;
+  }, [open]);
+
   const element = current ?? shown;
-  const open = current !== null;
   if (!element) return null;
 
   const { accent, accentInk } = accentTokens(element.category);
@@ -36,6 +89,8 @@ export function ElementPanel() {
 
   return (
     <aside
+      ref={panel}
+      tabIndex={-1}
       className="panel"
       data-open={open}
       inert={!open}

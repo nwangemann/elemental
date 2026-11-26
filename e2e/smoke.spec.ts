@@ -46,3 +46,49 @@ test('the explorer finds an element and flies there', async ({ page }) => {
   await expect(page.getByRole('complementary', { name: 'Neon' })).toBeVisible();
   await expect(page).toHaveURL(/#\/Ne$/);
 });
+
+test('the keyboard alone tours tiles and reads a panel', async ({ page }) => {
+  await page.goto('/');
+  const status = page.locator('[data-tile]');
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+
+  // Tab reaches the focusable table.
+  const scene = page.getByRole('application', { name: /periodic table/i });
+  for (let i = 0; i < 5 && (await page.locator('#scene:focus').count()) === 0; i++)
+    await page.keyboard.press('Tab');
+  await expect(scene).toBeFocused();
+
+  // H → Li → Be → B (over the transition gap) → C.
+  for (const [key, tile] of [
+    ['k', '3'],
+    ['l', '4'],
+    ['l', '5'],
+    ['l', '6'],
+  ] as const) {
+    await page.keyboard.press(key);
+    await expect(status).toHaveAttribute('data-tile', tile, { timeout: 10_000 });
+  }
+
+  // Esc closes the panel; Enter opens it with focus inside.
+  const panel = page.getByRole('complementary', { name: 'Carbon' });
+  await expect(panel).toHaveAttribute('data-open', 'true');
+  await page.keyboard.press('Escape');
+  await expect(panel).toHaveAttribute('data-open', 'false');
+  await page.keyboard.press('Enter');
+  await expect(panel).toHaveAttribute('data-open', 'true');
+  await expect(panel).toBeFocused();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('ArrowRight');
+  await expect(panel.getByRole('tab', { name: 'Properties' })).toBeFocused();
+  await expect(panel.getByText('Melting point')).toBeVisible();
+  // Esc from inside the panel returns to the table.
+  await page.keyboard.press('Escape');
+  await expect(scene).toBeFocused();
+
+  // `?` shows the key map; Esc closes it.
+  await page.keyboard.press('?');
+  const help = page.getByRole('dialog', { name: 'Keys' });
+  await expect(help).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(help).toBeHidden();
+});

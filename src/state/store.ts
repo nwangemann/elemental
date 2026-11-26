@@ -19,6 +19,12 @@ export interface AppState {
   /** The latest fly-to request from the explorer or a deep link; the scene carries it out. */
   flight: Flight | null;
   flyTo: (number: number) => void;
+  /**
+   * True when the player closed the panel (Esc) while standing on a tile. Entering another tile
+   * opens it again; Enter or Space reopens it on the same tile.
+   */
+  panelClosed: boolean;
+  setPanelClosed: (closed: boolean) => void;
 }
 
 /**
@@ -28,7 +34,13 @@ export interface AppState {
  */
 export const useAppStore = create<AppState>()((set) => ({
   activeTile: null,
-  setActiveTile: (activeTile) => set({ activeTile }),
+  setActiveTile: (activeTile) =>
+    set((s) => ({
+      activeTile,
+      panelClosed: activeTile?.number === s.activeTile?.number ? s.panelClosed : false,
+    })),
   flight: null,
   flyTo: (number) => set((s) => ({ flight: { number, seq: (s.flight?.seq ?? 0) + 1 } })),
+  panelClosed: false,
+  setPanelClosed: (panelClosed) => set({ panelClosed }),
 }));

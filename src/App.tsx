@@ -1,5 +1,6 @@
 import { Suspense, lazy, useCallback, useRef } from 'react';
 import type { PerfReport } from './scene/PerfProbe.tsx';
+import { KeyHelp } from './ui/KeyHelp.tsx';
 import { TileStatus } from './ui/TileStatus.tsx';
 
 // The scene (three, React Three Fiber, troika, element data) is its own chunk. The DOM shell
@@ -59,6 +60,7 @@ export function App() {
       <Suspense>
         <ElementPanel />
       </Suspense>
+      <KeyHelp />
       <TileStatus />
       {showPerf && <output ref={perf} className="perf" aria-live="off" />}
       {TunePanel && (

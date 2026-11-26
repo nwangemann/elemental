@@ -17,6 +17,7 @@ import { PerfProbe, type PerfReport } from './PerfProbe.tsx';
 import { TapToWalk } from './TapToWalk.tsx';
 import { TileActivator } from './TileActivator.tsx';
 import { TileRings } from './TileRings.tsx';
+import { TileStepper } from './TileStepper.tsx';
 import { Tiles } from './Tiles.tsx';
 import { useConfigVersion } from './useConfigVersion.ts';
 import { useKeyboardInput } from './useKeyboardInput.ts';
@@ -45,7 +46,14 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         className="scene"
         dpr={[1, 2]}
         camera={{ fov: CONFIG.camera.fov, position: [...CONFIG.camera.position] }}
-        aria-hidden
+        // The scene is one focusable stop: screen readers pass keys through (application role),
+        // the label says how to play, and the live tile status describes where the character is.
+        id="scene"
+        tabIndex={0}
+        role="application"
+        aria-roledescription="walkable periodic table"
+        aria-label="Periodic table. Walk with W A S D or the arrow keys, step tile to tile with I J K L, press Enter to read the element. Press question mark for all keys."
+        aria-describedby="tile-status"
       >
         <color attach="background" args={[SKY_COLOR]} />
         <fog attach="fog" args={[SKY_COLOR, 30, 70]} />
@@ -57,6 +65,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         </mesh>
         <CameraRig controller={controller} />
         <TapToWalk target={target} />
+        <TileStepper controller={controller} target={target} />
         <FlightHandler controller={controller} target={target} />
         <TileActivator activation={activation} controller={controller} />
         <Tiles key={`tiles-${version}`} activation={activation} />
