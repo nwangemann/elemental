@@ -12,11 +12,41 @@
 body {
   margin: 0;
   min-height: 100dvh;
+  overflow: hidden;
 }
 
-.shell {
-  display: grid;
-  place-content: center;
-  min-height: 100dvh;
-  text-align: center;
+.scene {
+  position: fixed !important;
+  inset: 0;
+}
+
+.hud {
+  position: fixed;
+  top: 1rem;
+  left: 1.25rem;
+  pointer-events: none;
+}
+
+.hud h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+}
+
+.hud p {
+  margin: 0.2rem 0 0;
+  font-size: 0.875rem;
+  color: #9da7b3;
+}
+
+.perf {
+  position: fixed;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 60%);
+  font:
+    12px ui-monospace,
+    monospace;
 }
