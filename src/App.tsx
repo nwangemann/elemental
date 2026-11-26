@@ -1,8 +1,14 @@
-import { useCallback, useRef } from 'react';
+import { Suspense, lazy, useCallback, useRef } from 'react';
 import type { PerfReport } from './scene/PerfProbe.tsx';
 import { Scene } from './scene/Scene.tsx';
 
-const showPerf = new URLSearchParams(window.location.search).has('perf');
+const params = new URLSearchParams(window.location.search);
+const showPerf = params.has('perf');
+
+// `?tune` opens the leva panel in development only. `import.meta.env.DEV` is false in a
+// production build, so the import below and leva itself are dropped from the bundle.
+const TunePanel =
+  import.meta.env.DEV && params.has('tune') ? lazy(() => import('./ui/TunePanel.tsx')) : null;
 
 export function App() {
   const perf = useRef<HTMLOutputElement>(null);
@@ -27,6 +33,11 @@ export function App() {
         <p>A walkable periodic table.</p>
       </header>
       {showPerf && <output ref={perf} className="perf" aria-live="off" />}
+      {TunePanel && (
+        <Suspense>
+          <TunePanel />
+        </Suspense>
+      )}
     </>
   );
 }

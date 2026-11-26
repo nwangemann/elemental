@@ -4,7 +4,7 @@
 
 - `src/core`: pure TypeScript. Maths, layout, data shaping, rules. No React, no three, no DOM, so everything here is unit-tested in Node.
 - `src/scene`: React Three Fiber components (see [ADR 2](adr/0002-scene-rendering.md)). Per-frame work happens in `useFrame` and mutates refs; it never sets React state.
-- `src/ui` (from milestone 1): DOM interface (element panel, explorer, settings).
+- `src/ui`: DOM interface. So far the dev-only tuning panel; the element panel, explorer and settings follow in milestone 1.
 - `src/data`: generated element data (`elements.json`), committed. Built by `scripts/build-elements.ts`; see [data sources](data-sources.md).
 
 ## Core modules
@@ -16,7 +16,7 @@
 - `elements/index.ts`: `ELEMENTS`, the committed dataset, and lookups. This is what the app imports.
 - `layout.ts`: where each tile sits. An 18 × 10 grid (groups as columns, periods as rows; the two f-block rows sit under groups 3–16 after one empty row), centred on the origin of the x–z ground plane. Converts world ↔ grid and finds the tile under a point in O(1) without allocating. The lookup takes the current tile for hysteresis: a tile is kept until the character is `LAYOUT.hysteresis` past its edge, which is wider than the gap, so walking along a boundary does not flicker. Tile size, gap and margin live in `LAYOUT`.
 
-- `config.ts`: visual and feel parameters (tile height and material, label sizes, camera) in one typed object. The shipped defaults; a tuning panel edits them live.
+- `config.ts`: visual and feel parameters (tile height and material, label sizes, camera). `CONFIG_DEFAULTS` holds the shipped values and `CONFIG_RANGES` the slider bounds. The app reads `CONFIG`, a mutable copy; `setConfig` changes one value, bumps a version and notifies subscribers. Per-frame code reads `CONFIG` every frame and needs no subscription. Objects built once from it (tile geometry, the label batch) are remounted by `Scene` when the version changes.
 - `palette.ts`: the family colours, label ink, ground and sky, and WCAG contrast helpers. Tests check that label ink meets AA on every family colour.
 - `frame-stats.ts`: rolling mean and percentile of frame times, allocation-free on push.
 
@@ -25,7 +25,13 @@
 - `Scene.tsx`: the canvas, background and fog, a hemisphere and a directional light, and the ground plane.
 - `Tiles.tsx`: all 118 tiles as one `InstancedMesh`, positioned from `TILES` and coloured from `CATEGORY_COLORS`.
 - `Labels.tsx`: each tile's symbol and atomic number as troika SDF text, merged into one `BatchedText`.
+- `CameraRig.tsx`: applies the camera's field of view and overview position from `CONFIG` each frame, a stand-in until the follow camera.
+- `useConfigVersion.ts`: re-renders on `CONFIG` changes and returns its version, used as a `key`.
 - `PerfProbe.tsx`: with `?perf` in the URL, an overlay shows draw calls, triangles and mean and p95 frame time twice a second. The same numbers are on the overlay's `data-calls`, `data-mean` and `data-p95` attributes for scripts.
+
+## Tuning panel
+
+With `?tune` in the URL, the dev server shows a [leva](https://github.com/pmndrs/leva) panel with a slider per `CONFIG` value (`src/ui/TunePanel.tsx`). It writes through `setConfig`, so the scene changes live. "Copy as defaults" puts the current values on the clipboard as JSON to paste into `config.ts`; "reset" restores the defaults. The panel is loaded with a dynamic import guarded by `import.meta.env.DEV`, so a production build contains neither the panel nor leva, and `?tune` does nothing there.
 
 ## Testing
 

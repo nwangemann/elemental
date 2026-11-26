@@ -1,14 +1,18 @@
 import { Canvas } from '@react-three/fiber';
 import { CONFIG } from '../core/config.ts';
 import { TABLE_SIZE } from '../core/layout.ts';
+import { CameraRig } from './CameraRig.tsx';
 import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
 import { Labels } from './Labels.tsx';
 import { PerfProbe, type PerfReport } from './PerfProbe.tsx';
 import { Tiles } from './Tiles.tsx';
+import { useConfigVersion } from './useConfigVersion.ts';
 
 const GROUND_SIZE = Math.max(TABLE_SIZE.width, TABLE_SIZE.depth) * 4;
 
 export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => void }) {
+  // Tiles and labels are built once from CONFIG; remount them when the tuning panel changes it.
+  const version = useConfigVersion();
   return (
     <Canvas
       className="scene"
@@ -24,8 +28,9 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
         <meshStandardMaterial color={GROUND_COLOR} roughness={1} />
       </mesh>
-      <Tiles />
-      <Labels />
+      <CameraRig />
+      <Tiles key={`tiles-${version}`} />
+      <Labels key={`labels-${version}`} />
       {onPerf && <PerfProbe onReport={onPerf} />}
     </Canvas>
   );

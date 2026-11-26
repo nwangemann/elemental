@@ -17,6 +17,7 @@
 | `@types/react`                    | React types                                                                        |
 | `@types/react-dom`                | React DOM types                                                                    |
 | `@vitejs/plugin-react`            | React support in Vite                                                              |
+| `leva`                            | Dev-only tuning panel (`?tune`) over `CONFIG`; kept out of the production build    |
 | `husky`                           | Git hooks that run the checks                                                      |
 | `oxlint`                          | Linter                                                                             |
 | `prettier`                        | Formatter                                                                          |
