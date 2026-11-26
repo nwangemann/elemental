@@ -8,9 +8,9 @@
 
 ## Session routine
 
-1. Read `dev/plan.md`: its "Next" line is the project state. `dev/` holds process notes; it is git-ignored, and committed files never link to it.
+1. If `dev/handoff.md` exists, read it first (the `handoff` skill says how to resume). Then read `dev/plan.md`: its "Next" line is the project state. `dev/` holds process notes; it is git-ignored, and committed files never link to it.
 2. Load the `elemental-dev` skill before running anything.
 3. Do one step (one checkbox). Touch only what that step needs.
-4. Run `npm run check`, commit, tick the step, update "Next" in the plan, and stop.
+4. Run `npm run check`, commit, tick the step, update "Next" in the plan, and stop. Around 25–30% of the context window, write a handoff instead of starting another step (see the workspace guidance on light context windows).
 
 New ideas go in the plan, not in the current step. Manual checks (what only a person or a real device can judge) go in the plan's last section and never block other work.
