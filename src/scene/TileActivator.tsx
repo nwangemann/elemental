@@ -4,6 +4,7 @@ import { stepActivation, type Activation } from '../core/activation.ts';
 import { CONFIG } from '../core/config.ts';
 import type { ControllerState } from '../core/controller.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
+import { standingOn, type LedgeState } from '../core/ledge.ts';
 import { useAppStore } from '../state/store.ts';
 import { CHARACTER_FRAME_PRIORITY } from './Character.tsx';
 
@@ -20,14 +21,18 @@ function publish(number: number | null): void {
 
 /**
  * Steps `core/activation.ts` with the character's position every frame and writes the store
- * only when the tile under the character changes. Renders nothing.
+ * only when the tile under the character changes. A tile only wakes once the character stands on
+ * top of it (`core/ledge.ts`), not while it hops up or after it drops to the ground. Renders
+ * nothing.
  */
 export function TileActivator({
   activation,
   controller,
+  ledge,
 }: {
   activation: Activation;
   controller: ControllerState;
+  ledge: LedgeState;
 }) {
   // Clear the store when the scene goes away, so the interface does not show a stale tile.
   useEffect(() => () => publish(null), []);
@@ -40,6 +45,7 @@ export function TileActivator({
       controller.z,
       dt,
       CONFIG.tiles.activateDuration,
+      standingOn(ledge),
     );
     if (changed) publish(activation.current);
   }, ACTIVATION_FRAME_PRIORITY);

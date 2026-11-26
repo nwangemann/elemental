@@ -69,6 +69,15 @@ export const CONFIG_DEFAULTS = {
     /** On-screen joystick: travel to full speed in px, and the dead zone as a fraction of it. */
     stickRadius: 48,
     stickDeadZone: 0.12,
+    /** Ledges (see `core/ledge.ts`): standing-height smoothing 1/s, fall acceleration units/s². */
+    standRate: 25,
+    gravity: 14,
+    /** Hop from the ground onto a tile: arc apex above the straight line, units, and length, s. */
+    hopHeight: 0.14,
+    hopDuration: 0.26,
+    /** Body squash on landing (fraction of height) and its recovery, 1/s. */
+    landSquash: 0.12,
+    squashRecover: 9,
   },
   camera: {
     fov: 40,
@@ -145,6 +154,12 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     slowRadius: { min: 0.05, max: 3, step: 0.05 },
     stickRadius: { min: 20, max: 120, step: 1 },
     stickDeadZone: { min: 0, max: 0.5, step: 0.01 },
+    standRate: { min: 1, max: 60, step: 1 },
+    gravity: { min: 1, max: 40, step: 0.5 },
+    hopHeight: { min: 0, max: 0.6, step: 0.01 },
+    hopDuration: { min: 0.05, max: 1, step: 0.01 },
+    landSquash: { min: 0, max: 0.4, step: 0.01 },
+    squashRecover: { min: 1, max: 30, step: 0.5 },
   },
   camera: {
     fov: { min: 15, max: 90, step: 1 },

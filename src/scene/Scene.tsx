@@ -5,6 +5,7 @@ import { CONFIG } from '../core/config.ts';
 import { createController } from '../core/controller.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
 import { parseDeepLink } from '../core/explorer.ts';
+import { createLedge } from '../core/ledge.ts';
 import { TABLE_SIZE, TILES } from '../core/layout.ts';
 import { createStick, createWalkTarget } from '../core/steering.ts';
 import { CameraRig } from './CameraRig.tsx';
@@ -33,10 +34,9 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
   // Tiles and labels are built once from CONFIG; remount them when the tuning panel changes it.
   const version = useConfigVersion();
   const input = useKeyboardInput();
-  const controller = useMemo(() => {
-    const spawn = spawnTile();
-    return createController(spawn.x, spawn.z);
-  }, []);
+  const spawn = useMemo(() => spawnTile(), []);
+  const controller = useMemo(() => createController(spawn.x, spawn.z), [spawn]);
+  const ledge = useMemo(() => createLedge(CONFIG.tiles.height, spawn.number), [spawn]);
   const activation = useMemo(() => createActivation(), []);
   const stick = useMemo(() => createStick(), []);
   const target = useMemo(() => createWalkTarget(), []);
@@ -67,7 +67,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         <TapToWalk target={target} />
         <TileStepper controller={controller} target={target} />
         <FlightHandler controller={controller} target={target} />
-        <TileActivator activation={activation} controller={controller} />
+        <TileActivator activation={activation} controller={controller} ledge={ledge} />
         <Tiles key={`tiles-${version}`} activation={activation} />
         <TileRings key={`rings-${version}`} activation={activation} />
         <Labels key={`labels-${version}`} activation={activation} />
@@ -78,6 +78,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           stick={stick}
           target={target}
           activation={activation}
+          ledge={ledge}
         />
         {onPerf && <PerfProbe onReport={onPerf} />}
       </Canvas>

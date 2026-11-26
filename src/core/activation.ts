@@ -1,3 +1,4 @@
+import { GROUND } from './boundary.ts';
 import { CONFIG } from './config.ts';
 import { tileAtPoint, TILES } from './layout.ts';
 
@@ -30,6 +31,11 @@ export function createActivation(): Activation {
  * Advances the activation for a character at world (x, z). The current tile comes from
  * `tileAtPoint` with hysteresis, so walking along an edge does not flicker. Allocation-free.
  *
+ * Pass `standingOn` (from `core/ledge.ts`) so a tile only wakes once the figure is on top of it
+ * (ADR 0009): `GROUND` (0) means on the ground, falling or hopping, and no tile is current. On a
+ * tile top, the point decides as above, falling back to the supporting tile when the point is
+ * just past its edge. Leave it out to go by the point alone.
+ *
  * @returns true when the current tile changed (entered, left, or moved to a neighbour).
  */
 export function stepActivation(
@@ -38,8 +44,14 @@ export function stepActivation(
   z: number,
   dt: number,
   duration: number,
+  standingOn?: number,
 ): boolean {
-  const next = tileAtPoint(x, z, a.current);
+  const next =
+    standingOn === undefined
+      ? tileAtPoint(x, z, a.current)
+      : standingOn === GROUND
+        ? null
+        : (tileAtPoint(x, z, a.current) ?? standingOn);
   const changed = next !== a.current;
   a.current = next;
 

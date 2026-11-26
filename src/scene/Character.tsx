@@ -7,12 +7,13 @@ import {
   type Group,
   type Mesh,
 } from 'three';
-import { easeLevel, type Activation } from '../core/activation.ts';
+import { tileTop, type Activation } from '../core/activation.ts';
+import { GROUND, surfaceAt } from '../core/boundary.ts';
 import { CONFIG } from '../core/config.ts';
-import { damp } from '../core/damp.ts';
 import { speedOf, stepController, tableBounds, type ControllerState } from '../core/controller.ts';
 import { createGait, createPose, poseOf, stepGait } from '../core/gait.ts';
 import { createIntent, moveIntent, type InputState } from '../core/input.ts';
+import { isAirborne, stepLedge, type LedgeState } from '../core/ledge.ts';
 import { TABLE_SIZE } from '../core/layout.ts';
 import { steer, type Stick, type WalkTarget } from '../core/steering.ts';
 import { CHARACTER_COLOR, EYE_COLOR } from '../core/palette.ts';
@@ -21,8 +22,6 @@ import { CHARACTER_COLOR, EYE_COLOR } from '../core/palette.ts';
 const MAX_DT = 0.1;
 /** Feet are flattened, slightly long spheres. */
 const FOOT_SCALE: [number, number, number] = [1, 0.55, 1.35];
-/** How fast the character's standing height follows the tile under it, 1/s. */
-const STAND_RATE = 25;
 /** Frame priority: below the default 0, so the character moves before the camera follows it. */
 export const CHARACTER_FRAME_PRIORITY = -1;
 
@@ -33,9 +32,10 @@ export const CHARACTER_FRAME_PRIORITY = -1;
  * refs. Keys win over the touch joystick, which wins over a clicked walk target
  * (`core/steering.ts`). Faces +z at heading 0. `controller`, `input`, `stick` and `target` are
  * owned by the parent, so a remount (the tuning panel changing sizes) keeps the character where
- * it is. It stands on the tile
- * under it and rides it up as it activates; the height is smoothed, so stepping straight from
- * one raised tile onto the next dips gently instead of dropping.
+ * it is. Its height comes from `core/ledge.ts` over `surfaceAt`: it rides the tile under it as it
+ * rises, drops to the ground off an edge and hops back up onto a tile, squashing a little on
+ * landing. The walk cycle pauses while it is in the air. `ledge` is parent-owned too, because
+ * `TileActivator` reads it to wake a tile only once the character is on top.
  */
 export function Character({
   controller,
@@ -43,12 +43,14 @@ export function Character({
   stick,
   target,
   activation,
+  ledge,
 }: {
   controller: ControllerState;
   input: InputState;
   stick: Stick;
   target: WalkTarget;
   activation: Activation;
+  ledge: LedgeState;
 }) {
   const c = CONFIG.character;
   const root = useRef<Group>(null);
@@ -59,7 +61,6 @@ export function Character({
   const leftFoot = useRef<Mesh>(null);
   const rightFoot = useRef<Mesh>(null);
 
-  const standY = useRef(CONFIG.tiles.height);
   const gait = useMemo(() => createGait(), []);
   const pose = useMemo(() => createPose(), []);
   const intent = useMemo(() => createIntent(), []);
@@ -103,14 +104,16 @@ export function Character({
     moveIntent(input, intent);
     steer(intent, stick, target, controller.x, controller.z, p);
     stepController(controller, intent, dt, p, bounds);
-    stepGait(gait, speedOf(controller), dt, p);
+    const support = surfaceAt(controller.x, controller.z);
+    const floor = support === GROUND ? 0 : tileTop(activation, support - 1);
+    stepLedge(ledge, support, floor, dt, p);
+    if (!isAirborne(ledge)) stepGait(gait, speedOf(controller), dt, p);
     poseOf(gait, p, pose);
-    const t = CONFIG.tiles;
-    const on = activation.current;
-    const ground = t.height + (on === null ? 0 : t.rise * easeLevel(activation.levels[on - 1]!));
-    standY.current = damp(standY.current, ground, STAND_RATE, dt);
+    // Landing squash on top of the gait's own, keeping volume.
+    const squashY = pose.scaleY * (1 - ledge.squash);
+    const squashXZ = 1 / Math.sqrt(squashY);
     if (root.current) {
-      root.current.position.set(controller.x, standY.current, controller.z);
+      root.current.position.set(controller.x, ledge.y, controller.z);
       root.current.rotation.y = controller.heading;
     }
     // Positive lean (turning toward +heading, the character's left) tips the top toward +x.
@@ -118,7 +121,7 @@ export function Character({
     const b = body.current;
     if (b) {
       b.position.y = bodyY + pose.bob;
-      b.scale.set(pose.scaleXZ, pose.scaleY, pose.scaleXZ);
+      b.scale.set(squashXZ, squashY, squashXZ);
     }
     if (leftArm.current) leftArm.current.rotation.x = pose.leftArm;
     if (rightArm.current) rightArm.current.rotation.x = pose.rightArm;
@@ -133,7 +136,7 @@ export function Character({
   return (
     <group
       ref={root}
-      position={[controller.x, CONFIG.tiles.height, controller.z]}
+      position={[controller.x, ledge.y, controller.z]}
       rotation-y={controller.heading}
     >
       <group ref={tilt}>
