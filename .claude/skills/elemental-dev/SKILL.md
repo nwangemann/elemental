@@ -20,6 +20,10 @@ Node 24+ must be on PATH. If `node` is not found, add your Node install's `bin` 
 
 The repo's `.claude/launch.json` defines `elemental-web` on port 5174, so it does not clash with another Vite app on 5173. Open `http://localhost:5174/?perf` for the draw-call and frame-time overlay.
 
+If `preview_start` fails with "Port 5174 is already in use", another session's server is serving this folder: open `http://localhost:5174/` with `preview_start {url}` instead; it serves the same files with HMR.
+
+With `?tune` the dev server shows a leva panel over `CONFIG`; it never exists in a production build.
+
 The preview pane runs `requestAnimationFrame` at about 30 Hz, so the overlay's frame interval reads about 30 ms there whatever the scene costs. To measure the scene's own frame work, time each rAF callback with `gl.finish()` from the page's JavaScript console instead.
 
 ## Gotchas
