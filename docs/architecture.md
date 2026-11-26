@@ -27,6 +27,8 @@
 
 ## Scene
 
+`App.tsx` loads the scene with `React.lazy`, so three, React Three Fiber, troika and the element data arrive as a separate chunk after the DOM shell has painted; a "Loading the table…" status shows meanwhile (ADR 0003).
+
 - `Scene.tsx`: the canvas, background and fog, a hemisphere and a directional light, and the ground plane.
 - `Tiles.tsx`: all 118 tiles as one `InstancedMesh`, positioned from `TILES` and coloured from `CATEGORY_COLORS`.
 - `Labels.tsx`: each tile's symbol and atomic number as troika SDF text, merged into one `BatchedText`.
@@ -43,5 +45,5 @@ With `?tune` in the URL, the dev server shows a [leva](https://github.com/pmndrs
 ## Testing
 
 - Unit tests (`*.test.ts` next to the code) cover `src/core`. The normalizer is tested against small recorded responses in `src/core/elements/__fixtures__/`; another test validates the whole committed dataset.
-- `scripts/size-check.mjs` builds the app and fails `npm run check` if the gzipped JavaScript passes 400 KB.
+- `scripts/size-check.mjs` builds the app and fails `npm run check` if the gzipped JavaScript passes either ceiling: 80 KB for the shell (the entry chunk and its static imports, read from the Vite manifest) and 380 KB for all chunks together.
 - `e2e/smoke.spec.ts` builds the app, serves it with `vite preview` and checks it loads in Chromium.

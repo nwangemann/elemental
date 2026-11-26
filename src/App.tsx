@@ -1,6 +1,9 @@
 import { Suspense, lazy, useCallback, useRef } from 'react';
 import type { PerfReport } from './scene/PerfProbe.tsx';
-import { Scene } from './scene/Scene.tsx';
+
+// The scene (three, React Three Fiber, troika, element data) is its own chunk. The DOM shell
+// paints first and the scene streams in behind it; see docs/adr/0003-bundle-budget.md.
+const Scene = lazy(() => import('./scene/Scene.tsx').then((m) => ({ default: m.Scene })));
 
 const params = new URLSearchParams(window.location.search);
 const showPerf = params.has('perf');
@@ -27,7 +30,15 @@ export function App() {
 
   return (
     <>
-      <Scene {...(showPerf ? { onPerf } : {})} />
+      <Suspense
+        fallback={
+          <p className="loading" role="status">
+            Loading the table…
+          </p>
+        }
+      >
+        <Scene {...(showPerf ? { onPerf } : {})} />
+      </Suspense>
       <header className="hud">
         <h1>elemental</h1>
         <p>A walkable periodic table.</p>

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The page paints a light shell (68 KB of gzipped JavaScript) and loads the 3D scene as a separate chunk behind it.
 - Follow camera: an establishing shot glides from the whole table down to the character (skipped under reduced motion), then the camera follows with a critically damped spring and a little look-ahead. Zoom with the wheel, a pinch or `+`/`-`.
 - The character walks with WASD or the arrow keys (Shift to walk slowly): it speeds up and slows down smoothly, turns to face where it goes, leans into turns and stops at the table's edge.
 - A procedural bean character stands on hydrogen: it breathes when idle and has a walk cycle driven by speed.

@@ -52,3 +52,13 @@ body {
     12px ui-monospace,
     monospace;
 }
+
+.loading {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: #9da7b3;
+  font-size: 0.875rem;
+}
