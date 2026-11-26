@@ -1,8 +1,8 @@
 import type { Category } from './elements/categories.ts';
 
 /**
- * Base colour of each element family, as `#rrggbb` (sRGB). Tiles use them now; the theme system
- * and the DOM panel's accent tokens build on the same values later.
+ * Base colour of each element family, as `#rrggbb` (sRGB). `themes.ts` builds each family's
+ * theme (tile colour, awake surface, interface accent) on these.
  *
  * Light, slightly muted tones on a dark ground, so the "awake" effects added later stand out.
  */
@@ -60,17 +60,3 @@ export const PANEL_COLOR = '#161b22';
 /** Body text on the panel, and the quieter text for labels and notes. */
 export const PANEL_TEXT = '#e6edf3';
 export const PANEL_MUTED = '#9da7b3';
-
-/**
- * Colour tokens the DOM interface takes from the element under the character, so the panel
- * "turns" with the tile. `accent` is the family colour (headings, rules, the symbol), and
- * `accentInk` the text colour on an accent-filled surface. The theme system builds on this.
- */
-export interface AccentTokens {
-  accent: string;
-  accentInk: string;
-}
-
-export function accentTokens(category: Category): AccentTokens {
-  return { accent: CATEGORY_COLORS[category], accentInk: LABEL_COLOR };
-}

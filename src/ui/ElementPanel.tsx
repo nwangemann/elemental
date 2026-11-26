@@ -7,7 +7,7 @@ import {
   type Fact,
 } from '../core/elementFacts.ts';
 import { elementByNumber, type Element } from '../core/elements/index.ts';
-import { accentTokens } from '../core/palette.ts';
+import { accentTokens } from '../core/themes.ts';
 import { useAppStore } from '../state/store.ts';
 
 const TABS = [

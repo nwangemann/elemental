@@ -2,7 +2,7 @@
 
 A walkable periodic table. A small figure strolls across a 3D table of the elements; each tile wakes up as you step onto it (gold turns to polished gold, neon glows like a sign) and opens that element's data. An explorer jumps straight to any element by name, symbol, number or property.
 
-> Status: early development. The table is drawn (all 118 tiles with labels) and a small figure walks across it with a follow camera; tiles wake as it steps on them and a panel shows the element's overview and properties. Themes per element family come next.
+> Status: early development. The table is drawn (all 118 tiles with labels) and a small figure walks across it with a follow camera; tiles wake into their family's material (brushed metal, chalky mineral, neon glow, radioactive pulse) as it steps on them, and a panel in the family's accent colour shows the element's overview and properties. Click-to-walk and touch controls come next.
 
 ## Controls
 

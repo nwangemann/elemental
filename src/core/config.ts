@@ -15,6 +15,13 @@ export const CONFIG_DEFAULTS = {
     /** How far the tile under the character rises, and how long entering or leaving takes, s. */
     rise: 0.1,
     activateDuration: 0.25,
+    /** How far a resting tile leans toward its family's awake surface (0 = all alike, 1 = awake). */
+    restMix: 0.25,
+    /** Strength of the reflected studio environment on tiles (what makes metals read as metal). */
+    envIntensity: 0.7,
+    /** Overall multiplier on awake glow, and the pulse rate of restless families, rad/s. */
+    glowScale: 1,
+    pulseSpeed: 2.5,
     /** Highlight ring on the ground around the active tile: gap from the tile edge and width. */
     ringInset: 0.015,
     ringWidth: 0.05,
@@ -95,6 +102,10 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     metalness: { min: 0, max: 1, step: 0.01 },
     rise: { min: 0, max: 0.5, step: 0.01 },
     activateDuration: { min: 0, max: 1, step: 0.01 },
+    restMix: { min: 0, max: 1, step: 0.01 },
+    envIntensity: { min: 0, max: 2, step: 0.01 },
+    glowScale: { min: 0, max: 3, step: 0.01 },
+    pulseSpeed: { min: 0, max: 10, step: 0.1 },
     ringInset: { min: 0, max: 0.1, step: 0.005 },
     ringWidth: { min: 0.01, max: 0.15, step: 0.005 },
   },

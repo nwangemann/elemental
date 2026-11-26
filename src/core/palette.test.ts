@@ -1,15 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CATEGORIES } from './elements/categories.ts';
-import {
-  CATEGORY_COLORS,
-  LABEL_COLOR,
-  PANEL_COLOR,
-  PANEL_MUTED,
-  PANEL_TEXT,
-  accentTokens,
-  contrastRatio,
-  luminance,
-} from './palette.ts';
+import { CATEGORY_COLORS, LABEL_COLOR, contrastRatio, luminance } from './palette.ts';
 
 const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 
@@ -41,18 +32,6 @@ describe('CATEGORY_COLORS', () => {
         const d = Math.hypot(...colors[i]!.map((c, k) => c - colors[j]![k]!));
         expect(d).toBeGreaterThan(40);
       }
-    }
-  });
-});
-
-describe('accentTokens', () => {
-  it('keeps accent text and panel text readable on the panel (WCAG AA, 4.5:1)', () => {
-    expect(contrastRatio(PANEL_TEXT, PANEL_COLOR)).toBeGreaterThanOrEqual(4.5);
-    expect(contrastRatio(PANEL_MUTED, PANEL_COLOR)).toBeGreaterThanOrEqual(4.5);
-    for (const category of CATEGORIES) {
-      const { accent, accentInk } = accentTokens(category);
-      expect(contrastRatio(accent, PANEL_COLOR)).toBeGreaterThanOrEqual(4.5);
-      expect(contrastRatio(accent, accentInk)).toBeGreaterThanOrEqual(4.5);
     }
   });
 });
