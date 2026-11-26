@@ -14,6 +14,7 @@
 - `elements/position.ts`: period, group and block from the atomic number.
 - `elements/normalize.ts`: turns PubChem's table and Wikidata's SPARQL rows into validated elements. Used by the build script and its tests.
 - `elements/index.ts`: `ELEMENTS`, the committed dataset, and lookups. This is what the app imports.
+- `layout.ts`: where each tile sits. An 18 × 10 grid (groups as columns, periods as rows; the two f-block rows sit under groups 3–16 after one empty row), centred on the origin of the x–z ground plane. Converts world ↔ grid and finds the tile under a point in O(1) without allocating. The lookup takes the current tile for hysteresis: a tile is kept until the character is `LAYOUT.hysteresis` past its edge, which is wider than the gap, so walking along a boundary does not flicker. Tile size, gap and margin live in `LAYOUT`.
 
 ## Testing
 

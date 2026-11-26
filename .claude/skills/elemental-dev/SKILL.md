@@ -7,7 +7,7 @@ description: Run, check and preview the elemental web app. Use before running an
 
 ## Environment
 
-Node 24+ must be on PATH. If `node` is not found, add your Node install's `bin` folder to PATH first.
+Node 24+ must be on PATH. If `node` is not found, add your Node install's `bin` folder to PATH first. On this machine that is `~/.local/node/bin` (agent shells don't load it): prefix commands with `export PATH=~/.local/node/bin:$PATH &&`.
 
 ## Commands
 
