@@ -1,0 +1,111 @@
+{
+  "Table": {
+    "Columns": {
+      "Column": [
+        "AtomicNumber",
+        "Symbol",
+        "Name",
+        "AtomicWeight",
+        "CPKHexColor",
+        "ElectronConfiguration",
+        "Electronegativity",
+        "AtomicRadius",
+        "IonizationEnergy",
+        "ElectronAffinity",
+        "OxidationStates",
+        "StandardState",
+        "MeltingPoint",
+        "BoilingPoint",
+        "Density",
+        "GroupBlock",
+        "YearDiscovered"
+      ]
+    },
+    "Row": [
+      {
+        "Cell": [
+          "1",
+          "H",
+          "Hydrogen",
+          "1.0080",
+          "FFFFFF",
+          "1s1",
+          "2.2",
+          "120",
+          "13.598",
+          "0.754",
+          "+1, -1",
+          "Gas",
+          "13.81",
+          "20.28",
+          "0.00008988",
+          "Nonmetal",
+          "1766"
+        ]
+      },
+      {
+        "Cell": [
+          "46",
+          "Pd",
+          "Palladium",
+          "106.42",
+          "6985",
+          "[Kr]4d10",
+          "2.2",
+          "202",
+          "8.337",
+          "0.557",
+          "+3, +2",
+          "Solid",
+          "1828.05",
+          "3236",
+          "12.0",
+          "Transition metal",
+          "1803"
+        ]
+      },
+      {
+        "Cell": [
+          "79",
+          "Au",
+          "Gold",
+          "196.96657",
+          "FFD123",
+          "[Xe]6s1 4f14 5d10",
+          "2.54",
+          "166",
+          "9.226",
+          "2.309",
+          "+3, +1",
+          "Solid",
+          "1337.33",
+          "3129",
+          "19.282",
+          "Transition metal",
+          "Ancient"
+        ]
+      },
+      {
+        "Cell": [
+          "118",
+          "Og",
+          "Oganesson",
+          "295.216",
+          "",
+          "[Rn]7s2 7p6 5f14 6d10 (predicted)",
+          "",
+          "",
+          "",
+          "",
+          "+6, +4, +2, +1, 0, -1",
+          "Expected to be a Gas",
+          "",
+          "",
+          "",
+          "Noble gas",
+          "2006"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,154 @@
+[
+  {
+    "el": {
+      "type": "uri",
+      "value": "http://www.wikidata.org/entity/Q556"
+    },
+    "num": {
+      "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+      "type": "literal",
+      "value": "1"
+    },
+    "discLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "Henry Cavendish"
+    },
+    "namedLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "water"
+    }
+  },
+  {
+    "el": {
+      "type": "uri",
+      "value": "http://www.wikidata.org/entity/Q560"
+    },
+    "num": {
+      "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+      "type": "literal",
+      "value": "2"
+    },
+    "discLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "Norman Lockyer"
+    },
+    "namedLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "Helios"
+    }
+  },
+  {
+    "el": {
+      "type": "uri",
+      "value": "http://www.wikidata.org/entity/Q560"
+    },
+    "num": {
+      "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+      "type": "literal",
+      "value": "2"
+    },
+    "discLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "Pierre Janssen"
+    },
+    "namedLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "Helios"
+    }
+  },
+  {
+    "el": {
+      "type": "uri",
+      "value": "http://www.wikidata.org/entity/Q560"
+    },
+    "num": {
+      "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+      "type": "literal",
+      "value": "2"
+    },
+    "discLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "William Ramsay"
+    },
+    "namedLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "Helios"
+    }
+  },
+  {
+    "el": {
+      "type": "uri",
+      "value": "http://www.wikidata.org/entity/Q1089"
+    },
+    "num": {
+      "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+      "type": "literal",
+      "value": "46"
+    },
+    "discLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "William Hyde Wollaston"
+    },
+    "namedLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "2 Pallas"
+    }
+  },
+  {
+    "el": {
+      "type": "uri",
+      "value": "http://www.wikidata.org/entity/Q897"
+    },
+    "num": {
+      "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+      "type": "literal",
+      "value": "79"
+    },
+    "discLabel": {
+      "type": "literal",
+      "value": "http://www.wikidata.org/.well-known/genid/9d95c053c6a96042af9f9df8e05f2f17"
+    }
+  },
+  {
+    "el": {
+      "type": "uri",
+      "value": "http://www.wikidata.org/entity/Q1307"
+    },
+    "num": {
+      "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+      "type": "literal",
+      "value": "118"
+    },
+    "discLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "Joint Institute for Nuclear Research"
+    },
+    "namedLabel": {
+      "xml:lang": "en",
+      "type": "literal",
+      "value": "Yuri Oganessian"
+    }
+  },
+  {
+    "el": {
+      "type": "uri",
+      "value": "http://www.wikidata.org/entity/Q1139"
+    },
+    "num": {
+      "datatype": "http://www.w3.org/2001/XMLSchema#decimal",
+      "type": "literal",
+      "value": "119"
+    }
+  }
+]
