@@ -10,7 +10,8 @@
 ## Core modules
 
 - `damp.ts`: frame-rate independent smoothing for camera follow and movement.
-- `elements/schema.ts`: the zod schema and `Element` type, and the ten families that drive tile colours and themes.
+- `elements/categories.ts`: the fixed value lists (the ten families that drive tile colours and themes, states, blocks), free of zod so the app can import them.
+- `elements/schema.ts`: the zod schema and the `Element` type. Only the data script and tests run it; the app imports its types, so zod is not in the app bundle.
 - `elements/position.ts`: period, group and block from the atomic number.
 - `elements/normalize.ts`: turns PubChem's table and Wikidata's SPARQL rows into validated elements. Used by the build script and its tests.
 - `elements/index.ts`: `ELEMENTS`, the committed dataset, and lookups. This is what the app imports.

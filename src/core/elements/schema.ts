@@ -1,23 +1,9 @@
 import { z } from 'zod';
+import { BLOCKS, CATEGORIES, STATES } from './categories.ts';
 
-/** Element families. They drive tile colours and, later, the theme of each tile. */
-export const CATEGORIES = [
-  'alkali',
-  'alkaline-earth',
-  'transition',
-  'post-transition',
-  'metalloid',
-  'nonmetal',
-  'halogen',
-  'noble-gas',
-  'lanthanide',
-  'actinide',
-] as const;
+export { BLOCKS, CATEGORIES, STATES, type Category } from './categories.ts';
+
 export const categorySchema = z.enum(CATEGORIES);
-export type Category = z.infer<typeof categorySchema>;
-
-export const STATES = ['solid', 'liquid', 'gas'] as const;
-export const BLOCKS = ['s', 'p', 'd', 'f'] as const;
 
 const nullableNumber = z.number().finite().nullable();
 

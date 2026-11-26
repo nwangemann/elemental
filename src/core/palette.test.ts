@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CATEGORIES } from './elements/schema.ts';
+import { CATEGORIES } from './elements/categories.ts';
 import { CATEGORY_COLORS, LABEL_COLOR, contrastRatio, luminance } from './palette.ts';
 
 const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));

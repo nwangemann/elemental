@@ -1,4 +1,4 @@
-import type { Category } from './elements/schema.ts';
+import type { Category } from './elements/categories.ts';
 
 /**
  * Base colour of each element family, as `#rrggbb` (sRGB). Tiles use them now; the theme system

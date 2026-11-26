@@ -1,4 +1,4 @@
-import type { BLOCKS } from './schema.ts';
+import type { BLOCKS } from './categories.ts';
 
 export interface Position {
   period: number;
