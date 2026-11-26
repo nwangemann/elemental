@@ -53,3 +53,24 @@ export const EYE_COLOR = '#11151c';
 
 /** Highlight ring around the tile the character stands on: warm white, drawn unlit. */
 export const RING_COLOR = '#fff1c9';
+
+/** The element panel's surface (slightly lighter than the sky, so it lifts off the scene). */
+export const PANEL_COLOR = '#161b22';
+
+/** Body text on the panel, and the quieter text for labels and notes. */
+export const PANEL_TEXT = '#e6edf3';
+export const PANEL_MUTED = '#9da7b3';
+
+/**
+ * Colour tokens the DOM interface takes from the element under the character, so the panel
+ * "turns" with the tile. `accent` is the family colour (headings, rules, the symbol), and
+ * `accentInk` the text colour on an accent-filled surface. The theme system builds on this.
+ */
+export interface AccentTokens {
+  accent: string;
+  accentInk: string;
+}
+
+export function accentTokens(category: Category): AccentTokens {
+  return { accent: CATEGORY_COLORS[category], accentInk: LABEL_COLOR };
+}

@@ -2,7 +2,7 @@ import { useAppStore } from '../state/store.ts';
 
 /**
  * Announces the tile under the character to screen readers ("Standing on Hydrogen"), so what
- * the scene shows is also available as text. Visually hidden until the element panel exists.
+ * the scene shows is also available as text. Visually hidden; the element panel shows the same visually.
  */
 export function TileStatus() {
   const tile = useAppStore((s) => s.activeTile);

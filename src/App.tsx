@@ -6,6 +6,12 @@ import { TileStatus } from './ui/TileStatus.tsx';
 // paints first and the scene streams in behind it; see docs/adr/0003-bundle-budget.md.
 const Scene = lazy(() => import('./scene/Scene.tsx').then((m) => ({ default: m.Scene })));
 
+// The element panel and the element data come in a chunk of their own, shared with the scene,
+// so the shell carries neither (docs/adr/0005-element-panel-data.md).
+const ElementPanel = lazy(() =>
+  import('./ui/ElementPanel.tsx').then((m) => ({ default: m.ElementPanel })),
+);
+
 const params = new URLSearchParams(window.location.search);
 const showPerf = params.has('perf');
 
@@ -44,6 +50,9 @@ export function App() {
         <h1>elemental</h1>
         <p>A walkable periodic table.</p>
       </header>
+      <Suspense>
+        <ElementPanel />
+      </Suspense>
       <TileStatus />
       {showPerf && <output ref={perf} className="perf" aria-live="off" />}
       {TunePanel && (

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Element panel: while the character stands on a tile, a panel slides in with the element's overview (family, state, mass, electron configuration, discovery) and properties (melting and boiling points, density, electronegativity, radius, ionization energy, electron affinity, oxidation states), with units and in the family's accent colour. On narrow screens it is a sheet along the bottom.
 - Tiles wake when the character steps on them: the tile rises with the character on it and a warm ring grows around it; leaving reverses it over a quarter second. A screen-reader status announces the tile ("Standing on Hydrogen").
 - The page paints a light shell (68 KB of gzipped JavaScript) and loads the 3D scene as a separate chunk behind it.
 - Follow camera: an establishing shot glides from the whole table down to the character (skipped under reduced motion), then the camera follows with a critically damped spring and a little look-ahead. Zoom with the wheel, a pinch or `+`/`-`.

@@ -5,7 +5,7 @@
 - `src/core`: pure TypeScript. Maths, layout, data shaping, rules. No React, no three, no DOM, so everything here is unit-tested in Node.
 - `src/scene`: React Three Fiber components (see [ADR 2](adr/0002-scene-rendering.md)). Per-frame work happens in `useFrame` and mutates refs; it never sets React state.
 - `src/state`: the app store (zustand, [ADR 4](adr/0004-app-state.md)), shared by the scene and the DOM interface. `activeTile` is the tile under the character (number and name), or null; the scene writes it only when that changes.
-- `src/ui`: DOM interface. So far a screen-reader status that announces the tile under the character (`TileStatus.tsx`, "Standing on Hydrogen") and the dev-only tuning panel; the element panel, explorer and settings follow in milestone 1.
+- `src/ui`: DOM interface. The element panel (`ElementPanel.tsx`), a screen-reader status that announces the tile under the character (`TileStatus.tsx`, "Standing on Hydrogen") and the dev-only tuning panel; the explorer and settings follow in milestone 1.
 - `src/data`: generated element data (`elements.json`), committed. Built by `scripts/build-elements.ts`; see [data sources](data-sources.md).
 
 ## Core modules
@@ -23,8 +23,9 @@
 - `gait.ts`: the character's procedural motion. `stepGait` advances time, the walk phase (one cycle per `strideLength` travelled, so feet do not slide at any speed) and a walk blend that follows speed; `poseOf` turns that into body bob, squash and stretch (volume kept), foot swing and lift, and arm swing, written into a reused object. Idle breathing fades out as the walk fades in.
 - `input.ts`: keyboard movement as data. `KEY_MAP` maps `KeyboardEvent.code` (physical keys, so WASD works on any layout) to actions: WASD and the arrows both move, either Shift walks slowly. `applyKey` records presses into a set of held codes, and `moveIntent` turns them into a normalised x–z direction (forward is −z, away from the camera; opposite keys cancel). `ZOOM_KEYS` maps the typed `+`/`=` to zoom in and `-`/`_` to zoom out; these go by `KeyboardEvent.key`, since the characters sit on different physical keys across layouts.
 - `controller.ts`: the kinematic character controller. `stepController` eases velocity toward the intent with `damp` (separate rates for accelerating and stopping), integrates position, clamps it to `tableBounds` (the table's footprint less the body radius) and zeroes velocity against the edge, turns the heading toward the travel direction the short way round, and leans into turns in proportion to turn rate × speed, capped. Allocation-free; parameters live in `CONFIG.character`.
-- `palette.ts`: the family colours, label ink, ground and sky, the character's body and eyes, and WCAG contrast helpers. Tests check that label ink meets AA on every family colour.
+- `palette.ts`: the family colours, label ink, ground and sky, the character's body and eyes, the panel's surface and text, and WCAG contrast helpers. `accentTokens(category)` gives the interface's accent colours for an element (today the family colour; the theme system builds on it). Tests check AA contrast for label ink on every family colour and for accents and text on the panel.
 - `activation.ts`: which tile the character stands on and how far each tile is through entering or leaving. `stepActivation` finds the current tile with `tileAtPoint` (with hysteresis), ramps it linearly toward 1 and every other tile toward 0 over `CONFIG.tiles.activateDuration` (0.25 s), and reports whether the current tile changed. A `dirty` flag per tile (and `anyDirty`) tells renderers which tiles moved this frame. `easeLevel` is the smoothstep the renderers apply; `tileTop` is a tile's top height with its eased rise. Allocation-free.
+- `elementFacts.ts`: the element panel's text. `overviewFacts` and `propertyFacts` turn an element into labelled rows with units (temperatures in K with °C alongside, gas densities in g/L, signed oxidation states, superscript electron counts); missing values read "Unknown" and predicted ones carry a note. `CATEGORY_LABELS` names the families.
 - `frame-stats.ts`: rolling mean and percentile of frame times, allocation-free on push.
 
 ## Scene
@@ -42,6 +43,10 @@
 - `useConfigVersion.ts`: re-renders on `CONFIG` changes and returns its version, used as a `key`.
 - `PerfProbe.tsx`: with `?perf` in the URL, an overlay shows draw calls, triangles and mean and p95 frame time twice a second. The same numbers are on the overlay's `data-calls`, `data-mean` and `data-p95` attributes for scripts.
 
+## Element panel
+
+`ui/ElementPanel.tsx` is lazily loaded by `App.tsx` and imports the element data directly; the bundler puts the data in a chunk shared with the scene, so the shell carries neither (ADR 0005). It reads `activeTile` from the store and slides in from the right (a bottom sheet below 40rem; a fade only under reduced motion) while the character stands on a tile, keeping the last element on screen as it slides out and making itself `inert` while closed. The header shows symbol, number, name, family and place in the table; two tabs (WAI-ARIA tabs: arrow keys, Home and End, which do not reach the movement keys) show `overviewFacts` and `propertyFacts`. Its `--accent` and `--accent-ink` CSS variables come from `accentTokens`.
+
 ## Tuning panel
 
 With `?tune` in the URL, the dev server shows a [leva](https://github.com/pmndrs/leva) panel with a slider per `CONFIG` value (`src/ui/TunePanel.tsx`). It writes through `setConfig`, so the scene changes live. "Copy as defaults" puts the current values on the clipboard as JSON to paste into `config.ts`; "reset" restores the defaults. The panel is loaded with a dynamic import guarded by `import.meta.env.DEV`, so a production build contains neither the panel nor leva, and `?tune` does nothing there.
@@ -50,4 +55,4 @@ With `?tune` in the URL, the dev server shows a [leva](https://github.com/pmndrs
 
 - Unit tests (`*.test.ts` next to the code) cover `src/core`. The normalizer is tested against small recorded responses in `src/core/elements/__fixtures__/`; another test validates the whole committed dataset.
 - `scripts/size-check.mjs` builds the app and fails `npm run check` if the gzipped JavaScript passes either ceiling: 80 KB for the shell (the entry chunk and its static imports, read from the Vite manifest) and 380 KB for all chunks together.
-- `e2e/smoke.spec.ts` builds the app, serves it with `vite preview` and checks it loads in Chromium.
+- `e2e/smoke.spec.ts` builds the app, serves it with `vite preview` and checks in Chromium that it loads and that the panel shows hydrogen, where the character starts, with its properties tab.
