@@ -1,5 +1,6 @@
 import { Suspense, lazy, useCallback, useRef } from 'react';
 import type { PerfReport } from './scene/PerfProbe.tsx';
+import { TileStatus } from './ui/TileStatus.tsx';
 
 // The scene (three, React Three Fiber, troika, element data) is its own chunk. The DOM shell
 // paints first and the scene streams in behind it; see docs/adr/0003-bundle-budget.md.
@@ -43,6 +44,7 @@ export function App() {
         <h1>elemental</h1>
         <p>A walkable periodic table.</p>
       </header>
+      <TileStatus />
       {showPerf && <output ref={perf} className="perf" aria-live="off" />}
       {TunePanel && (
         <Suspense>

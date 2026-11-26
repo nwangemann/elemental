@@ -12,6 +12,12 @@ export const CONFIG_DEFAULTS = {
     height: 0.18,
     roughness: 0.55,
     metalness: 0.05,
+    /** How far the tile under the character rises, and how long entering or leaving takes, s. */
+    rise: 0.1,
+    activateDuration: 0.25,
+    /** Highlight ring on the ground around the active tile: gap from the tile edge and width. */
+    ringInset: 0.015,
+    ringWidth: 0.05,
   },
   labels: {
     /** Cap height of the element symbol, in world units. */
@@ -87,6 +93,10 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     height: { min: 0.02, max: 1, step: 0.01 },
     roughness: { min: 0, max: 1, step: 0.01 },
     metalness: { min: 0, max: 1, step: 0.01 },
+    rise: { min: 0, max: 0.5, step: 0.01 },
+    activateDuration: { min: 0, max: 1, step: 0.01 },
+    ringInset: { min: 0, max: 0.1, step: 0.005 },
+    ringWidth: { min: 0.01, max: 0.15, step: 0.005 },
   },
   labels: {
     symbolSize: { min: 0.1, max: 0.8, step: 0.01 },

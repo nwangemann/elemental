@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { useMemo } from 'react';
+import { createActivation } from '../core/activation.ts';
 import { CONFIG } from '../core/config.ts';
 import { createController } from '../core/controller.ts';
 import { TABLE_SIZE, TILES } from '../core/layout.ts';
@@ -8,6 +9,8 @@ import { Character } from './Character.tsx';
 import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
 import { Labels } from './Labels.tsx';
 import { PerfProbe, type PerfReport } from './PerfProbe.tsx';
+import { TileActivator } from './TileActivator.tsx';
+import { TileRings } from './TileRings.tsx';
 import { Tiles } from './Tiles.tsx';
 import { useConfigVersion } from './useConfigVersion.ts';
 import { useKeyboardInput } from './useKeyboardInput.ts';
@@ -21,6 +24,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
   const version = useConfigVersion();
   const input = useKeyboardInput();
   const controller = useMemo(() => createController(SPAWN.x, SPAWN.z), []);
+  const activation = useMemo(() => createActivation(), []);
   return (
     <Canvas
       className="scene"
@@ -37,9 +41,16 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         <meshStandardMaterial color={GROUND_COLOR} roughness={1} />
       </mesh>
       <CameraRig controller={controller} />
-      <Tiles key={`tiles-${version}`} />
-      <Labels key={`labels-${version}`} />
-      <Character key={`character-${version}`} controller={controller} input={input} />
+      <TileActivator activation={activation} controller={controller} />
+      <Tiles key={`tiles-${version}`} activation={activation} />
+      <TileRings key={`rings-${version}`} activation={activation} />
+      <Labels key={`labels-${version}`} activation={activation} />
+      <Character
+        key={`character-${version}`}
+        controller={controller}
+        input={input}
+        activation={activation}
+      />
       {onPerf && <PerfProbe onReport={onPerf} />}
     </Canvas>
   );

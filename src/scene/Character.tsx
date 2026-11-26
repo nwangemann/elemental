@@ -7,7 +7,9 @@ import {
   type Group,
   type Mesh,
 } from 'three';
+import { easeLevel, type Activation } from '../core/activation.ts';
 import { CONFIG } from '../core/config.ts';
+import { damp } from '../core/damp.ts';
 import { speedOf, stepController, tableBounds, type ControllerState } from '../core/controller.ts';
 import { createGait, createPose, poseOf, stepGait } from '../core/gait.ts';
 import { createIntent, moveIntent, type InputState } from '../core/input.ts';
@@ -18,6 +20,8 @@ import { CHARACTER_COLOR, EYE_COLOR } from '../core/palette.ts';
 const MAX_DT = 0.1;
 /** Feet are flattened, slightly long spheres. */
 const FOOT_SCALE: [number, number, number] = [1, 0.55, 1.35];
+/** How fast the character's standing height follows the tile under it, 1/s. */
+const STAND_RATE = 25;
 /** Frame priority: below the default 0, so the character moves before the camera follows it. */
 export const CHARACTER_FRAME_PRIORITY = -1;
 
@@ -26,14 +30,18 @@ export const CHARACTER_FRAME_PRIORITY = -1;
  * `CONFIG.character` at mount. Every frame it reads the held keys, steps `core/controller.ts`
  * (position, heading, lean) and `core/gait.ts` (breathing, walk cycle) and writes the results to
  * refs. Faces +z at heading 0. `controller` and `input` are owned by the parent, so a remount
- * (the tuning panel changing sizes) keeps the character where it is.
+ * (the tuning panel changing sizes) keeps the character where it is. It stands on the tile
+ * under it and rides it up as it activates; the height is smoothed, so stepping straight from
+ * one raised tile onto the next dips gently instead of dropping.
  */
 export function Character({
   controller,
   input,
+  activation,
 }: {
   controller: ControllerState;
   input: InputState;
+  activation: Activation;
 }) {
   const c = CONFIG.character;
   const root = useRef<Group>(null);
@@ -44,6 +52,7 @@ export function Character({
   const leftFoot = useRef<Mesh>(null);
   const rightFoot = useRef<Mesh>(null);
 
+  const standY = useRef(CONFIG.tiles.height);
   const gait = useMemo(() => createGait(), []);
   const pose = useMemo(() => createPose(), []);
   const intent = useMemo(() => createIntent(), []);
@@ -87,8 +96,12 @@ export function Character({
     stepController(controller, moveIntent(input, intent), dt, p, bounds);
     stepGait(gait, speedOf(controller), dt, p);
     poseOf(gait, p, pose);
+    const t = CONFIG.tiles;
+    const on = activation.current;
+    const ground = t.height + (on === null ? 0 : t.rise * easeLevel(activation.levels[on - 1]!));
+    standY.current = damp(standY.current, ground, STAND_RATE, dt);
     if (root.current) {
-      root.current.position.set(controller.x, CONFIG.tiles.height, controller.z);
+      root.current.position.set(controller.x, standY.current, controller.z);
       root.current.rotation.y = controller.heading;
     }
     // Positive lean (turning toward +heading, the character's left) tips the top toward +x.

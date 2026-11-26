@@ -50,3 +50,6 @@ export const CHARACTER_COLOR = '#f5ead6';
 
 /** The character's eyes. */
 export const EYE_COLOR = '#11151c';
+
+/** Highlight ring around the tile the character stands on: warm white, drawn unlit. */
+export const RING_COLOR = '#fff1c9';
