@@ -12,6 +12,9 @@ const ElementPanel = lazy(() =>
   import('./ui/ElementPanel.tsx').then((m) => ({ default: m.ElementPanel })),
 );
 
+// The explorer shares that chunk: it needs the element data too.
+const Explorer = lazy(() => import('./ui/Explorer.tsx').then((m) => ({ default: m.Explorer })));
+
 const params = new URLSearchParams(window.location.search);
 const showPerf = params.has('perf');
 
@@ -50,6 +53,9 @@ export function App() {
         <h1>elemental</h1>
         <p>A walkable periodic table.</p>
       </header>
+      <Suspense>
+        <Explorer />
+      </Suspense>
       <Suspense>
         <ElementPanel />
       </Suspense>

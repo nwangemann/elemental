@@ -66,6 +66,15 @@ export function wrapAngle(a: number): number {
   return w === 0 ? Math.PI : w - Math.PI;
 }
 
+/** Puts the body at (x, z) at rest, keeping its heading (the explorer's fly-to). */
+export function teleport(s: ControllerState, x: number, z: number): void {
+  s.x = x;
+  s.z = z;
+  s.vx = 0;
+  s.vz = 0;
+  s.lean = 0;
+}
+
 export function speedOf(s: ControllerState): number {
   return Math.hypot(s.vx, s.vz);
 }

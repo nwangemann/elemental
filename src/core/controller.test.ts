@@ -5,6 +5,7 @@ import {
   speedOf,
   stepController,
   tableBounds,
+  teleport,
   wrapAngle,
   type ControllerParams,
 } from './controller.ts';
@@ -103,5 +104,14 @@ describe('controller', () => {
     expect(wrapAngle(Math.PI)).toBeCloseTo(Math.PI, 10);
     expect(wrapAngle(-Math.PI)).toBeCloseTo(Math.PI, 10);
     expect(wrapAngle(3 * Math.PI + 0.5)).toBeCloseTo(-Math.PI + 0.5, 10);
+  });
+
+  it('teleports to rest, keeping the heading', () => {
+    const s = createController(0, 0, 1.2);
+    s.vx = 3;
+    s.vz = -2;
+    s.lean = 0.2;
+    teleport(s, 4, -5);
+    expect(s).toEqual({ x: 4, z: -5, vx: 0, vz: 0, heading: 1.2, lean: 0 });
   });
 });

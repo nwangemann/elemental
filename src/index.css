@@ -272,3 +272,163 @@ body {
     transition: opacity 150ms linear;
   }
 }
+
+/* Explorer: the open button under the title, and the palette dialog (ui/Explorer.tsx). */
+.explore-open {
+  position: fixed;
+  top: 4.25rem;
+  left: 1.25rem;
+  z-index: 1;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  background: rgb(22 27 34 / 90%);
+  color: #e6edf3;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.explore-open:hover {
+  border-color: #6e7681;
+}
+
+kbd {
+  padding: 0.05rem 0.3rem;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  font:
+    0.75rem ui-monospace,
+    monospace;
+  color: #9da7b3;
+}
+
+.explorer {
+  width: min(36rem, calc(100vw - 2rem));
+  max-height: min(36rem, calc(100dvh - 4rem));
+  margin: 4rem auto auto;
+  padding: 0;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  background: #161b22;
+  color: #e6edf3;
+  box-shadow: 0 12px 48px rgb(0 0 0 / 55%);
+}
+
+.explorer[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.explorer::backdrop {
+  background: rgb(1 4 9 / 55%);
+}
+
+.explorer-search {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 0;
+  border-bottom: 1px solid #30363d;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 1rem;
+}
+
+.explorer-search:focus-visible,
+.explorer button:focus-visible,
+.explorer select:focus-visible {
+  outline: 2px solid #79c0ff;
+  outline-offset: -2px;
+}
+
+.explorer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  align-items: end;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid #30363d;
+  font-size: 0.75rem;
+  color: #9da7b3;
+}
+
+.explorer-controls label {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.explorer-controls select,
+.explorer-controls button {
+  padding: 0.25rem 0.4rem;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  background: #0d1117;
+  color: #e6edf3;
+  font: inherit;
+  font-size: 0.8rem;
+}
+
+.explorer-controls button {
+  cursor: pointer;
+}
+
+.explorer-count {
+  margin: 0;
+  padding: 0.4rem 1rem 0.2rem;
+  font-size: 0.75rem;
+  color: #9da7b3;
+}
+
+.explorer-list {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0.25rem 0.5rem 0.5rem;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.explorer-list li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.explorer-list li:hover {
+  background: #21262d;
+}
+
+.explorer-list li[aria-selected='true'] {
+  background: #1f2a37;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.explorer-symbol {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 5px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.explorer-name {
+  flex: 1;
+}
+
+.explorer-value {
+  font-size: 0.8rem;
+  color: #9da7b3;
+  font-variant-numeric: tabular-nums;
+}

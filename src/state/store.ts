@@ -6,10 +6,19 @@ export interface ActiveTile {
   name: string;
 }
 
+/** A request to put the character on a tile at once. `seq` makes repeat requests distinct. */
+export interface Flight {
+  number: number;
+  seq: number;
+}
+
 export interface AppState {
   /** The tile under the character, or null between tiles and off the table. */
   activeTile: ActiveTile | null;
   setActiveTile: (tile: ActiveTile | null) => void;
+  /** The latest fly-to request from the explorer or a deep link; the scene carries it out. */
+  flight: Flight | null;
+  flyTo: (number: number) => void;
 }
 
 /**
@@ -20,4 +29,6 @@ export interface AppState {
 export const useAppStore = create<AppState>()((set) => ({
   activeTile: null,
   setActiveTile: (activeTile) => set({ activeTile }),
+  flight: null,
+  flyTo: (number) => set((s) => ({ flight: { number, seq: (s.flight?.seq ?? 0) + 1 } })),
 }));

@@ -3,10 +3,13 @@ import { useMemo } from 'react';
 import { createActivation } from '../core/activation.ts';
 import { CONFIG } from '../core/config.ts';
 import { createController } from '../core/controller.ts';
+import { ELEMENTS } from '../core/elements/index.ts';
+import { parseDeepLink } from '../core/explorer.ts';
 import { TABLE_SIZE, TILES } from '../core/layout.ts';
 import { createStick, createWalkTarget } from '../core/steering.ts';
 import { CameraRig } from './CameraRig.tsx';
 import { Character } from './Character.tsx';
+import { FlightHandler } from './FlightHandler.tsx';
 import { Joystick } from './Joystick.tsx';
 import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
 import { Labels } from './Labels.tsx';
@@ -18,15 +21,21 @@ import { Tiles } from './Tiles.tsx';
 import { useConfigVersion } from './useConfigVersion.ts';
 import { useKeyboardInput } from './useKeyboardInput.ts';
 
-/** The character starts on hydrogen. */
-const SPAWN = TILES[0]!;
+/** The character starts on the deep-linked element (`#/Au`), or on hydrogen. */
+function spawnTile() {
+  const linked = parseDeepLink(window.location.hash, ELEMENTS);
+  return TILES[(linked?.number ?? 1) - 1]!;
+}
 const GROUND_SIZE = Math.max(TABLE_SIZE.width, TABLE_SIZE.depth) * 4;
 
 export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => void }) {
   // Tiles and labels are built once from CONFIG; remount them when the tuning panel changes it.
   const version = useConfigVersion();
   const input = useKeyboardInput();
-  const controller = useMemo(() => createController(SPAWN.x, SPAWN.z), []);
+  const controller = useMemo(() => {
+    const spawn = spawnTile();
+    return createController(spawn.x, spawn.z);
+  }, []);
   const activation = useMemo(() => createActivation(), []);
   const stick = useMemo(() => createStick(), []);
   const target = useMemo(() => createWalkTarget(), []);
@@ -48,6 +57,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         </mesh>
         <CameraRig controller={controller} />
         <TapToWalk target={target} />
+        <FlightHandler controller={controller} target={target} />
         <TileActivator activation={activation} controller={controller} />
         <Tiles key={`tiles-${version}`} activation={activation} />
         <TileRings key={`rings-${version}`} activation={activation} />

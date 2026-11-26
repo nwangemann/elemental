@@ -24,3 +24,25 @@ test('clicking the tile below hydrogen walks onto lithium', async ({ page }) => 
   await expect(status).toHaveAttribute('data-tile', '3', { timeout: 5_000 });
   await expect(page.getByRole('complementary', { name: 'Lithium' })).toBeVisible();
 });
+
+test('a deep link starts on its element', async ({ page }) => {
+  await page.goto('/#/Au');
+  await expect(page.getByRole('complementary', { name: 'Gold' })).toBeVisible({ timeout: 15_000 });
+});
+
+test('the explorer finds an element and flies there', async ({ page }) => {
+  await page.goto('/');
+  const status = page.locator('[data-tile]');
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+  await page.keyboard.press('/');
+  const search = page.getByRole('combobox', { name: /search/i });
+  await expect(search).toBeFocused();
+  await search.fill('neon');
+  await expect(
+    page.getByRole('listbox', { name: 'Elements' }).getByRole('option').first(),
+  ).toContainText('Neon');
+  await page.keyboard.press('Enter');
+  await expect(status).toHaveAttribute('data-tile', '10');
+  await expect(page.getByRole('complementary', { name: 'Neon' })).toBeVisible();
+  await expect(page).toHaveURL(/#\/Ne$/);
+});
