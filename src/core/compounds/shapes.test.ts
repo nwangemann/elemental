@@ -1,12 +1,17 @@
 import { describe, expect, it } from 'vitest';
+import cellsFixture from './__fixtures__/cod-cells.json' with { type: 'json' };
 import shapesFixture from './__fixtures__/pubchem-shapes.json' with { type: 'json' };
 import shapesData from '../../data/compound-shapes.json' with { type: 'json' };
 import { ELEMENTS } from '../elements/index.ts';
+import type { Cif } from './cif.ts';
 import { COMPOUNDS } from './index.ts';
+import { COMPOUND_SOURCES, type LatticeSpec } from './source.ts';
 import {
+  HAND_CRYSTALS,
   HAND_SHAPES,
   atomDistance,
   bakeConformer,
+  buildCrystal,
   buildShapes,
   type CompoundShapes,
   type MoleculeShape,
@@ -18,6 +23,12 @@ const FIXTURE = shapesFixture as {
   conformers: Record<string, PubChemConformer>;
 };
 const SHAPES = shapesData as unknown as CompoundShapes;
+const CELLS = cellsFixture as unknown as Record<string, Cif>;
+const LATTICES: Record<string, LatticeSpec> = Object.fromEntries(
+  COMPOUND_SOURCES.flatMap((c) => (c.lattice ? [[c.id, c.lattice]] : [])),
+);
+const build = (conformers = FIXTURE.conformers, cpk = FIXTURE.cpk, compounds = COMPOUNDS) =>
+  buildShapes(compounds, conformers, cpk, symbolOf, CELLS, LATTICES);
 const symbolOf = (n: number) => ELEMENTS[n - 1]!.symbol;
 const shape = (id: string) => SHAPES.molecules[id]!;
 
@@ -56,14 +67,12 @@ describe('bakeConformer', () => {
 
 describe('buildShapes', () => {
   it('rebuilds the committed file from the saved PubChem rows', () => {
-    expect(buildShapes(COMPOUNDS, FIXTURE.conformers, FIXTURE.cpk, symbolOf)).toEqual(SHAPES);
+    expect(build()).toEqual(SHAPES);
   });
 
   it('fails when a shape is missing or its atoms disagree with the formula', () => {
     const { water: _, ...noWater } = FIXTURE.conformers;
-    expect(() => buildShapes(COMPOUNDS, noWater, FIXTURE.cpk, symbolOf)).toThrow(
-      /No shape for water/,
-    );
+    expect(() => build(noWater)).toThrow(/No shape for water/);
     const water = COMPOUNDS.find((c) => c.id === 'water')!;
     const wrong = {
       ...water,
@@ -72,10 +81,8 @@ describe('buildShapes', () => {
         { symbol: 'O', count: 1 },
       ],
     };
-    expect(() => buildShapes([wrong], FIXTURE.conformers, FIXTURE.cpk, symbolOf)).toThrow(
-      /do not match/,
-    );
-    expect(() => buildShapes(COMPOUNDS, FIXTURE.conformers, {}, symbolOf)).toThrow(/CPK/);
+    expect(() => build(FIXTURE.conformers, FIXTURE.cpk, [wrong])).toThrow(/do not match/);
+    expect(() => build(FIXTURE.conformers, {})).toThrow(/CPK/);
   });
 });
 
@@ -117,5 +124,66 @@ describe('the shapes', () => {
     expect(Object.keys(SHAPES.cpk).toSorted()).toEqual([...used].toSorted());
     expect(SHAPES.cpk.H).toBe('#ffffff');
     expect(SHAPES.cpk.O).toBe('#ff0d0d');
+  });
+});
+
+const crystal = (id: string) => SHAPES.crystals[id]!;
+const formula = (id: string) => COMPOUNDS.find((c) => c.id === id)!.elements;
+
+describe('the crystals', () => {
+  it('cover every lattice and alloy', () => {
+    const ids = COMPOUNDS.filter((c) => c.kind === 'lattice' || c.kind === 'alloy').map(
+      (c) => c.id,
+    );
+    expect(Object.keys(SHAPES.crystals).toSorted()).toEqual(ids.toSorted());
+  });
+
+  it('come from the database unless there is no structure to cut', () => {
+    const hand = Object.entries(SHAPES.crystals).flatMap(([id, c]) =>
+      c.source === 'hand' ? [id] : [],
+    );
+    expect(hand.toSorted()).toEqual(Object.keys(HAND_CRYSTALS).toSorted());
+    expect(crystal('table-salt').source).toBe('COD 1000041');
+  });
+
+  it('cut table salt as the 3×3×3 cube around a sodium', () => {
+    const salt = crystal('table-salt');
+    expect(salt.elements).toHaveLength(27);
+    expect(salt.elements.filter((e) => e === 'Na')).toHaveLength(13);
+    for (const [a, b] of salt.bonds) expect(atomDistance(salt, a, b)).toBeCloseTo(2.81, 1);
+  });
+
+  it('keep atoms apart and sticks at bond lengths', () => {
+    for (const [id, c] of Object.entries(SHAPES.crystals)) {
+      for (let i = 0; i < c.elements.length; i++)
+        for (let j = i + 1; j < c.elements.length; j++)
+          expect(atomDistance(c, i, j), `${id} ${i}-${j}`).toBeGreaterThan(0.8);
+      for (const [a, b] of c.bonds) expect(atomDistance(c, a, b), id).toBeLessThan(3.1);
+    }
+  });
+
+  it('put one carbon in steel and tin on about one bronze site in ten', () => {
+    expect(crystal('steel').elements.filter((e) => e === 'C')).toHaveLength(1);
+    const bronze = crystal('bronze').elements;
+    expect(bronze.filter((e) => e === 'Sn').length / bronze.length).toBeCloseTo(0.1, 1);
+  });
+
+  it('refuse a cell that is not whole formula units', () => {
+    const salt = LATTICES['table-salt']!;
+    const wrong = [
+      { symbol: 'Na', count: 2 },
+      { symbol: 'Cl', count: 1 },
+    ];
+    expect(() => buildCrystal('table-salt', salt, CELLS['table-salt']!, wrong)).toThrow(
+      /whole formula units/,
+    );
+    expect(() =>
+      buildCrystal(
+        'table-salt',
+        { ...salt, radius: 1 },
+        CELLS['table-salt']!,
+        formula('table-salt'),
+      ),
+    ).toThrow(/misses an element|atoms/);
   });
 });

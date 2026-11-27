@@ -748,10 +748,10 @@
     "note": null
   },
   {
-    "id": "calcium-phosphate",
-    "name": "Calcium phosphate",
-    "formula": "Ca₃(PO₄)₂",
-    "cid": 24456,
+    "id": "hydroxyapatite",
+    "name": "Hydroxyapatite (bone mineral)",
+    "formula": "Ca₅(PO₄)₃(OH)",
+    "cid": 14781,
     "kind": "lattice",
     "bond": "transfers",
     "rank": 26,
@@ -760,24 +760,28 @@
     "elements": [
       {
         "symbol": "Ca",
-        "count": 3
+        "count": 5
       },
       {
         "symbol": "P",
-        "count": 2
+        "count": 3
       },
       {
         "symbol": "O",
-        "count": 8
+        "count": 13
+      },
+      {
+        "symbol": "H",
+        "count": 1
       }
     ],
-    "atoms": 13,
+    "atoms": 22,
     "carryable": true,
     "isomers": [],
-    "leadsTo": ["bones", "teeth"],
-    "where": "The hard part of your bones and teeth.",
-    "why": "Calcium hands electrons to phosphate groups (phosphorus sharing electrons with four oxygens), and the charges lock into a crystal.",
-    "note": "Three calcium to two phosphate is the ratio in which the charges balance. Bone builds it on a mesh of protein."
+    "leadsTo": ["bones", "tooth enamel"],
+    "where": "The hard part of your bones, and almost all of your tooth enamel.",
+    "why": "Calcium hands electrons to phosphate groups (phosphorus sharing electrons with four oxygens) and to hydroxide (an oxygen holding a hydrogen).",
+    "note": "A calcium phosphate crystal. Bone grows tiny crystals of it on a mesh of protein, which is why bone is hard but not brittle."
   },
   {
     "id": "lime",

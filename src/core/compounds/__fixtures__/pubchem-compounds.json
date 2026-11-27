@@ -99,9 +99,9 @@
     "CID": 190,
     "MolecularFormula": "C5H5N5"
   },
-  "calcium-phosphate": {
-    "CID": 24456,
-    "MolecularFormula": "Ca3O8P2"
+  "hydroxyapatite": {
+    "CID": 14781,
+    "MolecularFormula": "Ca5HO13P3"
   },
   "lime": {
     "CID": 14778,

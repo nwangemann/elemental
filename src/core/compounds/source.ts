@@ -37,6 +37,19 @@ export interface CompoundSource {
   why: string;
   /** An extra line when the kind needs explaining (lattice, alloy, lone atom, isomer). */
   note?: string;
+  /** For a lattice: where its crystal chunk comes from (see `LatticeSpec`). */
+  lattice?: LatticeSpec;
+}
+
+/**
+ * A lattice's chunk: a Crystallography Open Database entry, the element the chunk is centred
+ * on, its radius in Å, and the element pairs drawn as sticks with their longest length.
+ */
+export interface LatticeSpec {
+  cod: string;
+  centre: string;
+  radius: number;
+  bonds: [string, string, number][];
 }
 
 export const COMPOUND_SOURCES: readonly CompoundSource[] = [
@@ -66,6 +79,7 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
     where: 'On food, and dissolved in your blood, your sweat and the sea.',
     why: 'Sodium hands one electron to chlorine; the two end up with opposite charges, and opposite charges cling.',
     note: 'There is no single salt molecule: sodium and chloride ions (charged atoms) stack into a cube, millions at a time.',
+    lattice: { cod: '1000041', centre: 'Na', radius: 4.9, bonds: [['Na', 'Cl', 3.0]] },
   },
   {
     id: 'carbon-dioxide',
@@ -153,6 +167,15 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
     where: 'Eggshells, seashells, chalk, limestone and marble.',
     why: 'Calcium hands two electrons to a carbonate group (one carbon sharing electrons with three oxygens), and the charges cling.',
     note: 'It forms a crystal, not single molecules: calcium ions and carbonate groups stack in a repeating pattern.',
+    lattice: {
+      cod: '9000965',
+      centre: 'Ca',
+      radius: 5.0,
+      bonds: [
+        ['C', 'O', 1.4],
+        ['Ca', 'O', 2.5],
+      ],
+    },
   },
   {
     id: 'quartz',
@@ -166,6 +189,7 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
     where: 'Most of the sand on a beach, and the raw stuff of glass.',
     why: 'Each silicon shares electrons with four oxygens, and each oxygen bridges two silicons, so the whole crystal is one web.',
     note: 'There is no single SiO₂ molecule: the bonds go on in every direction, which is why quartz is so hard.',
+    lattice: { cod: '9000775', centre: 'Si', radius: 5.0, bonds: [['Si', 'O', 1.7]] },
   },
   {
     id: 'rust',
@@ -179,6 +203,7 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
     where: 'On old bikes and nails, and the red in red soil and on Mars.',
     why: 'Forms when iron meets water and air over time: iron hands electrons to oxygen, and the charged atoms pack into a crystal.',
     note: 'Two iron to three oxygen is the ratio in which the charges balance.',
+    lattice: { cod: '9000139', centre: 'Fe', radius: 4.2, bonds: [['Fe', 'O', 2.2]] },
   },
   {
     id: 'ethanol',
@@ -217,6 +242,16 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
     where: 'In cakes and bread, where it gives off carbon dioxide bubbles when it meets an acid.',
     why: 'Sodium hands one electron to a bicarbonate group (carbon, oxygen and hydrogen sharing electrons), and the charges cling.',
     note: 'A crystal of sodium ions and bicarbonate groups, not single molecules.',
+    lattice: {
+      cod: '1011016',
+      centre: 'Na',
+      radius: 5.0,
+      bonds: [
+        ['C', 'O', 1.4],
+        ['O', 'H', 1.1],
+        ['Na', 'O', 2.6],
+      ],
+    },
   },
   {
     id: 'caffeine',
@@ -356,17 +391,27 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
     why: 'Carbons and nitrogens share electrons in two joined rings, flat like a tile, which lets it stack inside DNA.',
   },
   {
-    id: 'calcium-phosphate',
-    name: 'Calcium phosphate',
-    formula: 'Ca₃(PO₄)₂',
-    pubchem: 'tricalcium phosphate',
+    id: 'hydroxyapatite',
+    name: 'Hydroxyapatite (bone mineral)',
+    formula: 'Ca₅(PO₄)₃(OH)',
+    pubchem: 'hydroxyapatite',
     kind: 'lattice',
     bond: 'transfers',
     contexts: ['body'],
-    leadsTo: ['bones', 'teeth'],
-    where: 'The hard part of your bones and teeth.',
-    why: 'Calcium hands electrons to phosphate groups (phosphorus sharing electrons with four oxygens), and the charges lock into a crystal.',
-    note: 'Three calcium to two phosphate is the ratio in which the charges balance. Bone builds it on a mesh of protein.',
+    leadsTo: ['bones', 'tooth enamel'],
+    where: 'The hard part of your bones, and almost all of your tooth enamel.',
+    why: 'Calcium hands electrons to phosphate groups (phosphorus sharing electrons with four oxygens) and to hydroxide (an oxygen holding a hydrogen).',
+    note: 'A calcium phosphate crystal. Bone grows tiny crystals of it on a mesh of protein, which is why bone is hard but not brittle.',
+    lattice: {
+      cod: '9002213',
+      centre: 'P',
+      radius: 5.2,
+      bonds: [
+        ['P', 'O', 1.7],
+        ['O', 'H', 1.1],
+        ['Ca', 'O', 2.6],
+      ],
+    },
   },
   {
     id: 'lime',
@@ -380,6 +425,7 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
     where: 'Made by roasting limestone; the start of cement and mortar.',
     why: 'Calcium hands two electrons to oxygen, and the two charged atoms stack like table salt.',
     note: 'A crystal of calcium and oxide ions (charged atoms), with the same cube pattern as table salt.',
+    lattice: { cod: '1000044', centre: 'Ca', radius: 4.2, bonds: [['Ca', 'O', 2.6]] },
   },
   {
     id: 'titanium-dioxide',
@@ -393,6 +439,7 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
     where: 'The bright white in most paint, toothpaste and mineral sunscreen.',
     why: 'Titanium hands electrons to two oxygens, and the charged atoms pack tightly into a crystal that scatters light.',
     note: 'A crystal, not single molecules.',
+    lattice: { cod: '9004141', centre: 'Ti', radius: 4.6, bonds: [['Ti', 'O', 2.1]] },
   },
   {
     id: 'corundum',
@@ -407,6 +454,7 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
       'Ruby and sapphire are this, coloured by a trace of another metal; and the same oxide forms the thin skin on aluminium foil.',
     why: 'Aluminium hands electrons to oxygen, and the tightly packed charged atoms make one of the hardest minerals.',
     note: 'Two aluminium to three oxygen is the ratio in which the charges balance.',
+    lattice: { cod: '1000017', centre: 'Al', radius: 4.0, bonds: [['Al', 'O', 2.1]] },
   },
   {
     id: 'magnetite',
@@ -420,6 +468,7 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
     where: 'A black iron ore that is naturally magnetic: the first compasses used it.',
     why: 'Iron hands electrons to oxygen in two different amounts, two or three each, and the mix packs into a magnetic crystal.',
     note: 'Like rust, but with less oxygen: three iron to four oxygen.',
+    lattice: { cod: '1011032', centre: 'Fe', radius: 4.2, bonds: [['Fe', 'O', 2.2]] },
   },
   {
     id: 'pyrite',
@@ -433,6 +482,15 @@ export const COMPOUND_SOURCES: readonly CompoundSource[] = [
     where: "Shiny gold-coloured cubes in rock, called fool's gold.",
     why: 'Iron hands electrons to pairs of sulfur atoms, which share electrons with each other, and the crystal grows as cubes.',
     note: 'The cube-shaped crystals you can find in rock are the lattice, grown large.',
+    lattice: {
+      cod: '9000594',
+      centre: 'Fe',
+      radius: 4.6,
+      bonds: [
+        ['Fe', 'S', 2.4],
+        ['S', 'S', 2.3],
+      ],
+    },
   },
   {
     id: 'hydrogen-sulfide',

@@ -1,6 +1,9 @@
-// Ball-and-stick shapes for combine mode (ADR 20): PubChem's computed 3D conformers, baked to
-// compact coordinates by `npm run data:compounds`, plus a few drawn by hand where PubChem has
-// no conformer. Free of zod, so the app can import the types and helpers.
+// Ball-and-stick shapes for combine mode (ADR 20), baked by `npm run data:compounds`:
+// molecules from PubChem's computed 3D conformers, lattices as small chunks cut from
+// Crystallography Open Database structures, and a few drawn by hand where neither source
+// has one. Free of zod, so the app can import the types and helpers.
+import { cellCounts, cutChunk, chunkBonds, fillCell, type Cif } from './cif.ts';
+import type { LatticeSpec } from './source.ts';
 
 /** A molecule's atoms and bonds. Coordinates in ångström, centred on the atoms' mean. */
 export interface MoleculeShape {
@@ -120,32 +123,166 @@ export function atomDistance(shape: MoleculeShape, i: number, j: number): number
   return Math.hypot(...d);
 }
 
-/** What `compound-shapes.json` holds: atom colours and one shape per molecule. */
+/** A lattice or alloy chunk: a molecule-like shape plus where it came from. */
+export interface CrystalShape extends MoleculeShape {
+  /** "COD 1000041", or "hand" for a chunk built here. */
+  source: string;
+}
+
+/** What `compound-shapes.json` holds: atom colours and one shape per molecule, lattice and alloy. */
 export interface CompoundShapes {
   /** CPK colour (`#rrggbb`) for every element the compound set uses. */
   cpk: Record<string, string>;
   molecules: Record<string, MoleculeShape>;
+  crystals: Record<string, CrystalShape>;
+}
+
+/** A chunk of a cubic metal: every lattice point within `radius` Å of one at the origin. */
+function cubicMetal(packing: 'bcc' | 'fcc', a: number, radius: number): [number, number, number][] {
+  const basis: [number, number, number][] =
+    packing === 'bcc'
+      ? [
+          [0, 0, 0],
+          [0.5, 0.5, 0.5],
+        ]
+      : [
+          [0, 0, 0],
+          [0.5, 0.5, 0],
+          [0.5, 0, 0.5],
+          [0, 0.5, 0.5],
+        ];
+  const out: [number, number, number][] = [];
+  for (let i = -3; i <= 3; i++)
+    for (let j = -3; j <= 3; j++)
+      for (let k = -3; k <= 3; k++)
+        for (const [u, v, w] of basis) {
+          const p: [number, number, number] = [(i + u) * a, (j + v) * a, (k + w) * a];
+          if (Math.hypot(...p) <= radius + 1e-6) out.push(p);
+        }
+  return out.toSorted(
+    (p, q) => Math.hypot(...p) - Math.hypot(...q) || p[0] - q[0] || p[1] - q[1] || p[2] - q[2],
+  );
+}
+
+function handCrystal(
+  elements: string[],
+  points: [number, number, number][],
+  bonds: [number, number, number][],
+): CrystalShape {
+  return { ...centre(elements, points, bonds), source: 'hand' };
 }
 
 /**
+ * Chunks with no database structure to cut from:
+ * - Bleach: solid sodium hypochlorite is not stable without water, so it is drawn as one
+ *   ion pair, a sodium ion beside a hypochlorite ion (Cl–O 1.69 Å, as in its pentahydrate).
+ * - Steel: body-centred cubic iron (a = 2.8665 Å), with one carbon in the octahedral gap
+ *   between two irons, the site carbon takes in iron.
+ * - Bronze: face-centred cubic copper (a = 3.6149 Å) with tin on two of its 19 sites, about
+ *   one atom in ten.
+ */
+export const HAND_CRYSTALS: Readonly<Record<string, CrystalShape>> = (() => {
+  const iron = cubicMetal('bcc', 2.8665, 4.1);
+  const copper = cubicMetal('fcc', 3.6149, 3.7);
+  return {
+    bleach: handCrystal(
+      ['Na', 'O', 'Cl'],
+      [
+        [-2.4, 0, 0],
+        [0, 0, 0],
+        [1.69, 0, 0],
+      ],
+      [[1, 2, 1]],
+    ),
+    steel: handCrystal([...iron.map(() => 'Fe'), 'C'], [...iron, [2.8665 / 2, 0, 0]], []),
+    bronze: handCrystal(
+      copper.map((_, i) => (i === 5 || i === 14 ? 'Sn' : 'Cu')),
+      copper,
+      [],
+    ),
+  };
+})();
+
+/**
+ * Cuts a lattice's chunk from its filled cell. The cell must hold a whole number of formula
+ * units (which catches a misread CIF or a wrong entry), and the chunk every element.
+ */
+export function buildCrystal(
+  id: string,
+  spec: LatticeSpec,
+  cif: Cif,
+  formula: readonly { symbol: string; count: number | null }[],
+): CrystalShape {
+  const atoms = fillCell(cif);
+  const counts = cellCounts(atoms);
+  const first = formula[0]!;
+  const z = (counts.get(first.symbol) ?? 0) / first.count!;
+  const whole =
+    Number.isInteger(z) &&
+    z > 0 &&
+    counts.size === formula.length &&
+    formula.every((e) => counts.get(e.symbol) === e.count! * z);
+  if (!whole)
+    throw new Error(
+      `${id}: COD ${spec.cod} cell holds ${[...counts].map(([s, n]) => s + n).join(' ')}, not whole formula units`,
+    );
+  const chunk = cutChunk(cif, atoms, spec.centre, spec.radius);
+  const present = new Set(chunk.map((a) => a.symbol));
+  if (formula.some((e) => !present.has(e.symbol)))
+    throw new Error(`${id}: chunk misses an element; widen its radius`);
+  if (chunk.length < 8 || chunk.length > 80)
+    throw new Error(`${id}: chunk has ${chunk.length} atoms; aim for 8–80`);
+  const bonds = chunkBonds(chunk, spec.bonds).map(([a, b]): [number, number, number] => [a, b, 1]);
+  return {
+    elements: chunk.map((a) => a.symbol),
+    xyz: chunk.flatMap((a) => a.p.map(round)),
+    bonds,
+    source: `COD ${spec.cod}`,
+  };
+}
+
+type ShapeCompound = {
+  id: string;
+  kind: string;
+  elements: { symbol: string; count: number | null }[];
+};
+
+/**
  * Builds the shapes file. Every molecule gets a PubChem conformer or a hand shape (never
- * both), and its atoms must match the compound's formula; every element in the set needs
- * a CPK colour.
+ * both), and its atoms must match the compound's formula. Every lattice gets a chunk from
+ * its COD cell or a hand chunk, and every alloy a hand chunk. Every element in the set
+ * needs a CPK colour.
  */
 export function buildShapes(
-  compounds: readonly {
-    id: string;
-    kind: string;
-    elements: { symbol: string; count: number | null }[];
-  }[],
+  compounds: readonly ShapeCompound[],
   conformers: Readonly<Record<string, PubChemConformer>>,
   cpkHex: Readonly<Record<string, string>>,
   symbolOf: (n: number) => string,
+  cells: Readonly<Record<string, Cif>>,
+  lattices: Readonly<Record<string, LatticeSpec>>,
 ): CompoundShapes {
   const molecules: Record<string, MoleculeShape> = {};
+  const crystals: Record<string, CrystalShape> = {};
   const used = new Set<string>();
   for (const c of compounds) {
     for (const e of c.elements) used.add(e.symbol);
+    if (c.kind === 'lattice' || c.kind === 'alloy') {
+      const spec = lattices[c.id];
+      const hand = HAND_CRYSTALS[c.id];
+      if (spec && hand) throw new Error(`${c.id} has both a COD entry and a hand chunk`);
+      if (hand) {
+        const symbols = new Set(hand.elements);
+        if (symbols.size !== c.elements.length || c.elements.some((e) => !symbols.has(e.symbol)))
+          throw new Error(`${c.id}: hand chunk elements do not match its formula`);
+        crystals[c.id] = hand;
+        continue;
+      }
+      if (!spec) throw new Error(`No crystal for ${c.id}`);
+      const cell = cells[c.id];
+      if (!cell) throw new Error(`No COD cell for ${c.id}`);
+      crystals[c.id] = buildCrystal(c.id, spec, cell, c.elements);
+      continue;
+    }
     if (c.kind !== 'molecule') continue;
     const raw = conformers[c.id];
     const hand = HAND_SHAPES[c.id];
@@ -165,5 +302,5 @@ export function buildShapes(
     if (!hex || !/^[0-9A-Fa-f]{6}$/.test(hex)) throw new Error(`No CPK colour for ${symbol}`);
     cpk[symbol] = `#${hex.toLowerCase()}`;
   }
-  return { cpk, molecules };
+  return { cpk, molecules, crystals };
 }

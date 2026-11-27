@@ -15,6 +15,26 @@ Derived in code, not fetched: period, group and block, from the atomic number (`
 
 Combine mode's compound set ([ADR 20](adr/0020-combine-mode.md)) is built by `npm run data:compounds` (`scripts/build-compounds.ts`) and committed as `src/data/compounds.json`. The list, display formulas and card copy are curated in `src/core/compounds/source.ts`; the script looks each compound up by name and fails if PubChem's formula disagrees with the display formula. It takes, per compound, PubChem's CID and molecular formula (PUG-REST), and per molecule its computed 3D conformer (`record_type=3d`), baked into `src/data/compound-shapes.json` with the CPK colours of the elements the set uses (from the periodic table endpoint above). These are computed by PubChem itself and fall under [NCBI's molecular data policy](https://www.ncbi.nlm.nih.gov/home/about/policies/), which places no restriction on use or redistribution. PubChem also carries text from hundreds of depositors under their own terms ([PubChem downloads, data usage and licensing](https://pubchem.ncbi.nlm.nih.gov/docs/downloads)); none of it is taken. Compound card copy is written for this project. PubChem has no conformer for hydrogen gas or nitrogen dioxide; those two are drawn by hand from experimental geometries in [NIST's CCCBDB](https://cccbdb.nist.gov/) (H–H 0.741 Å; N–O 1.193 Å at 134.1°), in `HAND_SHAPES` (`src/core/compounds/shapes.ts`). Scripted requests stay under PubChem's rate limit.
 
+Lattices (salts and minerals) are drawn as small chunks of their real crystal. The script fetches each one's CIF from the [Crystallography Open Database](https://www.crystallography.net/) (CC0), fills the unit cell from its symmetry operations, checks the cell holds whole formula units, and cuts the atoms within a few ångström of one centre atom. Only the parsed cell, operations and sites are kept, as a test fixture. A partly filled site (hydroxyapatite's hydroxide column) keeps that share of its positions, in one ordered arrangement.
+
+| Compound          | COD entry                                                   | Structure                           |
+| ----------------- | ----------------------------------------------------------- | ----------------------------------- |
+| Table salt        | [1000041](https://www.crystallography.net/cod/1000041.html) | Rock salt                           |
+| Quicklime         | [1000044](https://www.crystallography.net/cod/1000044.html) | Rock salt                           |
+| Calcium carbonate | [9000965](https://www.crystallography.net/cod/9000965.html) | Calcite                             |
+| Quartz            | [9000775](https://www.crystallography.net/cod/9000775.html) | α-quartz                            |
+| Rust              | [9000139](https://www.crystallography.net/cod/9000139.html) | Hematite                            |
+| Corundum          | [1000017](https://www.crystallography.net/cod/1000017.html) | Corundum                            |
+| Magnetite         | [1011032](https://www.crystallography.net/cod/1011032.html) | Spinel                              |
+| Titanium dioxide  | [9004141](https://www.crystallography.net/cod/9004141.html) | Rutile                              |
+| Pyrite            | [9000594](https://www.crystallography.net/cod/9000594.html) | Pyrite                              |
+| Baking soda       | [1011016](https://www.crystallography.net/cod/1011016.html) | Nahcolite (with hydrogen positions) |
+| Hydroxyapatite    | [9002213](https://www.crystallography.net/cod/9002213.html) | Hydroxylapatite (synthetic sample)  |
+
+Three chunks are built by hand in `HAND_CRYSTALS` (`src/core/compounds/shapes.ts`). Bleach: solid sodium hypochlorite is not stable without water, so it is one ion pair (Cl–O 1.69 Å). Steel: body-centred cubic iron (a = 2.8665 Å) with one carbon in an octahedral gap. Bronze: face-centred cubic copper (a = 3.6149 Å) with tin on two of 19 sites.
+
+Bone mineral is hydroxyapatite, Ca₅(PO₄)₃(OH), rather than tricalcium phosphate, Ca₃(PO₄)₂, so the body context uses hydroxyapatite.
+
 ## Units
 
 Melting and boiling points in kelvin, as normally quoted (1 atm; the temperature lens, ADR 18, corrects helium, whose melting point is at about 25 atm, and treats arsenic's boiling point below its melting point as sublimation); density in g/cm³ for every state; atomic radius in picometres (van der Waals); ionization energy and electron affinity in eV; electronegativity on the Pauling scale. Unknown values are `null`.

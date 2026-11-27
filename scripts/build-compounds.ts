@@ -6,12 +6,15 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { ELEMENTS } from '../src/core/elements/index.ts';
 import { buildCompounds, type PubChemCompoundRow } from '../src/core/compounds/normalize.ts';
+import { parseCif, type Cif } from '../src/core/compounds/cif.ts';
 import { HAND_SHAPES, buildShapes, type PubChemConformer } from '../src/core/compounds/shapes.ts';
-import { COMPOUND_SOURCES } from '../src/core/compounds/source.ts';
+import { COMPOUND_SOURCES, type LatticeSpec } from '../src/core/compounds/source.ts';
 
 const USER_AGENT = 'elemental-data-script/0.1 (periodic table build script)';
 const OUT = new URL('../src/data/compounds.json', import.meta.url);
 const SHAPES_OUT = new URL('../src/data/compound-shapes.json', import.meta.url);
+const CELLS_FIXTURE = new URL('../src/core/compounds/__fixtures__/cod-cells.json', import.meta.url);
+const COD = 'https://www.crystallography.net/cod';
 const SHAPES_FIXTURE = new URL(
   '../src/core/compounds/__fixtures__/pubchem-shapes.json',
   import.meta.url,
@@ -24,13 +27,15 @@ const PUG = 'https://pubchem.ncbi.nlm.nih.gov/rest/pug';
 /** PubChem asks for no more than 5 requests a second; stay well under. */
 const GAP_MS = 300;
 
-async function fetchJson<T>(url: string): Promise<T> {
+async function fetchText(url: string, accept: string): Promise<string> {
   await new Promise((r) => setTimeout(r, GAP_MS));
-  const res = await fetch(url, {
-    headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' },
-  });
+  const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT, Accept: accept } });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText} from ${url}`);
-  return (await res.json()) as T;
+  return res.text();
+}
+
+async function fetchJson<T>(url: string): Promise<T> {
+  return JSON.parse(await fetchText(url, 'application/json')) as T;
 }
 
 async function fetchRows(): Promise<Record<string, PubChemCompoundRow>> {
@@ -114,13 +119,40 @@ if (!offline) {
   shapeRows.cpk = Object.fromEntries(Object.entries(shapeRows.cpk).filter(([s]) => used.has(s)));
   await writeFile(SHAPES_FIXTURE, `${JSON.stringify(shapeRows)}\n`);
 }
+const lattices: Record<string, LatticeSpec> = Object.fromEntries(
+  COMPOUND_SOURCES.flatMap((c) => (c.lattice ? [[c.id, c.lattice]] : [])),
+);
+// Each lattice's CIF from the Crystallography Open Database, kept only as the parsed cell,
+// symmetry operations and sites.
+const cells: Record<string, Cif> = offline
+  ? JSON.parse(await readFile(CELLS_FIXTURE, 'utf8'))
+  : Object.fromEntries(
+      await Promise.all(
+        Object.entries(lattices).map(async ([id, spec], i) => {
+          await new Promise((r) => setTimeout(r, i * GAP_MS));
+          return [
+            id,
+            parseCif(await fetchText(`${COD}/${spec.cod}.cif`, 'chemical/x-cif')),
+          ] as const;
+        }),
+      ),
+    );
+if (!offline) await writeFile(CELLS_FIXTURE, `${JSON.stringify(cells)}\n`);
+
 const symbolOf = (n: number) => {
   const e = ELEMENTS[n - 1];
   if (!e) throw new Error(`No element ${n}`);
   return e.symbol;
 };
-const shapes = buildShapes(compounds, shapeRows.conformers, shapeRows.cpk, symbolOf);
+const shapes = buildShapes(
+  compounds,
+  shapeRows.conformers,
+  shapeRows.cpk,
+  symbolOf,
+  cells,
+  lattices,
+);
 await writeFile(SHAPES_OUT, `${JSON.stringify(shapes)}\n`);
 console.log(
-  `Wrote ${Object.keys(shapes.molecules).length} molecule shapes to src/data/compound-shapes.json`,
+  `Wrote ${Object.keys(shapes.molecules).length} molecules and ${Object.keys(shapes.crystals).length} crystals to src/data/compound-shapes.json`,
 );
