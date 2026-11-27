@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import type { Filters } from '../core/explorer.ts';
+import type { Lens } from '../core/lens.ts';
 
 /** The tile the character stands on, as the interface needs it. */
 export interface ActiveTile {
@@ -33,6 +35,12 @@ export interface AppState {
   /** The latest request to walk back to `lastTile` (R, Home or the button); the scene carries it out. */
   returnSeq: number;
   requestReturn: () => void;
+  /**
+   * How the table is read (`core/lens.ts`): the property each lens shows, and the explorer's
+   * filters, which dim the tiles they exclude. Changes only when the player changes them.
+   */
+  lens: Lens;
+  setLensFilters: (filters: Filters) => void;
 }
 
 /**
@@ -57,4 +65,11 @@ export const useAppStore = create<AppState>()((set) => ({
   setOffTable: (offTable) => set({ offTable }),
   returnSeq: 0,
   requestReturn: () => set((s) => ({ returnSeq: s.returnSeq + 1 })),
+  // Written out rather than `NO_LENS`, so the shell does not pull in the lens and explorer code.
+  lens: {
+    height: null,
+    colour: null,
+    filters: { category: null, state: null, block: null, period: null, group: null },
+  },
+  setLensFilters: (filters) => set((s) => ({ lens: { ...s.lens, filters } })),
 }));

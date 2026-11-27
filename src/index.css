@@ -306,6 +306,16 @@ body {
   border-color: #6e7681;
 }
 
+/* Shown while explorer filters dim part of the table, so the dimming has a visible cause. */
+.explore-filtered {
+  padding: 0.05rem 0.35rem;
+  border-radius: 4px;
+  background: #e6edf3;
+  color: #0d1117;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 kbd {
   padding: 0.05rem 0.3rem;
   border: 1px solid #30363d;

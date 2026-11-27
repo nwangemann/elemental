@@ -16,16 +16,44 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { easeLevel, tileTop, type Activation } from '../core/activation.ts';
 import { CONFIG } from '../core/config.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
+import { NO_FILTERS, type Filters } from '../core/explorer.ts';
+import { filterDim, shownDim, stepDim } from '../core/lens.ts';
 import { LAYOUT, TILES } from '../core/layout.ts';
 import { THEMES, surfaceAt } from '../core/themes.ts';
+import { useAppStore } from '../state/store.ts';
 import {
   createTileMaterial,
+  DIM_ATTRIBUTE,
   GLOW_COLOR_ATTRIBUTE,
   SURFACE_ATTRIBUTE,
   updateTileMaterial,
 } from './tileMaterial.ts';
 
 const THEME_OF_TILE = ELEMENTS.map((e) => THEMES[e.category]);
+
+const prefersReducedMotion = (): boolean =>
+  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
+/** Each tile's filter dim: where it is now, and where the explorer's filters want it. */
+interface Dim {
+  levels: Float32Array;
+  targets: Float32Array;
+  moving: boolean;
+}
+
+/** Dim state that starts at its targets: tiles already filtered out on mount appear dimmed. */
+function createDim(filters: Filters): Dim {
+  const targets = filterDim(ELEMENTS, filters);
+  return { levels: targets.slice(), targets, moving: true };
+}
+
+const EMPTY_DIM = createDim(NO_FILTERS);
+
+/** Writes every tile's shown dim (its dim, lifted as it wakes) into the `aDim` buffer. */
+function writeDim(out: Float32Array, dim: Dim, activation: Activation): void {
+  for (let i = 0; i < out.length; i++)
+    out[i] = shownDim(dim.levels[i]!, easeLevel(activation.levels[i]!));
+}
 
 function writeTile(
   m: InstancedMesh,
@@ -71,6 +99,8 @@ function createTileGeometry(): BoxGeometry {
     color.set(THEME_OF_TILE[i]!.awake.glowColor).toArray(glow, i * 3);
   geometry.setAttribute(SURFACE_ATTRIBUTE, surface.setUsage(DynamicDrawUsage));
   geometry.setAttribute(GLOW_COLOR_ATTRIBUTE, new InstancedBufferAttribute(glow, 3));
+  const dim = new InstancedBufferAttribute(new Float32Array(TILES.length), 1);
+  geometry.setAttribute(DIM_ATTRIBUTE, dim.setUsage(DynamicDrawUsage));
   return geometry;
 }
 
@@ -81,6 +111,8 @@ function createTileGeometry(): BoxGeometry {
  * rises by stretching upward from the ground, so no gap opens under it. Only dirty tiles are
  * rewritten. Metals reflect a procedural studio environment (three's `RoomEnvironment`), set on
  * this material only, so nothing is downloaded and the rest of the scene is lit as before.
+ * Tiles the explorer's filters exclude fade to a grey, darker look (`aDim`, `core/lens.ts`) over
+ * `CONFIG.tiles.dimDuration` (at once with reduced motion); the tile underfoot keeps its colour.
  */
 export function Tiles({ activation }: { activation: Activation }) {
   const mesh = useRef<InstancedMesh>(null);
@@ -89,6 +121,17 @@ export function Tiles({ activation }: { activation: Activation }) {
 
   const material = useMemo(() => createTileMaterial(createStudioEnvironment(gl)), [gl]);
   const geometry = useMemo(() => createTileGeometry(), []);
+  const dimRef = useRef<Dim>(EMPTY_DIM);
+
+  // Targets come from the store's filters now and whenever the player changes one; no re-render.
+  useEffect(() => {
+    dimRef.current = createDim(useAppStore.getState().lens.filters);
+    return useAppStore.subscribe((s, prev) => {
+      if (s.lens.filters === prev.lens.filters) return;
+      filterDim(ELEMENTS, s.lens.filters, dimRef.current.targets);
+      dimRef.current.moving = true;
+    });
+  }, []);
 
   useEffect(
     () => () => {
@@ -99,17 +142,27 @@ export function Tiles({ activation }: { activation: Activation }) {
     [geometry, material],
   );
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock }, dt) => {
     const m = mesh.current;
     if (!m) return;
-    const { glowScale, pulseSpeed, envIntensity } = CONFIG.tiles;
+    const dim = dimRef.current;
+    const { glowScale, pulseSpeed, envIntensity, dimStrength, dimDuration } = CONFIG.tiles;
     updateTileMaterial(
       m.material as MeshStandardMaterial,
       clock.elapsedTime,
       glowScale,
       pulseSpeed,
       envIntensity,
+      dimStrength,
     );
+    const dimChanged = dim.moving;
+    if (dim.moving)
+      dim.moving = stepDim(dim.levels, dim.targets, dt, prefersReducedMotion() ? 0 : dimDuration);
+    if (dimChanged || activation.anyDirty) {
+      const shown = m.geometry.getAttribute(DIM_ATTRIBUTE) as InstancedBufferAttribute;
+      writeDim(shown.array as Float32Array, dim, activation);
+      shown.needsUpdate = true;
+    }
     if (!activation.anyDirty) return;
     const surface = m.geometry.getAttribute(SURFACE_ATTRIBUTE) as InstancedBufferAttribute;
     for (let i = 0; i < TILES.length; i++)
@@ -127,6 +180,9 @@ export function Tiles({ activation }: { activation: Activation }) {
       writeTile(m, dummy, surface.array as Float32Array, activation, i);
       m.setColorAt(i, color.set(THEME_OF_TILE[i]!.color));
     }
+    const shown = m.geometry.getAttribute(DIM_ATTRIBUTE) as InstancedBufferAttribute;
+    writeDim(shown.array as Float32Array, dimRef.current, activation);
+    shown.needsUpdate = true;
     m.instanceMatrix.needsUpdate = true;
     surface.needsUpdate = true;
     if (m.instanceColor) m.instanceColor.needsUpdate = true;

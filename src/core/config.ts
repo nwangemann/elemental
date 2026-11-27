@@ -28,6 +28,9 @@ export const CONFIG_DEFAULTS = {
     /** Tap-to-walk marker on the target (see `core/tapMarker.ts`): pulse length s, held opacity. */
     markerPulse: 0.45,
     markerOpacity: 0.45,
+    /** Tiles the explorer's filters exclude: how far they darken and grey (0–1), and fade time s. */
+    dimStrength: 0.7,
+    dimDuration: 0.25,
   },
   labels: {
     /** Cap height of the element symbol, in world units. */
@@ -135,6 +138,8 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     ringWidth: { min: 0.01, max: 0.15, step: 0.005 },
     markerPulse: { min: 0.05, max: 1.5, step: 0.01 },
     markerOpacity: { min: 0, max: 1, step: 0.01 },
+    dimStrength: { min: 0, max: 1, step: 0.01 },
+    dimDuration: { min: 0, max: 1, step: 0.01 },
   },
   labels: {
     symbolSize: { min: 0.1, max: 0.8, step: 0.01 },

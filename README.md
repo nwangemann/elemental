@@ -15,7 +15,7 @@ A walkable periodic table. A small figure strolls across a 3D table of the eleme
 - Walk somewhere: click or tap a tile and the figure walks to it. Any key or the joystick takes over.
 - Touch: drag the joystick at the bottom left (shown on touch screens).
 - Zoom: mouse wheel, two-finger pinch, or `+` / `-`.
-- Explore: `⌘K` / `Ctrl K`, `/` or the Explore button. Search by name, symbol or number, sort and filter, then Enter or click to jump there.
+- Explore: `⌘K` / `Ctrl K`, `/` or the Explore button. Search by name, symbol or number, sort and filter, then Enter or click to jump there. Filters also dim the tiles they leave out on the table.
 - List: the List button shows every element as a plain table (number, symbol, name, family, period, group); choose a name to walk there. Use it with a screen reader or instead of the 3D scene.
 - Link to an element: add `#/` and its symbol to the address, for example `#/Au`.
 

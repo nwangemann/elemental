@@ -155,6 +155,11 @@ export function Explorer() {
 
   const filtered = Object.values(options.filters).some((v) => v !== null);
 
+  // The filters also dim the tiles they exclude on the table, open or closed (core/lens.ts).
+  useEffect(() => {
+    useAppStore.getState().setLensFilters(options.filters);
+  }, [options.filters]);
+
   return (
     <>
       <button
@@ -164,6 +169,7 @@ export function Explorer() {
         aria-keyshortcuts="Meta+K Control+K /"
       >
         Explore <kbd>{SHORTCUT}</kbd>
+        {filtered && <span className="explore-filtered">Filtered</span>}
       </button>
       <dialog
         ref={dialog}
