@@ -42,4 +42,5 @@ The preview pane runs `requestAnimationFrame` at about 30 Hz, so the overlay's f
 - `npm run check` ends with `size:check`, which builds the app (about a second) and fails above its ceilings (shell 76 KB, total 300 KB of gzipped JS).
 - In a hidden pane, lens eases (0.4 s) take seconds to finish, so a screenshot right after a hash change shows the old state. Wait about 8 s before judging a lens visually.
 - If the preview pane is hidden (`tabs_context` says so), rAF drops to 1–2 Hz and walking crawls: frame numbers are useless. Show it with the app's show-pane tool (`preview`) first. Failing that, measure headless with a throwaway Playwright spec in `e2e/` that wraps `requestAnimationFrame` with `gl.finish()` timing, then delete the spec.
+- In the preview pane, `navigate` to the same page with a new hash only changes the hash: the page does not reload and keeps old module state. Use `location.reload()` after editing code the page read on load.
 - Drive walking from the page console with `KeyboardEvent`s dispatched on `window` (keydown by `code`, wait, keyup); clicking the canvas is a tap-to-walk.

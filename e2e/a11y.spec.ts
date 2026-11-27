@@ -57,6 +57,13 @@ test('the temperature lens row passes an accessibility audit', async ({ page }) 
   await audit(page);
 });
 
+test('the discovery lens row passes an accessibility audit', async ({ page }) => {
+  await ready(page, '/#/Ne?year=1869', '10');
+  await expect(page.getByRole('slider', { name: 'Discovery' })).toBeVisible();
+  await expect(page.locator('.era-lens .scrub-summary').first()).toBeVisible();
+  await audit(page);
+});
+
 test('the explorer, key map and element list pass an accessibility audit', async ({ page }) => {
   await ready(page);
   await page.keyboard.press('/');
@@ -77,7 +84,7 @@ test('the explorer, key map and element list pass an accessibility audit', async
 test('tab order runs from the title buttons to the table, then the panel', async ({ page }) => {
   await ready(page);
   const order: string[] = [];
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 9; i++) {
     await page.keyboard.press('Tab');
     order.push(
       await page.evaluate(() => {
@@ -87,17 +94,19 @@ test('tab order runs from the title buttons to the table, then the panel', async
       }),
     );
   }
-  expect(order.slice(0, 7)).toEqual([
+  // Four lens stops: the height and colour selects, the temperature and discovery toggles.
+  expect(order.slice(0, 8)).toEqual([
     expect.stringMatching(/^Explore/),
     expect.stringMatching(/^Keys/),
     'List',
     'lens',
     'lens',
     'lens',
+    'lens',
     'scene',
   ]);
   // After the table, focus moves into the open panel (its selected tab).
-  expect(order[7]).toBe('Overview');
+  expect(order[8]).toBe('Overview');
 });
 
 test('the element list reads the table as text and walks to a choice', async ({ page }) => {

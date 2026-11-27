@@ -221,6 +221,48 @@ test('the temperature lens follows the deep link, the T key and its presets', as
   await expect(slider).toHaveAttribute('aria-valuetext', /^1200 K/);
 });
 
+test('the discovery timeline follows the deep link, the Y key and its presets', async ({
+  page,
+}) => {
+  await page.goto('/#/Ne?year=1869');
+  const panel = page.getByRole('complementary', { name: 'Neon' });
+  await expect(panel).toBeVisible({ timeout: 15_000 });
+  await expect(panel.locator('dt', { hasText: 'In 1869' }).locator('+ dd')).toHaveText(
+    'Not yet discovered',
+  );
+  const slider = page.getByRole('slider', { name: 'Discovery' });
+  await expect(slider).toHaveAttribute('aria-valuetext', "1869, mendeleev's table");
+  await expect(page.getByRole('button', { name: "Mendeleev's table" })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(page.locator('.era-lens .scrub-summary').first()).toHaveText('63 known, 55 to come');
+
+  // A preset moves the slider and the link; the counts are announced once it settles.
+  await page.getByRole('button', { name: 'Today' }).click();
+  await expect(page).toHaveURL(/#\/Ne\?year=2010$/);
+  await expect(panel.locator('dt', { hasText: 'In 2010' }).locator('+ dd')).toHaveText('Known');
+  await expect(page.locator('.era-lens [aria-live]')).toHaveText(/^118 known, 0 to come/);
+
+  // Y turns the lens off from the table, which drops the parameter and the panel line...
+  await page.locator('#scene').focus();
+  await page.keyboard.press('y');
+  await expect(slider).toHaveCount(0);
+  await expect(page).toHaveURL(/#\/Ne$/);
+  await expect(page.locator('.lens-control [role=status]')).toHaveText('Discovery lens off');
+  await expect(panel.getByText('In 2010')).toHaveCount(0);
+
+  // ...and back on at the last year, with focus on the slider; Home goes to Antiquity.
+  await page.keyboard.press('y');
+  await expect(slider).toBeFocused();
+  await expect(page.locator('.lens-control [role=status]')).toHaveText('Discovery lens: 2010');
+  await page.keyboard.press('Home');
+  await expect(page).toHaveURL(/#\/Ne\?year=antiquity$/);
+  await expect(slider).toHaveAttribute('aria-valuetext', 'Antiquity, antiquity');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#scene')).toBeFocused();
+});
+
 test('walking a density landscape climbs small steps and stops at a cliff', async ({ page }) => {
   const status = page.locator('[data-tile]');
 

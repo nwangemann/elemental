@@ -6,6 +6,9 @@ import {
   YEAR_MIN,
   SETTLE_WINDOW,
   createEraEase,
+  discoveryNews,
+  eraFact,
+  latestDiscoveries,
   eraGrey,
   eraSink,
   retargetEra,
@@ -236,5 +239,29 @@ describe('eraSink and eraGrey', () => {
     expect(eraSink(SETTLE_WINDOW, 1, 0.3)).toBeCloseTo(eraSink(SETTLE_WINDOW, 0, 0.3));
     expect(eraSink(0.7, 1, 0.3)).toBe(eraSink(0.7, 0, 0.3));
     expect(eraSink(0, 1, 0.3)).toBe(0);
+  });
+});
+
+describe('the lens in words', () => {
+  const ne = ELEMENTS[9]!;
+  const fe = ELEMENTS[25]!;
+
+  it('says in the panel whether an element was known in the year', () => {
+    expect(eraFact(ne, 1869)).toEqual({ label: 'In 1869', value: 'Not yet discovered' });
+    expect(eraFact(ne, 1898)).toEqual({ label: 'In 1898', value: 'Known' });
+    expect(eraFact(fe, ANTIQUITY)).toEqual({ label: 'In antiquity', value: 'Known' });
+  });
+
+  it('names what was found between two years, latest first going forward', () => {
+    expect(discoveryNews(ELEMENTS, 1897, 1898)).toBe('Discovered: Ra, Po, Xe, Kr, Ne');
+    expect(discoveryNews(ELEMENTS, 1898, 1897)).toBe('Not yet discovered: Ne, Kr, Xe, Po, Ra');
+    expect(discoveryNews(ELEMENTS, 1898, 1898)).toBe('');
+    expect(discoveryNews(ELEMENTS, ANTIQUITY, 2010)).toMatch(/^Discovered: Ts, .* and \d+ more$/);
+  });
+
+  it('gives the latest year with a discovery and its finds', () => {
+    expect(latestDiscoveries(ELEMENTS, 1898)).toBe('1898: Ne, Kr, Xe, Po, Ra');
+    expect(latestDiscoveries(ELEMENTS, ANTIQUITY)).toBeNull();
+    expect(latestDiscoveries(ELEMENTS, 2010)).toBe('2010: Ts');
   });
 });

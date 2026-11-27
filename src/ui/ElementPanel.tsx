@@ -19,6 +19,7 @@ import {
 } from '../core/elementFacts.ts';
 import { comparison, rankFacts } from '../core/elementRanks.ts';
 import { ELEMENTS, elementByNumber, type Element } from '../core/elements/index.ts';
+import { eraFact } from '../core/discovery.ts';
 import { phaseFact } from '../core/temperature.ts';
 import { accentTokens } from '../core/themes.ts';
 import { useAppStore } from '../state/store.ts';
@@ -222,12 +223,18 @@ function Tabs({ element }: { element: Element }) {
 
 /**
  * The overview facts; while the temperature lens is on, the state at its temperature follows the
- * state at room temperature ("At 310 K: Liquid").
+ * state at room temperature ("At 310 K: Liquid"); while the discovery lens is on, whether it was
+ * known in its year follows the discovery year ("In 1800: Not yet discovered").
  */
 function OverviewTab({ element }: { element: Element }) {
   const kelvin = useAppStore((s) => s.lens.temperature);
+  const year = useAppStore((s) => s.lens.year);
   const facts = overviewFacts(element);
   if (kelvin !== null) facts.splice(2, 0, phaseFact(element, kelvin));
+  if (year !== null) {
+    const at = facts.findIndex((f) => f.label === 'Discovered');
+    facts.splice(at < 0 ? facts.length : at + 1, 0, eraFact(element, year));
+  }
   return <FactList facts={facts} />;
 }
 

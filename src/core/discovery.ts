@@ -1,3 +1,4 @@
+import type { Fact } from './elementFacts.ts';
 import type { Element } from './elements/index.ts';
 
 /**
@@ -234,4 +235,53 @@ export function eraSink(level: number, rising: number, settle: number): number {
 /** How grey a tile at `level` is, 0–1, smoothstepped (the settle never touches colour). */
 export function eraGrey(level: number): number {
   return smooth(level);
+}
+
+/** The panel's line for the lens: "In 1800" → "Not yet discovered" or "Known". */
+export function eraFact(e: Dated, year: number): Fact {
+  const label = year === ANTIQUITY ? 'In antiquity' : `In ${String(year)}`;
+  return { label, value: knownBy(e, year) ? 'Known' : 'Not yet discovered' };
+}
+
+/** How many symbols an announcement names before it says "and N more". */
+const NEWS_LIMIT = 6;
+
+function symbolList(symbols: readonly string[]): string {
+  if (symbols.length <= NEWS_LIMIT) return symbols.join(', ');
+  const rest = symbols.length - NEWS_LIMIT;
+  return `${symbols.slice(0, NEWS_LIMIT).join(', ')} and ${String(rest)} more`;
+}
+
+/**
+ * What changed between two years, as the lens announces it after a drag: "Discovered: Ne, Kr,
+ * Xe, Po, Ra" going forward, "Not yet discovered: …" going back, or '' when nothing changed.
+ * Moving forward names the latest finds first, since they are the ones just reached.
+ */
+export function discoveryNews<E extends Dated & Pick<Element, 'number' | 'symbol'>>(
+  elements: readonly E[],
+  from: number,
+  to: number,
+): string {
+  if (from === to) return '';
+  const found = discoveredIn(elements, from, to).map((e) => e.symbol);
+  if (found.length === 0) return '';
+  if (to > from) return `Discovered: ${symbolList(found.toReversed())}`;
+  return `Not yet discovered: ${symbolList(found)}`;
+}
+
+/**
+ * The latest year with a discovery up to `year`, and what was found in it ("1898: Ne, Kr, Xe,
+ * Po, Ra"), or null at the Antiquity stop or before the first dated discovery.
+ */
+export function latestDiscoveries<E extends Dated & Pick<Element, 'number' | 'symbol'>>(
+  elements: readonly E[],
+  year: number,
+): string | null {
+  let latest = -Infinity;
+  for (const e of elements)
+    if (e.yearDiscovered !== null && !e.discoveredInAntiquity && e.yearDiscovered <= year)
+      latest = Math.max(latest, e.yearDiscovered);
+  if (latest === -Infinity) return null;
+  const found = discoveredIn(elements, latest - 1, latest).map((e) => e.symbol);
+  return `${String(latest)}: ${symbolList(found)}`;
 }

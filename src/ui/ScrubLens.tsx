@@ -19,6 +19,8 @@ const STEP_KEYS: ReadonlySet<string> = new Set([
 export interface Detent {
   value: number;
   label: string;
+  /** A shorter label that phones show on the button ("Mendeleev"); the full one stays its name. */
+  short?: string;
 }
 
 export interface ScrubLensProps {
@@ -168,11 +170,19 @@ export function ScrubLens(props: ScrubLensProps) {
                 key={d.value}
                 type="button"
                 aria-pressed={value === d.value}
+                aria-label={d.short ? d.label : undefined}
                 onClick={() => {
                   setValue(d.value);
                 }}
               >
-                {d.label}
+                {d.short ? (
+                  <>
+                    <span className="detent-long">{d.label}</span>
+                    <span className="detent-short">{d.short}</span>
+                  </>
+                ) : (
+                  d.label
+                )}
               </button>
             ))}
           </div>
@@ -184,7 +194,7 @@ export function ScrubLens(props: ScrubLensProps) {
 }
 
 /** How long the value must stay put before the summary is announced. */
-const ANNOUNCE_DELAY_MS = 600;
+export const ANNOUNCE_DELAY_MS = 600;
 
 /**
  * A scrub lens's summary line. The visible text follows the slider at once; a polite live region

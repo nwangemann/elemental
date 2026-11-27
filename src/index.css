@@ -557,6 +557,12 @@ kbd {
   gap: 0.25rem;
 }
 
+/* Two toggles stack (temperature, discovery): a row at least 24 px tall keeps their centres far
+   enough apart for the WCAG minimum target spacing. */
+.scrub-lens > .lens-row {
+  min-height: 1.5rem;
+}
+
 .scrub-toggle {
   width: 1rem;
   height: 1rem;
@@ -618,6 +624,10 @@ kbd {
   font: inherit;
   font-size: 0.75rem;
   cursor: pointer;
+}
+
+.detent-short {
+  display: none;
 }
 
 .scrub-detents button[aria-pressed='true'] {
@@ -694,6 +704,16 @@ kbd {
 
   .scrub-summary {
     flex-basis: 100%;
+  }
+
+  /* Short preset labels and no "Latest" line, so the discovery row stays three lines. */
+  .detent-long,
+  .era-latest {
+    display: none;
+  }
+
+  .detent-short {
+    display: inline;
   }
 }
 
