@@ -42,6 +42,7 @@ export default function TunePanel() {
   const setLabels = useGroup('labels');
   const setCharacter = useGroup('character');
   const setCamera = useGroup('camera');
+  const setPacing = useGroup('pacing');
 
   useControls('actions', {
     'copy as defaults': button(() => {
@@ -55,6 +56,7 @@ export default function TunePanel() {
       setLabels(CONFIG.labels);
       setCharacter(CONFIG.character);
       setCamera(CONFIG.camera);
+      setPacing(CONFIG.pacing);
     }),
   });
 

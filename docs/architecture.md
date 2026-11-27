@@ -40,6 +40,7 @@
 - `elementRanks.ts`: panel depth. `rankFacts` lists up to three places an element stands out: a top-three rank in the whole table ("3rd densest of all elements"), else leading its period, else its group (a period or group needs three known values to count), over density, melting and boiling points, electronegativity, atomic radius and ionization energy. `comparison` sets an element against another by the property with the largest ratio ("3.5× heavier"; temperatures in kelvin), or says nothing below 1.1×.
 - `frame-stats.ts`: rolling mean and percentile of frame times, allocation-free on push.
 - `quality.ts`: adaptive resolution (ADR 0010). `stepQuality` averages frame intervals over one-second windows after a warm-up and steps the pixel ratio by 0.25 between `minDpr` 0.75 and the display's own ratio (capped at 2): down below about 45 fps, up above about 57 fps. Intervals over 250 ms are pauses. After three changes of direction it settles on the lower ratio. Returns true only when the ratio changes; allocation-free.
+- `pacer.ts`: idle frame pacing (ADR 0016). `stepPacer` takes each frame's interval and whether anything moved, and returns how long to wait before the next frame: 0 while busy, about `1000 / idleFps` ms after `settle` still seconds, less half the display's frame interval (learned from full-rate frames). `wakePacer` resets the stillness; `paced` marks a frame that followed an idle wait. `poseMoved` compares the camera's position and rotation with their last copy. Parameters live in `CONFIG.pacing`.
 
 ## Scene
 
@@ -63,7 +64,8 @@
 - `useKeyboardInput.ts`: listens for key presses on the window and feeds them into one `InputState`. It ignores presses while a text field has focus or with ⌘/Ctrl/Alt held, prevents page scrolling for movement keys, and releases all keys when the window loses focus or is hidden.
 - `useConfigVersion.ts`: re-renders on `CONFIG` changes and returns its version, used as a `key`.
 - `PerfProbe.tsx`: with `?perf` in the URL, an overlay shows draw calls, triangles and mean and p95 frame time twice a second. The same numbers are on the overlay's `data-calls`, `data-mean` and `data-p95` attributes for scripts, with the pixel ratio on `data-dpr`.
-- `QualityGovernor.tsx`: feeds each frame interval to `core/quality.ts` and calls R3F's `setDpr` only when the ratio changes. `?quality=off` pins it.
+- `QualityGovernor.tsx`: feeds each frame interval to `core/quality.ts` and calls R3F's `setDpr` only when the ratio changes. `?quality=off` pins it Frames after an idle wait are left out.
+- `FramePacer.tsx`: the canvas runs `frameloop="demand"`; this asks for every display frame while the figure, camera, tiles or input move, and `CONFIG.pacing.idleFps` once all have been still for `settle` seconds (`core/pacer.ts`, [ADR 16](adr/0016-idle-frame-pacing.md)). Window input and app-store changes wake it.
 
 ## Element panel
 

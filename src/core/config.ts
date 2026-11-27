@@ -126,6 +126,12 @@ export const CONFIG_DEFAULTS = {
     /** How fast the view eases up when the panel sheet opens on narrow screens, 1/s. */
     liftRate: 6,
   },
+  pacing: {
+    /** Frames per second once the scene is still (`core/pacer.ts`); 0 stops until woken. */
+    idleFps: 20,
+    /** Seconds of stillness before the idle rate starts. */
+    settle: 1.5,
+  },
 };
 
 export type Config = typeof CONFIG_DEFAULTS;
@@ -215,6 +221,10 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     introDelay: { min: 0, max: 3, step: 0.1 },
     introDuration: { min: 0, max: 6, step: 0.1 },
     liftRate: { min: 1, max: 30, step: 0.5 },
+  },
+  pacing: {
+    idleFps: { min: 0, max: 60, step: 1 },
+    settle: { min: 0.1, max: 5, step: 0.1 },
   },
 };
 

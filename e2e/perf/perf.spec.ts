@@ -149,3 +149,26 @@ test('frame work while walking', async ({ page }) => {
   // Frame work, not interval: it must leave most of a 60 Hz frame free.
   expect(result.p95Ms).toBeLessThan(8);
 });
+
+/** Idle seconds counted, after the establishing shot and the pacer's settle time. */
+const IDLE_SECONDS = 5;
+
+test('frames while idle', async ({ page }) => {
+  await page.addInitScript(INIT);
+  await page.goto('/?perf&quality=off');
+  await expect(page.locator('#tile-status')).toHaveAttribute('data-tile', '1', {
+    timeout: 20_000,
+  });
+  // Establishing shot (2.5 s) plus the pacer's settle time (1.5 s), with room to spare.
+  await page.waitForTimeout(5_000);
+  await page.evaluate(() => ((window as unknown as { perfFrames: number[] }).perfFrames = []));
+  await page.waitForTimeout(IDLE_SECONDS * 1000);
+  const frames = await page.evaluate(
+    () => (window as unknown as { perfFrames: number[] }).perfFrames.length,
+  );
+  const result = { seconds: IDLE_SECONDS, frames, fps: +(frames / IDLE_SECONDS).toFixed(1) };
+  console.log(`perf:idle ${JSON.stringify(result)}`);
+  // The idle rate is 20 fps (CONFIG.pacing); well under a 60 Hz display, and still drawing.
+  expect(result.fps).toBeGreaterThan(5);
+  expect(result.fps).toBeLessThan(30);
+});

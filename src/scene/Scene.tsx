@@ -7,12 +7,14 @@ import { createController } from '../core/controller.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
 import { parseDeepLink } from '../core/explorer.ts';
 import { createLedge } from '../core/ledge.ts';
+import { createPacer } from '../core/pacer.ts';
 import { TILES } from '../core/layout.ts';
 import { createStick, createWalkTarget } from '../core/steering.ts';
 import { createTapMarker } from '../core/tapMarker.ts';
 import { CameraRig } from './CameraRig.tsx';
 import { Character } from './Character.tsx';
 import { FlightHandler } from './FlightHandler.tsx';
+import { FramePacer } from './FramePacer.tsx';
 import { HeightLens } from './HeightLens.tsx';
 import { Joystick } from './Joystick.tsx';
 import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
@@ -54,11 +56,15 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
   const stick = useMemo(() => createStick(), []);
   const target = useMemo(() => createWalkTarget(), []);
   const marker = useMemo(() => createTapMarker(), []);
+  const pacer = useMemo(() => createPacer(), []);
   return (
     <>
       <Canvas
         className="scene"
         dpr={[1, 2]}
+        // Frames on request: `FramePacer` asks for every display frame while anything moves and
+        // a slow idle rate once the scene is still (ADR 0016).
+        frameloop="demand"
         camera={{ fov: CONFIG.camera.fov, position: [...CONFIG.camera.position] }}
         // The scene is one focusable stop: screen readers pass keys through (application role),
         // the label says how to play, and the live tile status describes where the character is.
@@ -97,8 +103,18 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           ledge={ledge}
         />
         <TapMarkerMesh marker={marker} target={target} activation={activation} />
-        <QualityGovernor />
+        <QualityGovernor pacer={pacer} />
         {onPerf && <PerfProbe onReport={onPerf} />}
+        {/* Last, so it sees this frame's motion and the governor reads `paced` for this frame. */}
+        <FramePacer
+          pacer={pacer}
+          controller={controller}
+          input={input}
+          stick={stick}
+          target={target}
+          ledge={ledge}
+          activation={activation}
+        />
       </Canvas>
       <Joystick stick={stick} />
     </>
