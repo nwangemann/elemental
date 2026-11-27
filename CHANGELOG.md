@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `[` and `]` step to the previous or next element by atomic number: the figure walks there, so H → He → Li tours the table in order. They work on any keyboard layout and stop at hydrogen and oganesson.
 - On phones the joystick floats: drag anywhere on the scene and it appears under your thumb, instead of sitting in a fixed spot that could cover the figure. A short tap still walks to a tile, and a second finger still pinches to zoom. A drag that wanders and comes back to where it started no longer counts as a tap.
 - On phones, while the element sheet is open, the view shifts up so the figure sits in the middle of the visible scene instead of at the sheet's edge, and eases back when the sheet closes (a cut with reduced motion).
 - Tap-to-walk feedback: a tap or click leaves a square marker on the tile it chose (or a small one on the ground), which pulses once as the tap lands and stays faintly until the figure arrives. With reduced motion it fades in place without growing.

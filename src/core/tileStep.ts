@@ -25,6 +25,29 @@ export function stepDirectionForCode(code: string): StepDirection | null {
 }
 
 /**
+ * Atomic-number keys by `KeyboardEvent.key` (the character typed, since `[` and `]` sit on
+ * different physical keys across layouts): `[` steps to the previous element, `]` to the next.
+ */
+export const NUMBER_STEP_KEYS: Readonly<Record<string, -1 | 1>> = {
+  '[': -1,
+  ']': 1,
+};
+
+/** -1 or 1 for a key that steps by atomic number, or 0. */
+export function numberStepForKey(key: string): -1 | 0 | 1 {
+  return NUMBER_STEP_KEYS[key] ?? 0;
+}
+
+/**
+ * The element `delta` atomic numbers on from `from`, clamped to the table (1–118). Clamped rather
+ * than wrapping, like the grid steps that stop at the edge: Og → H would be the longest walk on
+ * the table.
+ */
+export function stepNumber(from: number, delta: number): number {
+  return Math.min(TILES.length, Math.max(1, Math.round(from) + delta));
+}
+
+/**
  * Return keys by `KeyboardEvent.code`: R (any layout, by position) and Home. Either walks the
  * character back to the last tile it stood on, which is how a player who wandered onto the ground
  * gets back to the table.

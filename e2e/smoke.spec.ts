@@ -113,3 +113,14 @@ test('walking off the table and pressing R returns to the last tile', async ({ p
   await expect(status).toHaveAttribute('data-off', 'false');
   await expect(page.getByRole('button', { name: /back to the table/i })).toBeHidden();
 });
+
+test('] and [ step by atomic number', async ({ page }) => {
+  await page.goto('/');
+  const status = page.locator('[data-tile]');
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+  await page.keyboard.press(']');
+  await expect(status).toHaveAttribute('data-tile', '2', { timeout: 10_000 });
+  await expect(page.getByRole('complementary', { name: 'Helium' })).toBeVisible();
+  await page.keyboard.press('[');
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 10_000 });
+});

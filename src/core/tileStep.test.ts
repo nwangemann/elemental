@@ -4,8 +4,11 @@ import { KEY_MAP } from './input.ts';
 import {
   isReturnCode,
   nearestTile,
+  NUMBER_STEP_KEYS,
+  numberStepForKey,
   RETURN_KEYS,
   stepDirectionForCode,
+  stepNumber,
   stepTile,
 } from './tileStep.ts';
 
@@ -85,5 +88,33 @@ describe('isReturnCode', () => {
       expect(KEY_MAP[code]).toBeUndefined();
       expect(stepDirectionForCode(code)).toBeNull();
     }
+  });
+});
+
+describe('stepNumber', () => {
+  it('steps to the next and previous element', () => {
+    expect(stepNumber(1, 1)).toBe(2); // H → He
+    expect(stepNumber(2, -1)).toBe(1);
+    expect(stepNumber(56, 1)).toBe(57); // Ba → La, into the f-block
+    expect(stepNumber(71, 1)).toBe(72); // Lu → Hf, back to period 6
+  });
+
+  it('clamps at hydrogen and oganesson', () => {
+    expect(stepNumber(1, -1)).toBe(1);
+    expect(stepNumber(118, 1)).toBe(118);
+    expect(TILES.length).toBe(118);
+  });
+});
+
+describe('numberStepForKey', () => {
+  it('maps [ and ] by the character typed', () => {
+    expect(numberStepForKey('[')).toBe(-1);
+    expect(numberStepForKey(']')).toBe(1);
+    expect(numberStepForKey('{')).toBe(0);
+    expect(numberStepForKey('BracketLeft')).toBe(0);
+  });
+
+  it('stays clear of the walking keys', () => {
+    for (const key of Object.keys(NUMBER_STEP_KEYS)) expect(KEY_MAP[key]).toBeUndefined();
   });
 });
