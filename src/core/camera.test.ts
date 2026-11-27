@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   cameraPose,
   createCamera,
+  followHeight,
   createPose,
   introProgress,
   sheetLift,
@@ -101,6 +102,18 @@ describe('camera', () => {
     run(600, () => stepCamera(s, 1, 2, 0, 0, 1 / 60, P, focus));
     expect(s.focusX.value).toBeCloseTo(1, 2);
     expect(s.focusZ.value).toBeCloseTo(2, 2);
+  });
+});
+
+describe('followHeight', () => {
+  it('lifts the focus and the camera with the figure', () => {
+    const s = createCamera(0, 0, P);
+    skipIntro(s, P);
+    const low = cameraPose(s, P, OVERVIEW, createPose()).target[1];
+    run(240, () => followHeight(s, 1.2, 1 / 60, P));
+    expect(s.focusY.value).toBeCloseTo(1.2, 2);
+    const pose = cameraPose(s, P, OVERVIEW, createPose());
+    expect(pose.target[1]).toBeCloseTo(low + 1.2, 2);
   });
 });
 

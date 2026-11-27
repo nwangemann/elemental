@@ -5,6 +5,7 @@ import { CONFIG } from '../core/config.ts';
 import {
   cameraPose,
   createCamera,
+  followHeight,
   createPose,
   sheetLift,
   skipIntro,
@@ -15,6 +16,7 @@ import {
   zoomByFactor,
 } from '../core/camera.ts';
 import type { ControllerState } from '../core/controller.ts';
+import type { LedgeState } from '../core/ledge.ts';
 import { zoomStepsForKey } from '../core/input.ts';
 import { TILES } from '../core/layout.ts';
 import { useAppStore } from '../state/store.ts';
@@ -57,13 +59,19 @@ function measureSheet(canvas: HTMLCanvasElement): number {
  * Under reduced motion the establishing shot is skipped, a fly-to cuts to its tile instead of
  * gliding, and the sheet shift is a cut too.
  */
-export function CameraRig({ controller }: { controller: ControllerState }) {
+export function CameraRig({
+  controller,
+  ledge,
+}: {
+  controller: ControllerState;
+  ledge: LedgeState;
+}) {
   const canvas = useThree((s) => s.gl.domElement);
   const cam = useMemo(() => {
-    const c = createCamera(controller.x, controller.z, CONFIG.camera);
+    const c = createCamera(controller.x, controller.z, CONFIG.camera, ledge.y);
     if (prefersReducedMotion()) skipIntro(c, CONFIG.camera);
     return c;
-  }, [controller]);
+  }, [controller, ledge]);
   const pose = useMemo(() => createPose(), []);
   const focusMargin = CONFIG.camera.focusMargin;
   const focus = useMemo(() => outerBounds(focusMargin, 0), [focusMargin]);
@@ -178,6 +186,7 @@ export function CameraRig({ controller }: { controller: ControllerState }) {
       p,
       focus,
     );
+    followHeight(cam, ledge.y, Math.min(delta, MAX_DT), p);
     // The camera config's own position and target are the overview pose.
     cameraPose(cam, p, p, pose);
     camera.position.set(pose.position[0], pose.position[1], pose.position[2]);

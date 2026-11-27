@@ -77,8 +77,8 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           <boxGeometry args={[GROUND_W, GROUND_THICKNESS, GROUND_D]} />
           <meshStandardMaterial color={GROUND_COLOR} roughness={1} />
         </mesh>
-        <CameraRig controller={controller} />
-        <TapToWalk target={target} marker={marker} />
+        <CameraRig controller={controller} ledge={ledge} />
+        <TapToWalk target={target} marker={marker} activation={activation} />
         <TileStepper controller={controller} target={target} />
         <FlightHandler controller={controller} target={target} />
         <ReturnHandler controller={controller} target={target} />

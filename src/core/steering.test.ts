@@ -27,14 +27,16 @@ describe('setWalkTarget', () => {
   it('snaps a point on a tile to its centre and reports the element', () => {
     const t = createWalkTarget();
     expect(setWalkTarget(t, FE.x + 0.3, FE.z - 0.2)).toBe(26);
-    expect(t).toEqual({ active: true, x: FE.x, z: FE.z });
+    expect(t).toEqual({ active: true, x: FE.x, z: FE.z, climb: false });
+    setWalkTarget(t, FE.x, FE.z, true);
+    expect(t.climb).toBe(true);
   });
 
   it('keeps a point over a gap as it is', () => {
     const t = createWalkTarget();
     const x = H.x + LAYOUT.tileSize / 2 + LAYOUT.gap / 2;
     expect(setWalkTarget(t, x, H.z)).toBeNull();
-    expect(t).toEqual({ active: true, x, z: H.z });
+    expect(t).toEqual({ active: true, x, z: H.z, climb: false });
   });
 });
 

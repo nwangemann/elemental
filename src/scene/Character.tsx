@@ -9,12 +9,13 @@ import {
 } from 'three';
 import { tileTop, type Activation } from '../core/activation.ts';
 import { BOUNDARY, GROUND, outerBounds, surfaceAt } from '../core/boundary.ts';
+import { blockCliffs, type SurfaceHeight } from '../core/climb.ts';
 import { CONFIG } from '../core/config.ts';
 import { speedOf, stepController, type ControllerState } from '../core/controller.ts';
 import { createGait, createPose, poseOf, stepGait } from '../core/gait.ts';
 import { createIntent, moveIntent, type InputState } from '../core/input.ts';
 import { isAirborne, stepLedge, type LedgeState } from '../core/ledge.ts';
-import { steer, type Stick, type WalkTarget } from '../core/steering.ts';
+import { clearWalkTarget, steer, type Stick, type WalkTarget } from '../core/steering.ts';
 import { CHARACTER_COLOR, EYE_COLOR } from '../core/palette.ts';
 
 /** Longest frame step fed to the controller and gait, so a background tab does not jump. */
@@ -34,7 +35,9 @@ export const CHARACTER_FRAME_PRIORITY = -1;
  * it is. Its height comes from `core/ledge.ts` over `surfaceAt`: it rides the tile under it as it
  * rises, drops to the ground off an edge and hops back up onto a tile, squashing a little on
  * landing. The walk cycle pauses while it is in the air. `ledge` is parent-owned too, because
- * `TileActivator` reads it to wake a tile only once the character is on top.
+ * `TileActivator` reads it to wake a tile only once the character is on top. Over a height lens
+ * landscape, `core/climb.ts` stops it at any step up taller than `climbLimit`; a tap's walk
+ * target is dropped there, while a keyboard step or a return (`target.climb`) hops on up.
  */
 export function Character({
   controller,
@@ -68,6 +71,10 @@ export function Character({
     () => new MeshStandardMaterial({ color: CHARACTER_COLOR, roughness: 0.6 }),
     [],
   );
+  const heightOf = useMemo<SurfaceHeight>(
+    () => (support) => (support === GROUND ? 0 : tileTop(activation, support - 1)),
+    [activation],
+  );
   const ink = useMemo(() => new MeshStandardMaterial({ color: EYE_COLOR, roughness: 0.3 }), []);
 
   const footRadius = c.radius * 0.38;
@@ -99,9 +106,29 @@ export function Character({
     const p = CONFIG.character;
     moveIntent(input, intent);
     steer(intent, stick, target, controller.x, controller.z, p);
+    const climbing = target.active && target.climb;
+    const fromX = controller.x;
+    const fromZ = controller.z;
     stepController(controller, intent, dt, p, bounds);
+    // Against a cliff the reference is where the feet are, or the top they are hopping onto.
+    const reference = Math.max(ledge.y, heightOf(ledge.on));
+    if (
+      !climbing &&
+      blockCliffs(
+        controller,
+        fromX,
+        fromZ,
+        reference,
+        p.climbLimit,
+        p.radius - BOUNDARY.support,
+        heightOf,
+      ) &&
+      target.active
+    ) {
+      clearWalkTarget(target);
+    }
     const support = surfaceAt(controller.x, controller.z);
-    const floor = support === GROUND ? 0 : tileTop(activation, support - 1);
+    const floor = heightOf(support);
     stepLedge(ledge, support, floor, dt, p);
     if (!isAirborne(ledge)) stepGait(gait, speedOf(controller), dt, p);
     poseOf(gait, p, pose);

@@ -4,6 +4,7 @@ import { CONFIG_DEFAULTS } from './config.ts';
 import {
   createLedge,
   hopHeightAt,
+  hopScale,
   isAirborne,
   LEDGE_FALL,
   LEDGE_HOP,
@@ -110,6 +111,58 @@ describe('stepLedge', () => {
     s.squash = P.landSquash;
     for (let i = 0; i < 60; i++) stepLedge(s, GROUND, 0, DT, P);
     expect(s.squash).toBeLessThan(0.01);
+  });
+});
+
+describe('stepLedge over a landscape', () => {
+  it('hops up onto a tile more than stepGlide higher, with a bigger, longer hop', () => {
+    const base = createLedge(0, GROUND);
+    const baseYs = [base.y, ...run(base, 5, TOP)];
+    const s = createLedge(TOP, 1);
+    const top = TOP + 0.4;
+    stepLedge(s, 2, top, DT, P);
+    expect(s.mode).toBe(LEDGE_HOP);
+    const ys = [s.y, ...run(s, 2, top)];
+    expect(s.y).toBe(top);
+    expect(standingOn(s)).toBe(2);
+    expect(Math.max(...ys) - top).toBeGreaterThan(Math.max(...baseYs) - TOP);
+    expect(ys.length).toBeGreaterThan(baseYs.length);
+  });
+
+  it('falls onto a tile more than stepGlide lower and lands standing on it', () => {
+    const s = createLedge(TOP + 0.6, 1);
+    stepLedge(s, 2, TOP, DT, P);
+    expect(s.mode).toBe(LEDGE_FALL);
+    run(s, 2, TOP);
+    expect(s.mode).toBe(LEDGE_STAND);
+    expect(s.y).toBe(TOP);
+    expect(standingOn(s)).toBe(2);
+    expect(s.squash).toBeGreaterThan(0);
+  });
+
+  it('glides over a small step up between tiles', () => {
+    const s = createLedge(TOP, 1);
+    stepLedge(s, 2, TOP + P.stepGlide * 0.8, DT, P);
+    expect(s.mode).toBe(LEDGE_STAND);
+    expect(standingOn(s)).toBe(2);
+  });
+
+  it('keeps falling past a tile edge that is still below the feet', () => {
+    const s = createLedge(1, 1);
+    stepLedge(s, GROUND, 0, DT, P);
+    stepLedge(s, 3, TOP, DT, P);
+    expect(s.mode).toBe(LEDGE_FALL);
+    run(s, 3, TOP);
+    expect(standingOn(s)).toBe(3);
+    expect(s.y).toBe(TOP);
+  });
+});
+
+describe('hopScale', () => {
+  it('is 1 up to hopStep and grows in proportion past it', () => {
+    expect(hopScale(0.05, P)).toBe(1);
+    expect(hopScale(P.hopStep, P)).toBe(1);
+    expect(hopScale(P.hopStep * 2.5, P)).toBeCloseTo(2.5);
   });
 });
 

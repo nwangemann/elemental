@@ -14,7 +14,7 @@ import { isTextEntry } from './useKeyboardInput.ts';
 
 /**
  * I, J, K and L step from tile to tile (`core/tileStep.ts`); `[` and `]` step to the previous or
- * next element by atomic number. Each press sets the walk target to the next tile, so the character walks there and stops on its centre; presses
+ * next element by atomic number. Each press sets the walk target to the next tile, so the character walks there (climbing any cliff on the way) and stops on its centre; presses
  * during the walk chain on from the tile it is heading for. Works per key press, outside the frame
  * loop. Renders nothing.
  */
@@ -38,7 +38,7 @@ export function TileStepper({
         nearestTile(controller.x, controller.z);
       const next = dir ? stepTile(from, dir) : stepNumber(from, delta);
       const tile = next === null ? TILES[from - 1] : TILES[next - 1];
-      if (tile) setWalkTarget(target, tile.x, tile.z);
+      if (tile) setWalkTarget(target, tile.x, tile.z, true);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);

@@ -27,6 +27,12 @@ export interface WalkTarget {
   active: boolean;
   x: number;
   z: number;
+  /**
+   * True when the walk may climb any cliff on the way (`core/climb.ts`): keyboard tile steps and
+   * the way back to the table, which are "go to that element" and must always arrive. A tap's
+   * walk is false and stops at a cliff.
+   */
+  climb: boolean;
 }
 
 /** Joystick deflection in world x/z, length 0–1. Screen up is −z, matching the fixed camera. */
@@ -36,7 +42,7 @@ export interface Stick {
 }
 
 export function createWalkTarget(): WalkTarget {
-  return { active: false, x: 0, z: 0 };
+  return { active: false, x: 0, z: 0, climb: false };
 }
 
 export function createStick(): Stick {
@@ -46,14 +52,16 @@ export function createStick(): Stick {
 /**
  * Sets the walk target from a point on the table plane. A point on a tile snaps to that tile's
  * centre (so "walk there" lands squarely on the element); a point over a gap or empty cell is
- * kept as it is. Returns the element number under the point, or null.
+ * kept as it is. `climb` lets the walk go over cliffs (see `WalkTarget`). Returns the element
+ * number under the point, or null.
  */
-export function setWalkTarget(t: WalkTarget, x: number, z: number): number | null {
+export function setWalkTarget(t: WalkTarget, x: number, z: number, climb = false): number | null {
   const number = tileAtPoint(x, z);
   const tile = number === null ? undefined : TILES[number - 1];
   t.x = tile ? tile.x : x;
   t.z = tile ? tile.z : z;
   t.active = true;
+  t.climb = climb;
   return number;
 }
 

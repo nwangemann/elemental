@@ -15,7 +15,7 @@ export interface CameraParams {
   followRate: number;
   /** Seconds of velocity added to the focus point, so the view leads the walk a little. */
   lookAhead: number;
-  /** Height of the focus point above the ground, world units. */
+  /** Height of the focus point above the figure's feet, world units. */
   focusHeight: number;
   /** How far past the table's footprint the focus may go, world units (see `focusBounds`). */
   focusMargin: number;
@@ -37,6 +37,8 @@ export interface CameraParams {
 export interface CameraState {
   focusX: Spring;
   focusZ: Spring;
+  /** The figure's feet height, followed on the same spring so the view climbs with it. */
+  focusY: Spring;
   distance: number;
   zoomTarget: number;
   /** Seconds since the intro started. */
@@ -48,11 +50,12 @@ export interface CameraPose {
   target: [number, number, number];
 }
 
-export function createCamera(x: number, z: number, p: CameraParams): CameraState {
+export function createCamera(x: number, z: number, p: CameraParams, y = 0): CameraState {
   const d = clamp(p.distance, p.minDistance, p.maxDistance);
   return {
     focusX: { value: x, velocity: 0 },
     focusZ: { value: z, velocity: 0 },
+    focusY: { value: y, velocity: 0 },
     distance: d,
     zoomTarget: d,
     introTime: 0,
@@ -131,6 +134,14 @@ export function stepCamera(
 }
 
 /**
+ * Eases the focus height toward the figure's feet at `y` on the follow spring, so climbing a
+ * height lens landscape lifts the view with it and a hop's arc is smoothed out.
+ */
+export function followHeight(s: CameraState, y: number, dt: number, p: CameraParams): void {
+  if (dt > 0) stepSpring(s.focusY, y, p.followRate, dt);
+}
+
+/**
  * Writes the camera pose into `out`: the follow pose (behind the focus point at `pitch`, looking
  * toward −z), blended from the `overview` pose by the intro's progress.
  */
@@ -142,7 +153,7 @@ export function cameraPose(
 ): CameraPose {
   const a = (p.pitch * Math.PI) / 180;
   const tx = s.focusX.value;
-  const ty = p.focusHeight;
+  const ty = p.focusHeight + s.focusY.value;
   const tz = s.focusZ.value;
   const px = tx;
   const py = ty + Math.sin(a) * s.distance;

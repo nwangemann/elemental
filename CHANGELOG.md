@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Climbing the height lens landscape: the figure hops up small steps (a bigger step gets a bigger, slower hop), falls down onto lower tiles, and stops at cliffs taller than about two and a half tiles, sliding along the face. A tap that would walk into a cliff stops there; I J K L, `[` `]` and R still climb it, so the keyboard reaches every tile. Taps pick the raised tile you actually see, and the camera rises with the figure.
 - Height lens: the Lens menu (or `H`, `Shift H` backward) raises every tile by a property, so density, melting point, electronegativity, radius or discovery year becomes a landscape you can walk across. Tiles ease to their new heights in about half a second (at once with reduced motion), labels ride along, and elements with no known value stay flat. The element list gains a column for the property, and the lens goes into the link (`#/Au?lens=density`).
 - Tile labels draw from a pre-rendered glyph atlas instead of a text library: about 40 KB less JavaScript, no font download, labels show as soon as the table does, and frame work while walking halves.
 - The element panel says where an element stands out: "Densest of all elements", "3rd highest melting point of all elements", "Most electronegative in period 6". After you've seen another element it adds one comparison with it, picking the most striking difference ("Compared with Iron: 3.5× heavier").

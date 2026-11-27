@@ -17,7 +17,7 @@ A walkable periodic table. A small figure strolls across a 3D table of the eleme
 - Zoom: mouse wheel, two-finger pinch, or `+` / `-`.
 - Explore: `⌘K` / `Ctrl K`, `/` or the Explore button. Search by name, symbol or number, sort and filter, then Enter or click to jump there. Filters also dim the tiles they leave out on the table.
 - List: the List button shows every element as a plain table (number, symbol, name, family, period, group); choose a name to walk there. Use it with a screen reader or instead of the 3D scene.
-- Height lens: the Lens menu or `H` (`Shift H` backward) raises every tile by a property (density, melting point, discovery year and more), turning the table into a landscape you can walk over. Elements with no known value stay flat. The element list adds a column for the property.
+- Height lens: the Lens menu or `H` (`Shift H` backward) raises every tile by a property (density, melting point, discovery year and more), turning the table into a landscape you can walk over: small steps are hopped up, taller cliffs stop a walk (the I J K L steps and R still climb them). Elements with no known value stay flat. The element list adds a column for the property.
 - Link to an element: add `#/` and its symbol to the address, for example `#/Au`, and `?lens=` to raise the tiles, for example `#/Au?lens=density`.
 
 ## Stack

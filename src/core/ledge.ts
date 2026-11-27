@@ -7,10 +7,17 @@ import { damp } from './damp.ts';
  * (`surfaceAt`) and the height of that surface.
  *
  * - **Stand:** the feet follow the surface's height, smoothed, so a tile rising underneath is
- *   ridden and stepping between a raised tile and a resting one dips gently.
- * - **Fall:** leaving a tile for the ground drops under gravity, easing in like a real fall.
- * - **Hop:** moving from the ground onto a tile (by walking, a walk target or a fly-to) hops up
- *   on a short arc that ends on the tile top.
+ *   ridden and a step between tiles no taller than `stepGlide` (a raised tile and a resting one)
+ *   dips or rises gently.
+ * - **Fall:** leaving a tile for the ground, or for a tile more than `stepGlide` lower, drops
+ *   under gravity, easing in like a real fall.
+ * - **Hop:** moving from the ground onto a tile, or onto a tile more than `stepGlide` higher (by
+ *   walking, a walk target or a fly-to), hops up on an arc that ends on the tile top. Steps up to
+ *   `hopStep` get the base hop; taller ones scale its apex with the step and its length with the
+ *   square root, so a bigger climb is a bigger, slower jump (ADR 0014).
+ *
+ * Which steps may be climbed at all is not decided here: `core/climb.ts` stops walking at a cliff
+ * before the body gets over it.
  *
  * Landing from either squashes the body a little, recovering over a moment.
  */
@@ -28,6 +35,10 @@ export interface LedgeParams {
   /** Apex of a hop above the straight line from start to tile top, and its duration, s. */
   hopHeight: number;
   hopDuration: number;
+  /** Largest step that gets the base hop; taller steps scale it (see `hopShape`). */
+  hopStep: number;
+  /** Tile-to-tile steps up to this height are smoothed rather than hopped or fallen. */
+  stepGlide: number;
   /** Body squash on landing (fraction of height) and how fast it recovers, 1/s. */
   landSquash: number;
   squashRecover: number;
@@ -41,9 +52,11 @@ export interface LedgeState {
   mode: LedgeMode;
   /** What the body stands on or is hopping onto: a tile number or `GROUND`. */
   on: number;
-  /** Seconds into the current hop, and the height it started from. */
+  /** Seconds into the current hop, the height it started from, its apex and its length, s. */
   hopTime: number;
   hopFrom: number;
+  hopApex: number;
+  hopLength: number;
   /** Current landing squash, 0 at rest. */
   squash: number;
 }
@@ -52,20 +65,38 @@ export interface LedgeState {
 const FALL_EPSILON = 0.005;
 
 export function createLedge(y: number, on: number): LedgeState {
-  return { y, vy: 0, mode: LEDGE_STAND, on, hopTime: 0, hopFrom: y, squash: 0 };
+  return {
+    y,
+    vy: 0,
+    mode: LEDGE_STAND,
+    on,
+    hopTime: 0,
+    hopFrom: y,
+    hopApex: 0,
+    hopLength: 0,
+    squash: 0,
+  };
 }
 
-function startFall(s: LedgeState): void {
+/** How much bigger than the base hop a climb of `step` is: 1 up to `hopStep`, then in proportion. */
+export function hopScale(step: number, p: LedgeParams): number {
+  return p.hopStep > 0 ? Math.max(1, step / p.hopStep) : 1;
+}
+
+function startFall(s: LedgeState, onto: number): void {
   s.mode = LEDGE_FALL;
-  s.on = GROUND;
+  s.on = onto;
   s.vy = 0;
 }
 
-function startHop(s: LedgeState, onto: number): void {
+function startHop(s: LedgeState, onto: number, floor: number, p: LedgeParams): void {
+  const k = hopScale(floor - s.y, p);
   s.mode = LEDGE_HOP;
   s.on = onto;
   s.hopTime = 0;
   s.hopFrom = s.y;
+  s.hopApex = p.hopHeight * k;
+  s.hopLength = p.hopDuration * Math.sqrt(k);
   s.vy = 0;
 }
 
@@ -100,38 +131,41 @@ export function stepLedge(
 ): void {
   s.squash = damp(s.squash, 0, p.squashRecover, dt);
 
-  if (s.mode === LEDGE_STAND) {
-    if (support === GROUND && s.on !== GROUND) {
-      if (s.y > floor + FALL_EPSILON) startFall(s);
+  if (s.mode === LEDGE_STAND && support !== s.on) {
+    if (support === GROUND) {
+      if (s.y > floor + FALL_EPSILON) startFall(s, GROUND);
       else s.on = GROUND;
-    } else if (support !== GROUND && s.on === GROUND) {
-      startHop(s, support);
+    } else if (s.on === GROUND || floor > s.y + p.stepGlide) {
+      startHop(s, support, floor, p);
+    } else if (floor < s.y - p.stepGlide) {
+      startFall(s, support);
     } else {
       s.on = support;
     }
   }
 
   if (s.mode === LEDGE_FALL) {
-    if (support !== GROUND) {
-      // Back over a tile mid-fall (only possible at its edge): hop onto it from here.
-      startHop(s, support);
+    if (floor > s.y) {
+      // Back over a higher surface mid-fall (only possible at its edge): hop onto it from here.
+      startHop(s, support, floor, p);
     } else {
+      s.on = support;
       fallStep(s, floor, dt, p);
       return;
     }
   }
 
   if (s.mode === LEDGE_HOP) {
-    if (support === GROUND) {
-      // Moved back off before landing: fall from wherever the arc had got to.
-      startFall(s);
+    if (support !== s.on && (support === GROUND || floor < s.y)) {
+      // Moved off before landing, onto something lower: fall from wherever the arc had got to.
+      startFall(s, support);
       fallStep(s, floor, dt, p);
       return;
     }
     s.on = support;
     s.hopTime += dt;
-    const t = p.hopDuration > 0 ? Math.min(1, s.hopTime / p.hopDuration) : 1;
-    s.y = hopHeightAt(s.hopFrom, floor, t, p.hopHeight);
+    const t = s.hopLength > 0 ? Math.min(1, s.hopTime / s.hopLength) : 1;
+    s.y = hopHeightAt(s.hopFrom, floor, t, s.hopApex);
     if (t >= 1) land(s, floor, p);
     return;
   }

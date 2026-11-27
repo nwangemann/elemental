@@ -85,6 +85,14 @@ export const CONFIG_DEFAULTS = {
     /** Hop from the ground onto a tile: arc apex above the straight line, units, and length, s. */
     hopHeight: 0.14,
     hopDuration: 0.26,
+    /**
+     * Climbing a landscape (see `core/climb.ts`, ADR 0014): steps up to `hopStep` get the base
+     * hop and taller ones a bigger one; tile-to-tile steps up to `stepGlide` are smoothed; a step
+     * up taller than `climbLimit` is a cliff that blocks walking. Units.
+     */
+    hopStep: 0.18,
+    stepGlide: 0.12,
+    climbLimit: 0.45,
     /** Body squash on landing (fraction of height) and its recovery, 1/s. */
     landSquash: 0.12,
     squashRecover: 9,
@@ -182,6 +190,9 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     gravity: { min: 1, max: 40, step: 0.5 },
     hopHeight: { min: 0, max: 0.6, step: 0.01 },
     hopDuration: { min: 0.05, max: 1, step: 0.01 },
+    hopStep: { min: 0.02, max: 1, step: 0.01 },
+    stepGlide: { min: 0, max: 0.5, step: 0.01 },
+    climbLimit: { min: 0.1, max: 2, step: 0.01 },
     landSquash: { min: 0, max: 0.4, step: 0.01 },
     squashRecover: { min: 1, max: 30, step: 0.5 },
     edgeBand: { min: 0, max: 1.5, step: 0.05 },

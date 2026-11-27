@@ -150,3 +150,29 @@ test('the height lens follows the deep link, the H key and the list', async ({ p
   await lens.selectOption('');
   await expect(page).toHaveURL(/#\/Fe$/);
 });
+
+test('walking a density landscape climbs small steps and stops at a cliff', async ({ page }) => {
+  const status = page.locator('[data-tile]');
+
+  // Potassium to iron rises a little at each tile: the walk climbs on through.
+  await page.goto('/#/K?lens=density');
+  await expect(status).toHaveAttribute('data-tile', '19', { timeout: 15_000 });
+  await page.waitForTimeout(1_000);
+  await page.keyboard.down('ArrowRight');
+  await expect(status).toHaveAttribute('data-tile', '26', { timeout: 10_000 });
+  await page.keyboard.up('ArrowRight');
+
+  // Krypton is a gas, bromine a liquid far denser: walking left from krypton meets a cliff.
+  await page.goto('/#/Kr?lens=density');
+  await expect(status).toHaveAttribute('data-tile', '36', { timeout: 15_000 });
+  await page.waitForTimeout(1_000);
+  await page.keyboard.down('ArrowLeft');
+  await page.waitForTimeout(1_500);
+  await page.keyboard.up('ArrowLeft');
+  await expect(status).toHaveAttribute('data-tile', '36');
+  await expect(status).toHaveAttribute('data-off', 'false');
+
+  // A keyboard tile step is a "go to that element": it climbs the cliff.
+  await page.keyboard.press('j');
+  await expect(status).toHaveAttribute('data-tile', '35', { timeout: 10_000 });
+});
