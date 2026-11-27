@@ -156,7 +156,8 @@ function createTileGeometry(): BoxGeometry {
  * Instance colours come from the colour lens's `tint` (`ColourLens`): all of them while it eases,
  * otherwise only tiles whose activation changed, since the tile underfoot blends back to its theme.
  * The temperature lens's `phase` (`TemperatureLens`) fills `aPhase`, which fades gas tiles by a
- * screen door, and dims tiles whose state is unknown; both are rewritten only while it moves.
+ * screen door and ripples liquid ones (`CONFIG.tiles.ripple`, off with reduced motion), and dims
+ * tiles whose state is unknown; both attributes are rewritten only while it moves.
  */
 export function Tiles({
   activation,
@@ -199,6 +200,7 @@ export function Tiles({
     if (!m) return;
     const dim = dimRef.current;
     const { glowScale, pulseSpeed, envIntensity, dimStrength, dimDuration, gasFade } = CONFIG.tiles;
+    const reduced = prefersReducedMotion();
     updateTileMaterial(
       m.material as MeshStandardMaterial,
       clock.elapsedTime,
@@ -207,10 +209,11 @@ export function Tiles({
       envIntensity,
       dimStrength,
       gasFade,
+      reduced ? 0 : CONFIG.tiles.ripple,
+      CONFIG.tiles.rippleSpeed,
     );
     const dimChanged = dim.moving;
-    if (dim.moving)
-      dim.moving = stepDim(dim.levels, dim.targets, dt, prefersReducedMotion() ? 0 : dimDuration);
+    if (dim.moving) dim.moving = stepDim(dim.levels, dim.targets, dt, reduced ? 0 : dimDuration);
     if (dimChanged || phase.moved || activation.anyDirty) {
       const shown = m.geometry.getAttribute(DIM_ATTRIBUTE) as InstancedBufferAttribute;
       writeDim(shown.array as Float32Array, dim, phase, activation);

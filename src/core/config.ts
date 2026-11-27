@@ -46,6 +46,9 @@ export const CONFIG_DEFAULTS = {
     gasLift: 0.3,
     gasFade: 0.55,
     unknownDim: 0.6,
+    /** Liquid tiles' top-face ripple: how far it tilts the surface (slope) and its speed, rad/s. */
+    ripple: 0.12,
+    rippleSpeed: 4,
   },
   labels: {
     /** Cap height of the element symbol, in world units. */
@@ -177,6 +180,8 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     gasLift: { min: 0, max: 1, step: 0.01 },
     gasFade: { min: 0, max: 1, step: 0.01 },
     unknownDim: { min: 0, max: 1, step: 0.01 },
+    ripple: { min: 0, max: 0.5, step: 0.01 },
+    rippleSpeed: { min: 0, max: 12, step: 0.1 },
   },
   labels: {
     symbolSize: { min: 0.1, max: 0.8, step: 0.01 },
