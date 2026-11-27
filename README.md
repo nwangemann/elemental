@@ -2,7 +2,9 @@
 
 A walkable periodic table. A small figure strolls across a 3D table of the elements; each tile wakes up as you step onto it (gold turns to polished gold, neon glows like a sign) and opens that element's data. An explorer jumps straight to any element by name, symbol, number or property.
 
-> Status: version 0.1.0, the first walkable table. All 118 elements are drawn and a small figure walks across them with a follow camera; tiles wake into their family's material (brushed metal, chalky mineral, neon glow, radioactive pulse) as it steps on them, and a panel in the family's accent colour shows the element's overview and properties. You can walk with the keyboard, by clicking or tapping a tile, or with an on-screen joystick on touch screens, and jump to any element with the explorer, the plain element list or a link like `#/Au`. Next: particles, sound and other effects per family.
+**Try it:** https://nwangemann.github.io/elemental/ (the latest release).
+
+> Status: version 0.1.0, the first walkable table, is live. All 118 elements are drawn and a small figure walks across them with a follow camera; tiles wake into their family's material (brushed metal, chalky mineral, neon glow, radioactive pulse) as it steps on them, and a panel in the family's accent colour shows the element's overview and properties. You can walk with the keyboard, by clicking or tapping a tile, or with an on-screen joystick on touch screens, and jump to any element with the explorer, the plain element list or a link like `#/Au`. Since then `main` has gained an Atom tab and four lenses (height, colour, temperature, discovery year), listed under Unreleased in the [changelog](CHANGELOG.md). Next: Combine mode, which carries elements and forms real compounds; it is partly built on `main`.
 
 ## Controls
 
@@ -50,6 +52,12 @@ npm run check      # types, lint, formatting, unit tests, docs, bundle size
 npm run test:e2e   # production build in headless Chromium, incl. an accessibility audit
 npm run perf       # time to first move and frame work, see docs/performance.md
 ```
+
+CI runs `check` and the browser tests on every push and pull request (`.github/workflows/check.yml`).
+
+## Release it
+
+Update `CHANGELOG.md`, then tag and push: `git tag v0.2.0 && git push origin v0.2.0`. The tag deploys itself to GitHub Pages (`.github/workflows/deploy.yml`, [ADR 21](docs/adr/0021-pages-deploy.md)); `main` alone never goes live.
 
 ## Docs
 
