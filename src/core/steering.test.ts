@@ -5,9 +5,15 @@ import { createIntent } from './input.ts';
 import { LAYOUT, PITCH, TABLE_SIZE, TILES } from './layout.ts';
 import {
   clampKnob,
+  createFloatingStick,
   createStick,
   createWalkTarget,
+  floatCancel,
+  floatMove,
+  floatPress,
+  floatRelease,
   isTap,
+  TAP_MAX_PX,
   setWalkTarget,
   steer,
   stickFromOffset,
@@ -122,5 +128,56 @@ describe('isTap', () => {
     expect(isTap(120, 3)).toBe(true);
     expect(isTap(120, 40)).toBe(false);
     expect(isTap(2000, 0)).toBe(false);
+  });
+});
+
+describe('floating stick', () => {
+  it('stays a candidate (a tap) until the finger drifts past the tap threshold', () => {
+    const s = createFloatingStick();
+    const out = createStick();
+    floatPress(s, 1, 100, 300, 1, out);
+    expect(floatMove(s, 1, 100 + TAP_MAX_PX, 300, P, out)).toBe(false);
+    expect(out).toEqual({ x: 0, z: 0 });
+    expect(floatMove(s, 1, 100 + TAP_MAX_PX + 1, 300, P, out)).toBe(true);
+    expect(s).toMatchObject({ ox: 100, oy: 300, engaged: true });
+    expect(out.x).toBeGreaterThan(0);
+  });
+
+  it('deflects from where the thumb landed, like the fixed stick', () => {
+    const s = createFloatingStick();
+    const out = createStick();
+    const fixed = createStick();
+    floatPress(s, 1, 50, 50, 1, out);
+    floatMove(s, 1, 50 + 30, 50 - 40, P, out);
+    stickFromOffset(30, -40, P, fixed);
+    expect(out).toEqual(fixed);
+    // Back inside the dead zone it stays engaged but gives no deflection.
+    expect(floatMove(s, 1, 51, 50, P, out)).toBe(true);
+    expect(out).toEqual({ x: 0, z: 0 });
+  });
+
+  it('follows only the first finger and ends on its release', () => {
+    const s = createFloatingStick();
+    const out = createStick();
+    floatPress(s, 1, 0, 0, 1, out);
+    floatMove(s, 2, 80, 0, P, out);
+    expect(s.engaged).toBe(false);
+    floatMove(s, 1, 80, 0, P, out);
+    expect(floatRelease(s, 2, out)).toBe(false);
+    expect(out.x).toBeCloseTo(1, 10);
+    expect(floatRelease(s, 1, out)).toBe(true);
+    expect(s).toMatchObject({ pointer: null, engaged: false });
+    expect(out).toEqual({ x: 0, z: 0 });
+  });
+
+  it('cancels when a second finger lands (a pinch)', () => {
+    const s = createFloatingStick();
+    const out = createStick();
+    floatPress(s, 1, 0, 0, 1, out);
+    floatMove(s, 1, 0, 60, P, out);
+    expect(floatPress(s, 2, 100, 100, 2, out)).toBe(true);
+    expect(out).toEqual({ x: 0, z: 0 });
+    expect(floatMove(s, 1, 0, 90, P, out)).toBe(false);
+    expect(floatCancel(s, out)).toBe(false);
   });
 });

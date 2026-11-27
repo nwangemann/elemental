@@ -135,3 +135,83 @@ export const TAP_MAX_PX = 10;
 export function isTap(ms: number, px: number): boolean {
   return ms <= TAP_MAX_MS && px <= TAP_MAX_PX;
 }
+
+/**
+ * A floating joystick: on phones the stick appears where the thumb lands instead of in a fixed
+ * place. A touch on the scene is first only a candidate; it becomes a stick, centred on where it
+ * landed, once it drifts past the tap threshold (`TAP_MAX_PX`), so a short still touch stays a
+ * walk tap. A second finger is a pinch and cancels it. Deflection uses `stickFromOffset`, as the
+ * fixed joystick does.
+ */
+export interface FloatingStick {
+  /** The finger being followed, or null. */
+  pointer: number | null;
+  /** Where it landed, px; the stick's centre once engaged. */
+  ox: number;
+  oy: number;
+  /** True once the finger has drifted far enough to be a stick rather than a tap. */
+  engaged: boolean;
+}
+
+export function createFloatingStick(): FloatingStick {
+  return { pointer: null, ox: 0, oy: 0, engaged: false };
+}
+
+/**
+ * A finger goes down at (x, y); `fingers` counts the fingers now down, this one included. The
+ * first finger becomes the candidate; any further finger cancels the stick (writing zero into
+ * `out`). Returns true when a stick that was engaged was cancelled.
+ */
+export function floatPress(
+  s: FloatingStick,
+  id: number,
+  x: number,
+  y: number,
+  fingers: number,
+  out: Stick,
+): boolean {
+  if (fingers > 1) return floatCancel(s, out);
+  if (s.pointer !== null) return false;
+  s.pointer = id;
+  s.ox = x;
+  s.oy = y;
+  s.engaged = false;
+  return false;
+}
+
+/**
+ * The finger `id` moved to (x, y). Engages the stick once it has drifted past `TAP_MAX_PX`, and
+ * while engaged writes its deflection into `out`. Returns whether the stick is engaged.
+ */
+export function floatMove(
+  s: FloatingStick,
+  id: number,
+  x: number,
+  y: number,
+  p: SteeringParams,
+  out: Stick,
+): boolean {
+  if (id !== s.pointer) return s.engaged;
+  const dx = x - s.ox;
+  const dy = y - s.oy;
+  if (!s.engaged && Math.hypot(dx, dy) > TAP_MAX_PX) s.engaged = true;
+  if (s.engaged) stickFromOffset(dx, dy, p, out);
+  return s.engaged;
+}
+
+/** The finger `id` lifted or was lost. Ends the stick if it was that finger. Returns true then. */
+export function floatRelease(s: FloatingStick, id: number, out: Stick): boolean {
+  if (id !== s.pointer) return false;
+  floatCancel(s, out);
+  return true;
+}
+
+/** Ends the stick and zeroes `out`. Returns true when it had been engaged. */
+export function floatCancel(s: FloatingStick, out: Stick): boolean {
+  const was = s.engaged;
+  s.pointer = null;
+  s.engaged = false;
+  out.x = 0;
+  out.z = 0;
+  return was;
+}
