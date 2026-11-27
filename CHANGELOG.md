@@ -2,19 +2,26 @@
 
 ## Unreleased
 
+## 0.1.0 — 2026-11-26
+
+The first walkable table: walk onto any of the 118 elements, read its data, and jump to others with the explorer.
+
+- Element list: the List button shows every element as a plain table (number, symbol, name, family, period, group) with the current tile marked; choosing a name walks there. The interface buttons come before the scene in the tab order, and an automated accessibility audit (WCAG 2.2 AA, including text contrast over the scene) runs with the browser tests.
 - Faster start: the table is walkable about a second sooner, because tile labels are now built in background workers and no longer hold up the first frame.
 - Adaptive resolution: on a GPU that can't keep up, the scene lowers its resolution a step at a time to hold the frame rate, and raises it again when there is room.
 - With reduced motion on, jumping to an element from the explorer or a link cuts straight to it instead of gliding.
 - `npm run perf` measures time to first move and frame work on the production build.
 - Getting back: R or Home walks the figure back to the last tile it stood on, and after two seconds on the ground a "Back to the table" button appears. The status tells screen-reader users how to return.
+- Off the edge: the figure can step off a tile onto the ground and drops with an eased fall; walking back into a tile hops it up on a short arc. A tile only wakes once the figure stands on top of it. Past the table a ground margin ends in a soft limit that pushes back, with a visible edge, and the camera keeps the table in frame.
+- Keyboard access: I, J, K and L step tile to tile, Enter or Space opens the panel and moves focus into it, Esc backs out, and `?` shows the key map. The scene is focusable with a visible focus ring and a label, and keys typed in text fields never walk the figure.
 - Explorer: `⌘K`, `/` or the Explore button opens a palette that searches elements by name, symbol or number (forgiving of typos), sorts them by number, name, mass, discovery year, density, electronegativity or melting point, and filters by family, state, block, period and group. Choosing one puts the character on that tile and the camera glides there. Every element has a link (`#/Au`), and the address follows the tile you stand on.
 - Click or tap a tile and the character walks straight to it, slowing to a stop on its centre. On touch screens an on-screen joystick walks it at any speed; it sits above the panel sheet on phones. The keyboard always takes over, then the joystick, then a clicked target.
 - Element families have themes: a tile wakes into its family's surface when the character steps on it (brushed transition metals, chalky alkaline earths, glassy metalloids, glowing noble gases, pulsing actinides and more), and the panel takes its accent from the same theme. All tiles still draw in one call.
 - Element panel: while the character stands on a tile, a panel slides in with the element's overview (family, state, mass, electron configuration, discovery) and properties (melting and boiling points, density, electronegativity, radius, ionization energy, electron affinity, oxidation states), with units and in the family's accent colour. On narrow screens it is a sheet along the bottom.
 - Tiles wake when the character steps on them: the tile rises with the character on it and a warm ring grows around it; leaving reverses it over a quarter second. A screen-reader status announces the tile ("Standing on Hydrogen").
-- The page paints a light shell (68 KB of gzipped JavaScript) and loads the 3D scene as a separate chunk behind it.
+- The page paints a light shell (about 70 KB of gzipped JavaScript) and loads the 3D scene as a separate chunk behind it.
 - Follow camera: an establishing shot glides from the whole table down to the character (skipped under reduced motion), then the camera follows with a critically damped spring and a little look-ahead. Zoom with the wheel, a pinch or `+`/`-`.
-- The character walks with WASD or the arrow keys (Shift to walk slowly): it speeds up and slows down smoothly, turns to face where it goes, leans into turns and stops at the table's edge.
+- The character walks with WASD or the arrow keys (Shift to walk slowly): it speeds up and slows down smoothly, turns to face where it goes, leans into turns.
 - A procedural bean character stands on hydrogen: it breathes when idle and has a walk cycle driven by speed.
 - The app bundle no longer includes zod (357 KB gzipped, down from 381 KB).
 - Dev-only tuning panel: `?tune` on the dev server shows live sliders for tile, label and camera settings.
