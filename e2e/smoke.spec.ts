@@ -127,3 +127,26 @@ test('] and [ step by atomic number', async ({ page }) => {
   await page.keyboard.press('[');
   await expect(status).toHaveAttribute('data-tile', '1', { timeout: 10_000 });
 });
+
+test('the height lens follows the deep link, the H key and the list', async ({ page }) => {
+  await page.goto('/#/Fe?lens=density');
+  await expect(page.getByRole('complementary', { name: 'Iron' })).toBeVisible({ timeout: 15_000 });
+  const lens = page.getByRole('combobox', { name: /lens/i });
+  await expect(lens).toHaveValue('density');
+
+  // H cycles to the next lens, keeps the element in the link and is announced.
+  await page.locator('#scene').focus();
+  await page.keyboard.press('h');
+  await expect(lens).toHaveValue('electronegativity');
+  await expect(page).toHaveURL(/#\/Fe\?lens=electronegativity$/);
+  await expect(page.locator('.lens-control [role=status]')).toHaveText(
+    'Height lens: Electronegativity',
+  );
+
+  // The list gains a column for the lens; flat removes the lens from the link.
+  await page.getByRole('button', { name: 'List' }).click();
+  await expect(page.getByRole('columnheader', { name: 'Electronegativity' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await lens.selectOption('');
+  await expect(page).toHaveURL(/#\/Fe$/);
+});

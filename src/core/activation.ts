@@ -1,6 +1,7 @@
 import { GROUND } from './boundary.ts';
 import { CONFIG } from './config.ts';
 import { tileAtPoint, TILES } from './layout.ts';
+import { createLiftEase, stepLift, type LiftEase } from './lens.ts';
 
 /**
  * Which tile the character stands on, and how far each tile is through its enter/leave
@@ -16,6 +17,11 @@ export interface Activation {
   levels: Float32Array;
   dirty: Uint8Array;
   anyDirty: boolean;
+  /**
+   * Each tile's extra height from the height lens (`core/lens.ts`), 0 with no lens. Written by
+   * `stepLift`, which marks the tiles it moves dirty, so it runs after `stepActivation`.
+   */
+  lift: Float32Array;
 }
 
 export function createActivation(): Activation {
@@ -24,6 +30,7 @@ export function createActivation(): Activation {
     levels: new Float32Array(TILES.length),
     dirty: new Uint8Array(TILES.length),
     anyDirty: false,
+    lift: new Float32Array(TILES.length),
   };
 }
 
@@ -76,7 +83,25 @@ export function easeLevel(level: number): number {
   return level * level * (3 - 2 * level);
 }
 
-/** Height of tile i's top above the ground: the resting height plus its eased rise. */
+/** Height of tile i's top above the ground: the resting height, its lens lift and its eased rise. */
 export function tileTop(a: Activation, i: number): number {
-  return CONFIG.tiles.height + CONFIG.tiles.rise * easeLevel(a.levels[i]!);
+  return CONFIG.tiles.height + a.lift[i]! + CONFIG.tiles.rise * easeLevel(a.levels[i]!);
+}
+
+/** Puts every tile at its lens lift at once (marking all dirty) and returns an ease resting there. */
+export function placeLift(a: Activation, targets: Float32Array): LiftEase {
+  a.lift.set(targets);
+  a.dirty.fill(1);
+  a.anyDirty = true;
+  return createLiftEase(a.lift);
+}
+
+/** Steps the height lens's ease into `a.lift`; run after `stepActivation`, which clears `dirty`. */
+export function stepActivationLift(
+  a: Activation,
+  ease: LiftEase,
+  dt: number,
+  duration: number,
+): void {
+  if (stepLift(ease, a.lift, a.dirty, dt, duration)) a.anyDirty = true;
 }

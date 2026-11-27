@@ -1,17 +1,20 @@
 import { useId, useRef } from 'react';
 import { CATEGORY_LABELS } from '../core/elementFacts.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
+import { LENS_LABELS, lensValueLabel } from '../core/lens.ts';
 import { useAppStore } from '../state/store.ts';
 
 /**
  * The table as plain text: a native modal `<dialog>` holding an HTML table of all elements in
  * atomic-number order, for anyone who cannot or would rather not use the 3D scene. Each name is a
  * button that closes the list and flies the character to that element, so the panel opens on it.
+ * With a height lens on, a last column shows the property the tiles' heights stand for.
  * Lazy-loaded in the chunk that already carries the element data (docs/adr/0005-element-panel-data.md).
  */
 export function ElementList() {
   const dialog = useRef<HTMLDialogElement>(null);
   const current = useAppStore((s) => s.activeTile?.number ?? null);
+  const lens = useAppStore((s) => s.lens.height);
   const base = useId();
 
   const go = (n: number) => {
@@ -53,6 +56,7 @@ export function ElementList() {
                 <th scope="col">Family</th>
                 <th scope="col">Period</th>
                 <th scope="col">Group</th>
+                {lens && <th scope="col">{LENS_LABELS[lens]}</th>}
               </tr>
             </thead>
             <tbody>
@@ -75,6 +79,7 @@ export function ElementList() {
                       </>
                     )}
                   </td>
+                  {lens && <td>{lensValueLabel(e, lens)}</td>}
                 </tr>
               ))}
             </tbody>

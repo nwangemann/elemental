@@ -2,17 +2,24 @@ import { describe, expect, it } from 'vitest';
 import { ELEMENTS } from './elements/index.ts';
 import { NO_FILTERS } from './explorer.ts';
 import {
+  createLiftEase,
+  cycleLens,
   filterDim,
   hasFilters,
   LENS_KEYS,
   LENS_SCALES,
   lensDomain,
+  lensFromHash,
   lensLevel,
   lensLevels,
   lensValue,
+  lensValueLabel,
+  liftTargets,
   NO_DATA,
+  retargetLift,
   shownDim,
   stepDim,
+  stepLift,
 } from './lens.ts';
 
 const byNumber = (n: number) => ELEMENTS[n - 1]!;
@@ -134,5 +141,77 @@ describe('shownDim', () => {
     expect(shownDim(1, 0)).toBe(1);
     expect(shownDim(1, 1)).toBe(0);
     expect(shownDim(0, 0.5)).toBe(0);
+  });
+});
+
+describe('lensFromHash', () => {
+  it('reads a known lens from the deep link query', () => {
+    expect(lensFromHash('#/Au?lens=density')).toBe('density');
+    expect(lensFromHash('#/au?x=1&lens=meltingPoint')).toBe('meltingPoint');
+  });
+
+  it('ignores a missing or unknown lens', () => {
+    expect(lensFromHash('#/Au')).toBeNull();
+    expect(lensFromHash('#/Au?lens=colour')).toBeNull();
+    expect(lensFromHash('')).toBeNull();
+  });
+});
+
+describe('lensValueLabel', () => {
+  it('formats with units and says when a value is unknown', () => {
+    expect(lensValueLabel(byNumber(FE), 'atomicRadius')).toMatch(/pm$/);
+    expect(lensValueLabel(byNumber(C), 'yearDiscovered')).toBe('Antiquity');
+    expect(lensValueLabel(byNumber(OG), 'meltingPoint')).toBe('Unknown');
+  });
+});
+
+describe('liftTargets', () => {
+  const p = { lensHeight: 1, lensFloor: 0.1 };
+
+  it('is all zero with the lens off', () => {
+    expect([...liftTargets(ELEMENTS, null, p)].every((v) => v === 0)).toBe(true);
+  });
+
+  it('spreads known values from the floor to the top, unknowns at 0', () => {
+    const lift = liftTargets(ELEMENTS, 'density', p);
+    const levels = lensLevels(ELEMENTS, 'density');
+    ELEMENTS.forEach((_, i) => {
+      const level = levels[i]!;
+      expect(lift[i]).toBeCloseTo(level === NO_DATA ? 0 : 0.1 + 0.9 * level, 5);
+    });
+    expect(lift[OS - 1]).toBeGreaterThan(lift[H - 1]!);
+  });
+});
+
+describe('stepLift', () => {
+  it('eases every tile together and marks the ones that move', () => {
+    const lift = new Float32Array(3);
+    const dirty = new Uint8Array(3);
+    const ease = createLiftEase(lift);
+    expect(stepLift(ease, lift, dirty, 0.1, 0.6)).toBe(false);
+    retargetLift(ease, lift, new Float32Array([1, 0, 2]));
+    expect(stepLift(ease, lift, dirty, 0.3, 0.6)).toBe(true);
+    expect(lift[0]).toBeCloseTo(0.5, 5);
+    expect(lift[2]).toBeCloseTo(1, 5);
+    expect([...dirty]).toEqual([1, 0, 1]);
+    stepLift(ease, lift, dirty, 1, 0.6);
+    expect([...lift]).toEqual([1, 0, 2]);
+    expect(stepLift(ease, lift, dirty, 0.1, 0.6)).toBe(false);
+  });
+
+  it('snaps with no duration', () => {
+    const lift = new Float32Array([0.5]);
+    const ease = createLiftEase(lift);
+    retargetLift(ease, lift, new Float32Array([0]));
+    expect(stepLift(ease, lift, new Uint8Array(1), 0, 0)).toBe(true);
+    expect(lift[0]).toBe(0);
+  });
+});
+
+describe('cycleLens', () => {
+  it('runs off, every key, off, and back', () => {
+    expect(cycleLens(null, 1)).toBe(LENS_KEYS[0]);
+    expect(cycleLens(LENS_KEYS.at(-1)!, 1)).toBeNull();
+    expect(cycleLens(null, -1)).toBe(LENS_KEYS.at(-1));
   });
 });

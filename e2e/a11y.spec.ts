@@ -64,23 +64,25 @@ test('the explorer, key map and element list pass an accessibility audit', async
 test('tab order runs from the title buttons to the table, then the panel', async ({ page }) => {
   await ready(page);
   const order: string[] = [];
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     await page.keyboard.press('Tab');
     order.push(
       await page.evaluate(() => {
         const a = document.activeElement;
+        if (a?.tagName === 'SELECT') return 'lens';
         return a?.id === 'scene' ? 'scene' : a?.textContent?.trim() || '';
       }),
     );
   }
-  expect(order.slice(0, 4)).toEqual([
+  expect(order.slice(0, 5)).toEqual([
     expect.stringMatching(/^Explore/),
     expect.stringMatching(/^Keys/),
     'List',
+    'lens',
     'scene',
   ]);
   // After the table, focus moves into the open panel (its selected tab).
-  expect(order[4]).toBe('Overview');
+  expect(order[5]).toBe('Overview');
 });
 
 test('the element list reads the table as text and walks to a choice', async ({ page }) => {

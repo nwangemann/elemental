@@ -28,6 +28,7 @@ import {
   type Filters,
   type SortKey,
 } from '../core/explorer.ts';
+import { lensFromHash } from '../core/lens.ts';
 import { accentTokens } from '../core/themes.ts';
 import { useAppStore } from '../state/store.ts';
 import { isTextEntry } from '../scene/useKeyboardInput.ts';
@@ -42,30 +43,38 @@ function valueOf(e: ChangeEvent<HTMLSelectElement>): string | null {
   return e.target.value || null;
 }
 
+/** Replaces the hash (no history entry) when it differs. */
+function replaceHash(hash: string): void {
+  if (window.location.hash === hash) return;
+  const { pathname, search } = window.location;
+  window.history.replaceState(window.history.state, '', pathname + search + hash);
+}
+
 /**
- * Keeps the address bar on the element under the character (`#/Au`, replaced, not pushed, so
- * walking does not fill the history) and flies to an element when the hash is edited by hand.
- * The first spawn from a deep link is the scene's own (scene/Scene.tsx).
+ * Keeps the address bar on the element under the character and the height lens
+ * (`#/Au?lens=density`, replaced, not pushed, so walking does not fill the history), and flies to
+ * an element and sets the lens when the hash is edited by hand. The first spawn and lens from a
+ * deep link are the scene's own (scene/Scene.tsx, scene/HeightLens.tsx).
  */
 function useDeepLinks(): void {
   useEffect(() => {
     const unsubscribe = useAppStore.subscribe((s, prev) => {
-      if (!s.activeTile || s.activeTile === prev.activeTile) return;
-      const e = elementByNumber(s.activeTile.number);
-      if (!e || parseDeepLink(window.location.hash, ELEMENTS) === e) return;
-      const { pathname, search } = window.location;
-      window.history.replaceState(window.history.state, '', pathname + search + deepLink(e));
+      if (s.activeTile === prev.activeTile && s.lens.height === prev.lens.height) return;
+      // Off the table, the link keeps the element it already names (or the last one stood on).
+      const e =
+        (s.activeTile && elementByNumber(s.activeTile.number)) ??
+        parseDeepLink(window.location.hash, ELEMENTS) ??
+        (s.lastTile === null ? undefined : elementByNumber(s.lastTile));
+      if (e) replaceHash(deepLink(e, s.lens.height));
     });
     const onHash = () => {
       const e = parseDeepLink(window.location.hash, ELEMENTS);
       if (!e) return;
+      const store = useAppStore.getState();
+      store.setLensHeight(lensFromHash(window.location.hash));
       // A hand-typed `#/gold` or `#/79` reads back as the canonical `#/Au`.
-      if (window.location.hash !== deepLink(e)) {
-        const { pathname, search } = window.location;
-        window.history.replaceState(window.history.state, '', pathname + search + deepLink(e));
-      }
-      if (e.number !== useAppStore.getState().activeTile?.number)
-        useAppStore.getState().flyTo(e.number);
+      replaceHash(deepLink(e, useAppStore.getState().lens.height));
+      if (e.number !== store.activeTile?.number) store.flyTo(e.number);
     };
     window.addEventListener('hashchange', onHash);
     return () => {

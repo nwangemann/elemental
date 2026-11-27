@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Height lens: the Lens menu (or `H`, `Shift H` backward) raises every tile by a property, so density, melting point, electronegativity, radius or discovery year becomes a landscape you can walk across. Tiles ease to their new heights in about half a second (at once with reduced motion), labels ride along, and elements with no known value stay flat. The element list gains a column for the property, and the lens goes into the link (`#/Au?lens=density`).
 - Tile labels draw from a pre-rendered glyph atlas instead of a text library: about 40 KB less JavaScript, no font download, labels show as soon as the table does, and frame work while walking halves.
 - The element panel says where an element stands out: "Densest of all elements", "3rd highest melting point of all elements", "Most electronegative in period 6". After you've seen another element it adds one comparison with it, picking the most striking difference ("Compared with Iron: 3.5× heavier").
 - Explorer filters now show on the table: tiles that don't match fade to a dim grey, so "noble gases" or "period 6" lights up its own part of the table. The dimming stays after the explorer closes, the Explore button says "Filtered" while it does, and the tile you stand on always keeps its colour.

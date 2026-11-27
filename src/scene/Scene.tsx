@@ -13,6 +13,7 @@ import { createTapMarker } from '../core/tapMarker.ts';
 import { CameraRig } from './CameraRig.tsx';
 import { Character } from './Character.tsx';
 import { FlightHandler } from './FlightHandler.tsx';
+import { HeightLens } from './HeightLens.tsx';
 import { Joystick } from './Joystick.tsx';
 import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
 import { Labels } from './Labels.tsx';
@@ -82,6 +83,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         <FlightHandler controller={controller} target={target} />
         <ReturnHandler controller={controller} target={target} />
         <TileActivator activation={activation} controller={controller} ledge={ledge} />
+        <HeightLens key={`lens-${version}`} activation={activation} />
         <Tiles key={`tiles-${version}`} activation={activation} />
         <TileRings key={`rings-${version}`} activation={activation} />
         <Labels key={`labels-${version}`} activation={activation} />

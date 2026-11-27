@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { Filters } from '../core/explorer.ts';
-import type { Lens } from '../core/lens.ts';
+import type { Lens, LensKey } from '../core/lens.ts';
 
 /** The tile the character stands on, as the interface needs it. */
 export interface ActiveTile {
@@ -41,6 +41,8 @@ export interface AppState {
    */
   lens: Lens;
   setLensFilters: (filters: Filters) => void;
+  /** Sets the property the tiles' heights show (null = flat); the scene eases them there. */
+  setLensHeight: (height: LensKey | null) => void;
 }
 
 /**
@@ -72,4 +74,6 @@ export const useAppStore = create<AppState>()((set) => ({
     filters: { category: null, state: null, block: null, period: null, group: null },
   },
   setLensFilters: (filters) => set((s) => ({ lens: { ...s.lens, filters } })),
+  setLensHeight: (height) =>
+    set((s) => (s.lens.height === height ? s : { lens: { ...s.lens, height } })),
 }));

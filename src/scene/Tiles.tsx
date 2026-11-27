@@ -189,5 +189,8 @@ export function Tiles({ activation }: { activation: Activation }) {
     m.computeBoundingSphere();
   }, [activation, dummy]);
 
-  return <instancedMesh ref={mesh} args={[geometry, material, TILES.length]} />;
+  // The height lens moves tiles after the bounds are computed; the table is always in view anyway.
+  return (
+    <instancedMesh ref={mesh} args={[geometry, material, TILES.length]} frustumCulled={false} />
+  );
 }

@@ -19,3 +19,11 @@ Several planned features read the whole table at once by one property: tile heig
 - New lenses are a key in `LENS_KEYS` plus a renderer; the maths and the "no data" rule are already tested.
 - Labels on dimmed tiles stay at full brightness (they are one troika batch; recolouring members would rebuild it). The baked label atlas (ADR 13) can dim them per instance.
 - The fade rewrites the 118-float `aDim` buffer only while a fade runs or a tile changes.
+
+## Addendum: the height lens
+
+- **The lift lives in the activation state** (`activation.lift`), and `tileTop` adds it. Tiles, labels, the tap marker and the figure's footing already read heights through `tileTop` and rewrite only dirty tiles, so the lens needed no new path in any renderer: the ease marks the tiles it moves dirty.
+- **The whole table eases together** from its old heights to the new ones (about 0.6 s, smoothstepped), rather than each tile at its own rate, so a lens change reads as one motion. Reduced motion snaps.
+- **Unknown values stay at rest height**; the lowest known value sits a little above it (`lensFloor`), so "unknown" and "lowest" stay apart.
+- **The lens is part of the deep link** as a query in the hash (`#/Au?lens=density`), so links stay static-host friendly and older `#/Au` links still work.
+- For now the figure rides any height difference with its standing smoothing; tap-to-walk aims at the resting plane, and the camera does not follow the figure's height. Cliffs that block, hops that scale with the step and tap targets on raised tiles come with climbing.

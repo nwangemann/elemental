@@ -120,6 +120,12 @@ describe('deep links', () => {
     for (const e of ELEMENTS) expect(parseDeepLink(deepLink(e), ELEMENTS)).toBe(e);
   });
 
+  it('carries a lens in the query and still finds the element', () => {
+    const au = byNumber(79);
+    expect(deepLink(au, 'density')).toBe('#/Au?lens=density');
+    expect(parseDeepLink('#/au?lens=density', ELEMENTS)).toBe(au);
+  });
+
   it('accepts lower case, numbers, names and a missing slash', () => {
     const au = byNumber(79);
     expect(parseDeepLink('#/au', ELEMENTS)).toBe(au);

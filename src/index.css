@@ -502,6 +502,42 @@ kbd {
   top: 9.25rem;
 }
 
+.lens-control {
+  position: fixed;
+  top: 11.75rem;
+  left: 1.25rem;
+  z-index: 1;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.3rem 0.4rem 0.3rem 0.7rem;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  background: rgb(22 27 34 / 90%);
+  color: #e6edf3;
+  font-size: 0.875rem;
+}
+
+.lens-control label {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.lens-control select {
+  padding: 0.15rem 0.3rem;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  background: #0d1117;
+  color: inherit;
+  font: inherit;
+}
+
+.lens-control select:focus-visible {
+  outline: 2px solid #79c0ff;
+  outline-offset: 2px;
+}
+
 .keys-open:hover,
 .list-open:hover {
   border-color: #6e7681;

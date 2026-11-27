@@ -171,17 +171,17 @@ export function sortValueLabel(e: Element, key: SortKey): string {
   }
 }
 
-/** The hash for an element's deep link: `#/Au`. */
-export function deepLink(e: Pick<Element, 'symbol'>): string {
-  return `#/${e.symbol}`;
+/** The hash for an element's deep link: `#/Au`, or `#/Au?lens=density` with a height lens on. */
+export function deepLink(e: Pick<Element, 'symbol'>, lens: string | null = null): string {
+  return lens === null ? `#/${e.symbol}` : `#/${e.symbol}?lens=${lens}`;
 }
 
 /**
  * The element a hash points at, or null. Accepts `#/Au`, `#/au`, `#/79` and `#/gold`, with or
- * without the slash, so hand-typed links work too.
+ * without the slash, so hand-typed links work too. A query after `?` (the lens) is ignored here.
  */
 export function parseDeepLink(hash: string, elements: readonly Element[]): Element | null {
-  let key = hash.replace(/^#\/?/, '');
+  let key = hash.replace(/^#\/?/, '').replace(/\?.*$/, '');
   try {
     key = decodeURIComponent(key);
   } catch {

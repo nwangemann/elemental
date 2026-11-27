@@ -25,6 +25,7 @@ const KEY_GROUPS: readonly { title: string; rows: readonly [keys: string[], acti
         [['Space'], 'Same as Enter'],
         [['Esc'], 'Close the panel and return to the table'],
         [[IS_MAC ? '⌘ K' : 'Ctrl K', '/'], 'Search, sort and filter the elements'],
+        [['H', 'Shift H'], 'Raise the tiles by the next or previous property (height lens)'],
         [['?'], 'Show or hide this list'],
       ],
     },

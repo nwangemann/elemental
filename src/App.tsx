@@ -17,6 +17,11 @@ const ElementPanel = lazy(() =>
 // The explorer shares that chunk: it needs the element data too.
 const Explorer = lazy(() => import('./ui/Explorer.tsx').then((m) => ({ default: m.Explorer })));
 
+// The height lens control needs only the lens core, not the element data.
+const LensControl = lazy(() =>
+  import('./ui/LensControl.tsx').then((m) => ({ default: m.LensControl })),
+);
+
 // The plain-text list of every element, for use without the 3D scene; same chunk again.
 const ElementList = lazy(() =>
   import('./ui/ElementList.tsx').then((m) => ({ default: m.ElementList })),
@@ -59,6 +64,9 @@ export function App() {
       <KeyHelp />
       <Suspense>
         <ElementList />
+      </Suspense>
+      <Suspense>
+        <LensControl />
       </Suspense>
       <Suspense
         fallback={

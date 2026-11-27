@@ -31,6 +31,10 @@ export const CONFIG_DEFAULTS = {
     /** Tiles the explorer's filters exclude: how far they darken and grey (0–1), and fade time s. */
     dimStrength: 0.7,
     dimDuration: 0.25,
+    /** Height lens (`core/lens.ts`): extra height of the top tile and of the lowest known one, and the ease, s. */
+    lensHeight: 1.2,
+    lensFloor: 0.04,
+    lensDuration: 0.6,
   },
   labels: {
     /** Cap height of the element symbol, in world units. */
@@ -140,6 +144,9 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     markerOpacity: { min: 0, max: 1, step: 0.01 },
     dimStrength: { min: 0, max: 1, step: 0.01 },
     dimDuration: { min: 0, max: 1, step: 0.01 },
+    lensHeight: { min: 0, max: 3, step: 0.05 },
+    lensFloor: { min: 0, max: 0.5, step: 0.01 },
+    lensDuration: { min: 0, max: 2, step: 0.05 },
   },
   labels: {
     symbolSize: { min: 0.1, max: 0.8, step: 0.01 },
