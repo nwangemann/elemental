@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addRecent,
   BOND_LABELS,
+  isomersOf,
   leadsTo,
   madeOf,
   parseRecent,
@@ -34,6 +35,14 @@ describe('compound card', () => {
     const linked = COMPOUNDS.flatMap((c) => leadsTo(c, COMPOUNDS)).filter((i) => i.compound);
     expect(linked.map((i) => i.compound!.id)).toContain('glucose');
     for (const i of linked) expect(i.compound!.name.toLowerCase()).toBe(i.text.toLowerCase());
+  });
+});
+
+describe('isomers on the card', () => {
+  it('links each isomer both ways, and nothing else', () => {
+    expect(isomersOf(byId('ethanol'), COMPOUNDS).map((c) => c.id)).toEqual(['dimethyl-ether']);
+    expect(isomersOf(byId('dimethyl-ether'), COMPOUNDS).map((c) => c.id)).toEqual(['ethanol']);
+    expect(isomersOf(byId('water'), COMPOUNDS)).toEqual([]);
   });
 });
 

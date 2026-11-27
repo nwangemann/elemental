@@ -23,10 +23,10 @@ import { foundIn, foundInLine } from '../core/compounds/contexts.ts';
 import { eraFact } from '../core/discovery.ts';
 import { phaseFact } from '../core/temperature.ts';
 import { accentTokens } from '../core/themes.ts';
-import { useAppStore } from '../state/store.ts';
+import { useAppStore, type PanelTab } from '../state/store.ts';
 import { AtomDiagram } from './AtomDiagram.tsx';
 
-const TABS: readonly { id: string; label: string; render: (e: Element) => ReactNode }[] = [
+const TABS: readonly { id: PanelTab; label: string; render: (e: Element) => ReactNode }[] = [
   { id: 'overview', label: 'Overview', render: (e) => <OverviewTab element={e} /> },
   { id: 'properties', label: 'Properties', render: (e) => <FactList facts={propertyFacts(e)} /> },
   { id: 'atom', label: 'Atom', render: (e) => <AtomTab element={e} /> },
@@ -170,6 +170,14 @@ function Tabs({ element }: { element: Element }) {
   const [active, setActive] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const base = useId();
+  // A card's electrons link asks for the Atom tab (adjusted during render, not in an effect).
+  const request = useAppStore((s) => s.panelTab);
+  const [seen, setSeen] = useState<typeof request>(null);
+  if (request !== seen) {
+    setSeen(request);
+    const i = TABS.findIndex((t) => t.id === request?.tab);
+    if (i >= 0) setActive(i);
+  }
 
   // Arrow keys, Home and End move between tabs (WAI-ARIA tabs pattern). The event stops here,
   // so the arrows do not also walk the character.

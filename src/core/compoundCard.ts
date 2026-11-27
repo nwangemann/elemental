@@ -44,6 +44,11 @@ export function leadsTo(compound: Compound, compounds: readonly Compound[]): Lea
   }));
 }
 
+/** The compounds with the same atoms in another shape (ethanol and dimethyl ether), for links. */
+export function isomersOf(compound: Compound, compounds: readonly Compound[]): Compound[] {
+  return compound.isomers.flatMap((id) => compounds.find((c) => c.id === id) ?? []);
+}
+
 /** How many compounds Recently made keeps. */
 export const RECENT_LIMIT = 8;
 

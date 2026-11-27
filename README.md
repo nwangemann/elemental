@@ -4,7 +4,7 @@ A walkable periodic table. A small figure strolls across a 3D table of the eleme
 
 **Try it:** https://nwangemann.github.io/elemental/ (the latest release).
 
-> Status: version 0.2.0 is live. All 118 elements are drawn and a small figure walks across them with a follow camera; tiles wake into their family's material as it steps on them, and a panel in the family's accent colour shows the element's overview, properties and atom (its electron shells). Four lenses read the whole table at once: height, colour, temperature and discovery year. Combine mode carries atoms and forms real compounds over the figure, each with a card that explains it. You can walk with the keyboard, by clicking or tapping a tile, or with an on-screen joystick, and jump to any element with the explorer, the element list or a link like `#/Au`. Next: scale ladders and isomer notes on the compound cards. See the [changelog](CHANGELOG.md).
+> Status: version 0.2.0 is live. All 118 elements are drawn and a small figure walks across them with a follow camera; tiles wake into their family's material as it steps on them, and a panel in the family's accent colour shows the element's overview, properties and atom (its electron shells). Four lenses read the whole table at once: height, colour, temperature and discovery year. Combine mode carries atoms and forms real compounds over the figure, each with a card that explains it, links to its elements' electron shells and to its isomers, and climbs a scale ladder (glucose → starch → bread). You can walk with the keyboard, by clicking or tapping a tile, or with an on-screen joystick, and jump to any element with the explorer, the element list or a link like `#/Au`. Next: release 0.3.0. See the [changelog](CHANGELOG.md).
 
 ## Controls
 

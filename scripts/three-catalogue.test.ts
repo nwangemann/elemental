@@ -21,7 +21,8 @@ function sourceFiles(dir: string): string[] {
 describe('threeCatalogue', () => {
   it('has a class for every lowercase JSX element that names a three class', () => {
     const missing = new Set<string>();
-    for (const file of sourceFiles(join(root, 'src'))) {
+    // Only the scene renders React Three Fiber; the DOM interface's SVG (<path>, <line>) is not three.
+    for (const file of sourceFiles(join(root, 'src', 'scene'))) {
       for (const [, tag] of readFileSync(file, 'utf8').matchAll(/<([a-z][A-Za-z0-9]*)[\s/>]/g)) {
         if (!tag) continue;
         const name = tag.charAt(0).toUpperCase() + tag.slice(1);

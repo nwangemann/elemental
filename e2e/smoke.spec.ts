@@ -501,6 +501,44 @@ test('Show me gathers water, its card opens, and Recently made reopens it', asyn
   await expect(recent).toHaveCount(0);
 });
 
+test('a card climbs its scale ladder, links its isomer and opens the Atom tab', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const status = page.locator('[data-tile]');
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
+  await page.evaluate(() =>
+    localStorage.setItem('elemental:recent', JSON.stringify(['calcium-carbonate', 'ethanol'])),
+  );
+  await page.reload();
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
+  await page.keyboard.press('c');
+  await page.keyboard.press('Backspace');
+  const tray = page.getByRole('region', { name: 'Combine' });
+  const recent = tray.getByRole('list', { name: 'Recently made' });
+
+  // Limestone → Quicklime → Concrete, with Quicklime opening its own card.
+  await recent.getByRole('button', { name: 'Calcium carbonate' }).click();
+  const ladder = tray.getByRole('list').filter({ hasText: 'Concrete' });
+  await expect(ladder.getByRole('listitem')).toHaveCount(3);
+  await expect(ladder.locator('[aria-current="step"]')).toContainText('Limestone');
+  await ladder.getByRole('button', { name: 'Quicklime' }).click();
+  await expect(tray.getByRole('heading', { name: /^Quicklime/ })).toBeFocused();
+
+  // Ethanol and dimethyl ether link each other.
+  await page.keyboard.press('Escape');
+  await recent.getByRole('button', { name: 'Ethanol' }).click();
+  await tray.getByRole('button', { name: 'Dimethyl ether' }).click();
+  await expect(tray.getByRole('heading', { name: /Dimethyl ether/ })).toBeFocused();
+
+  // The electrons link flies to oxygen and opens its Atom tab.
+  await tray.getByRole('button', { name: "Oxygen's electron shells" }).click();
+  await expect(status).toHaveAttribute('data-tile', '8', { timeout: slow(10_000) });
+  const panel = page.getByRole('complementary', { name: 'Oxygen' });
+  await expect(panel.getByRole('tab', { name: 'Atom' })).toHaveAttribute('aria-selected', 'true');
+  await expect(panel.getByText('Electrons per shell')).toBeVisible();
+});
+
 test('a context lights its elements, lists its compounds and goes into the link', async ({
   page,
 }) => {

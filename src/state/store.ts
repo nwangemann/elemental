@@ -39,6 +39,9 @@ export interface Flight {
   seq: number;
 }
 
+/** The element panel's tabs. */
+export type PanelTab = 'overview' | 'properties' | 'atom';
+
 export interface AppState {
   /** The tile under the character, or null between tiles and off the table. */
   activeTile: ActiveTile | null;
@@ -55,6 +58,10 @@ export interface AppState {
    */
   panelClosed: boolean;
   setPanelClosed: (closed: boolean) => void;
+  /** The latest request to show a panel tab (the compound card's electrons links); `seq` repeats it. */
+  panelTab: { tab: PanelTab; seq: number } | null;
+  /** Flies to element `number` and opens its panel on `tab`. */
+  showTab: (number: number, tab: PanelTab) => void;
   /** Atomic number of the last tile the character stood on, kept while it is off the table. */
   lastTile: number | null;
   /** True while the character is on the ground beside the table (ADR 0009), not on a tile. */
@@ -111,6 +118,13 @@ export const useAppStore = create<AppState>()((set) => ({
   walkTo: (number) => set((s) => ({ walk: { number, seq: (s.walk?.seq ?? 0) + 1 } })),
   panelClosed: false,
   setPanelClosed: (panelClosed) => set({ panelClosed }),
+  panelTab: null,
+  showTab: (number, tab) =>
+    set((s) => ({
+      flight: { number, seq: (s.flight?.seq ?? 0) + 1 },
+      panelClosed: false,
+      panelTab: { tab, seq: (s.panelTab?.seq ?? 0) + 1 },
+    })),
   lastTile: null,
   offTable: false,
   setOffTable: (offTable) => set({ offTable }),

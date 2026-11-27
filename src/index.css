@@ -1328,3 +1328,77 @@ body:has(.combine-tray:not([hidden])) .back-to-table {
     overflow-y: auto;
   }
 }
+
+/* The card's electrons links and isomer links, inline after their text. */
+.compound-electrons {
+  display: block;
+  margin-top: 0.15rem;
+  color: #9da7b3;
+  font-size: 0.8rem;
+}
+
+.combine-tray .compound-electrons .compound-link,
+.combine-tray .compound-card dd > .compound-link + .compound-link {
+  margin-left: 0.4rem;
+}
+
+/* The scale ladder: one row of rungs per chain, each a small picture, a label and a line. */
+.ladder {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ladder li {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  font-size: 0.75rem;
+}
+
+.ladder li + li::before {
+  content: '→' / '';
+  position: absolute;
+  top: 16px;
+  left: -0.45rem;
+  color: #6e7681;
+  line-height: 1;
+}
+
+.ladder li[aria-current] b {
+  color: var(--combine-accent, #79c0ff);
+}
+
+.ladder span {
+  color: #9da7b3;
+}
+
+.ladder li + li .rung-art {
+  margin-left: 0.55rem;
+}
+
+.rung-art {
+  color: #c9d1d9;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+}
+
+.rung-art * {
+  vector-effect: non-scaling-stroke;
+}
+
+.rung-art polyline,
+.rung-art line {
+  stroke: #6e7681;
+}
+
+.rung-art .rung-other {
+  fill: #e3b341;
+  stroke: #e3b341;
+}
