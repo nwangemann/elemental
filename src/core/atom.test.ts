@@ -172,7 +172,7 @@ describe('atomOf', () => {
 describe('atomSummary and fillingNote', () => {
   it('summarises shells for a screen reader', () => {
     expect(atomSummary(atomOf('[Ar]3d5 4s1'))).toBe('2, 8, 13, 1 electrons; outer shell 1');
-    expect(atomSummary(atomOf('1s1'))).toBe('1 electrons; outer shell 1');
+    expect(atomSummary(atomOf('1s1'))).toBe('1 electron; outer shell 1');
   });
 
   it('says nothing for an element that follows the rule', () => {

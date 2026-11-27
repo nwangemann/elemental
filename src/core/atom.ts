@@ -186,7 +186,8 @@ export function atomOf(configuration: string): Atom {
 export function atomSummary(atom: Atom): string {
   const counts = atom.shells.map((s) => String(s.electrons)).join(', ');
   const outer = atom.shells[atom.valenceShell - 1]?.electrons ?? 0;
-  return `${counts} electrons; outer shell ${String(outer)}`;
+  const noun = counts === '1' ? 'electron' : 'electrons';
+  return `${counts} ${noun}; outer shell ${String(outer)}`;
 }
 
 /**
