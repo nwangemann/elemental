@@ -59,8 +59,8 @@ function replaceHash(hash: string): void {
  */
 function useDeepLinks(): void {
   useEffect(() => {
-    // The scene reads the height and colour lenses from the link as it loads; the temperature
-    // has no scene yet, so it is read here, before the first hash rewrite could drop it.
+    // The scene reads all three lenses from the link as it loads; the temperature is also read
+    // here, since the shell mounts first and its first hash rewrite must not drop it.
     useAppStore.getState().setLensTemperature(temperatureFromHash(window.location.hash));
     const unsubscribe = useAppStore.subscribe((s, prev) => {
       if (

@@ -27,5 +27,7 @@ Carbon is left as the data has it (melts at 3,823 K, boils at 4,098 K), though a
 
 ## Consequences
 
-- The scene gets one code per tile from `phaseTargets` (0 solid, 1 liquid, 2 gas, 3 unknown) and eases between them; liquid and gas looks are later steps.
+- The scene eases each tile's shown phase (0 solid, 1 liquid, 2 gas) at one state per 0.4 s, at once with reduced motion; unknown tiles keep the solid shape and take the dim (a share of the filters' dim, so a filtered-out tile still reads as more excluded).
+- Gas tiles float up by `CONFIG.tiles.gasLift` (0.3, under the 0.45 climb limit, so the figure can still step onto one from a solid neighbour) through the same `tileTop` the height lens uses, so labels, the tap marker and footing follow. They turn see-through by a screen-door dither (`discard` on a 4×4 ordered pattern) rather than blending, so the tiles stay one opaque draw call with no sorting; the cost is a visible stipple, read here as vapour. Labels stay solid on top, so a gas tile's symbol stays readable.
+- The liquid look is a separate step (a ripple on the top face, shading only).
 - The lens can disagree with a textbook for elements the data does not describe at 1 atm (carbon). An honest unknown is shown where the data stops, so the superheavy row and a few actinides grey out at every temperature.

@@ -7,6 +7,7 @@ import type { InputState } from '../core/input.ts';
 import { LEDGE_STAND, type LedgeState } from '../core/ledge.ts';
 import { poseMoved, stepPacer, wakePacer, type Pacer } from '../core/pacer.ts';
 import type { TintEase } from '../core/lens.ts';
+import type { PhaseEase } from '../core/temperature.ts';
 import type { Stick, WalkTarget } from '../core/steering.ts';
 import { useAppStore } from '../state/store.ts';
 
@@ -18,7 +19,7 @@ const WAKE_EVENTS = ['keydown', 'keyup', 'pointerdown', 'pointerup', 'wheel', 'r
 
 /**
  * Drives the canvas in `frameloop="demand"` (`core/pacer.ts`): while the figure, camera, tiles
- * (their lift, activation or colour-lens tint) or input move it asks for the next display frame;
+ * (their lift, activation, colour-lens tint or temperature-lens phase) or input move it asks for the next display frame;
  * once all are still for `CONFIG.pacing.settle` it asks for one every `1 / idleFps` seconds. Input on the window and any app-store change wake
  * it at once. Mount it after every other frame subscriber at priority 0, so the quality governor
  * reads `pacer.paced` for the frame it is in. Renders nothing.
@@ -32,6 +33,7 @@ export function FramePacer({
   ledge,
   activation,
   tint,
+  phase,
 }: {
   pacer: Pacer;
   controller: ControllerState;
@@ -41,6 +43,7 @@ export function FramePacer({
   ledge: LedgeState;
   activation: Activation;
   tint: TintEase;
+  phase: PhaseEase;
 }) {
   const invalidate = useThree((s) => s.invalidate);
   const pose = useMemo(() => new Float64Array(7), []);
@@ -82,7 +85,9 @@ export function FramePacer({
       ledge.squash > STILL ||
       activation.anyDirty ||
       tint.moved ||
-      tint.t < 1;
+      tint.t < 1 ||
+      phase.moved ||
+      phase.moving;
     const wait = stepPacer(pacer, delta, busy, CONFIG.pacing);
     window.clearTimeout(timer.current);
     if (wait === 0) invalidate();

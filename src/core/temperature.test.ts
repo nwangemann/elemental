@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { ELEMENTS } from './elements/index.ts';
 import { deepLink, parseDeepLink } from './explorer.ts';
 import {
+  createPhaseEase,
   DETENTS,
+  gasAmount,
+  retargetPhase,
+  stepPhase,
   DETENT_WINDOW,
   kelvinAt,
   PHASE_CODE,
@@ -147,5 +151,58 @@ describe('temperature deep link', () => {
       expect(temperatureFromHash(hash)).toBe(k);
       expect(parseDeepLink(hash, ELEMENTS)).toBe(ga);
     }
+  });
+});
+
+const i = (sym: string) => bySymbol(sym).number - 1;
+
+describe('PhaseEase', () => {
+  it('rests at the lens it is created with', () => {
+    const off = createPhaseEase(ELEMENTS, null);
+    expect(off.levels.every((v) => v === 0)).toBe(true);
+    expect(off.unknown.every((v) => v === 0)).toBe(true);
+    const room = createPhaseEase(ELEMENTS, ROOM);
+    expect(room.levels[i('Fe')]).toBe(0);
+    expect(room.levels[i('Hg')]).toBe(1);
+    expect(room.levels[i('O')]).toBe(2);
+    // Unknown tiles keep the solid look and take the dim.
+    expect(room.levels[i('Og')]).toBe(0);
+    expect(room.unknown[i('Og')]).toBe(1);
+    expect(stepPhase(room, 0.1, 0.4)).toBe(false);
+  });
+
+  it('moves one state per duration and reports moved, then settles', () => {
+    const e = createPhaseEase(ELEMENTS, null);
+    retargetPhase(e, ELEMENTS, ROOM);
+    expect(stepPhase(e, 0.2, 0.4)).toBe(true);
+    expect(e.levels[i('Hg')]).toBeCloseTo(0.5);
+    expect(e.levels[i('O')]).toBeCloseTo(0.5);
+    expect(e.unknown[i('Og')]).toBeCloseTo(0.5);
+    expect(e.moving).toBe(true);
+    stepPhase(e, 0.2, 0.4);
+    expect(e.levels[i('Hg')]).toBe(1);
+    expect(e.levels[i('O')]).toBeCloseTo(1);
+    stepPhase(e, 0.4, 0.4);
+    expect(e.levels[i('O')]).toBe(2);
+    expect(e.moved).toBe(true);
+    expect(e.moving).toBe(false);
+    expect(stepPhase(e, 0.1, 0.4)).toBe(false);
+  });
+
+  it('snaps with a zero duration', () => {
+    const e = createPhaseEase(ELEMENTS, ROOM);
+    retargetPhase(e, ELEMENTS, 6000);
+    expect(stepPhase(e, 0.016, 0)).toBe(true);
+    expect(e.levels[i('W')]).toBe(2);
+    expect(e.moving).toBe(false);
+  });
+});
+
+describe('gasAmount', () => {
+  it('is 0 up to liquid, 1 at gas, smooth between', () => {
+    expect(gasAmount(0)).toBe(0);
+    expect(gasAmount(1)).toBe(0);
+    expect(gasAmount(1.5)).toBeCloseTo(0.5);
+    expect(gasAmount(2)).toBe(1);
   });
 });

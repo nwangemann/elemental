@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { createActivation, easeLevel, stepActivation } from './activation.ts';
+import {
+  createActivation,
+  easeLevel,
+  stepActivation,
+  stepActivationPhase,
+  tileTop,
+} from './activation.ts';
+import { CONFIG } from './config.ts';
+import { ELEMENTS } from './elements/index.ts';
+import { createPhaseEase, retargetPhase, stepPhase } from './temperature.ts';
 import { LAYOUT, TILES } from './layout.ts';
 
 const H = TILES[0]!;
@@ -96,5 +105,31 @@ describe('stepActivation with a standing tile', () => {
     const justOff = H.z - LAYOUT.tileSize / 2 - 0.05;
     stepActivation(a, H.x, justOff, 0.1, DURATION, 1);
     expect(a.current).toBe(1);
+  });
+});
+
+describe('stepActivationPhase', () => {
+  it('floats gas tiles by the gas lift, marks them dirty, and tileTop follows', () => {
+    const a = createActivation();
+    const ease = createPhaseEase(ELEMENTS, null);
+    retargetPhase(ease, ELEMENTS, 298.15);
+    stepPhase(ease, 10, 0.4);
+    stepActivationPhase(a, ease, 0.3);
+    const o = 7; // oxygen
+    expect(a.phaseLift[o]).toBeCloseTo(0.3);
+    expect(a.phaseLift[25]).toBe(0); // iron
+    expect(a.dirty[o]).toBe(1);
+    expect(a.dirty[25]).toBe(0);
+    expect(a.anyDirty).toBe(true);
+    expect(tileTop(a, o)).toBeCloseTo(CONFIG.tiles.height + 0.3);
+  });
+
+  it('does nothing while the ease is still, unless placing', () => {
+    const a = createActivation();
+    const ease = createPhaseEase(ELEMENTS, 298.15);
+    stepActivationPhase(a, ease, 0.3);
+    expect(a.anyDirty).toBe(false);
+    stepActivationPhase(a, ease, 0.3, true);
+    expect(a.phaseLift[7]).toBeCloseTo(0.3);
   });
 });

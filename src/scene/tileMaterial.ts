@@ -4,12 +4,14 @@ import { MeshStandardMaterial, type IUniform, type Texture } from 'three';
 export const SURFACE_ATTRIBUTE = 'aSurface';
 export const GLOW_COLOR_ATTRIBUTE = 'aGlowColor';
 export const DIM_ATTRIBUTE = 'aDim';
+export const PHASE_ATTRIBUTE = 'aPhase';
 
 export interface TileUniforms {
   uTime: IUniform<number>;
   uGlowScale: IUniform<number>;
   uPulseSpeed: IUniform<number>;
   uDimStrength: IUniform<number>;
+  uGasFade: IUniform<number>;
 }
 
 /**
@@ -23,7 +25,10 @@ export interface TileUniforms {
  * and tone mapping stay three's own. The environment map adds reflections only
  * (`lights_fragment_maps` drops its diffuse irradiance), so it makes metals read as metal without
  * paling every family colour. `aDim` (float, 0–1) greys and darkens a tile by `uDimStrength`
- * and fades its glow, for tiles the explorer's filters exclude (`core/lens.ts`).
+ * and fades its glow, for tiles the explorer's filters exclude (`core/lens.ts`) and tiles whose
+ * state the temperature lens cannot tell. `aPhase` (float, 0 solid → 1 liquid → 2 gas) makes gas
+ * tiles see-through by a screen door: a 4×4 ordered-dither pattern in screen space drops up to
+ * `uGasFade` of their pixels, so they stay in the one opaque draw call with no sorting.
  */
 export function createTileMaterial(envMap: Texture | null): MeshStandardMaterial {
   const uniforms: TileUniforms = {
@@ -31,6 +36,7 @@ export function createTileMaterial(envMap: Texture | null): MeshStandardMaterial
     uGlowScale: { value: 1 },
     uPulseSpeed: { value: 0 },
     uDimStrength: { value: 0 },
+    uGasFade: { value: 0 },
   };
   const material = new MeshStandardMaterial({ envMap });
   material.userData.uniforms = uniforms;
@@ -44,16 +50,19 @@ export function createTileMaterial(envMap: Texture | null): MeshStandardMaterial
 attribute vec4 ${SURFACE_ATTRIBUTE};
 attribute vec3 ${GLOW_COLOR_ATTRIBUTE};
 attribute float ${DIM_ATTRIBUTE};
+attribute float ${PHASE_ATTRIBUTE};
 varying vec4 vSurface;
 varying vec3 vGlowColor;
-varying float vDim;`,
+varying float vDim;
+varying float vPhase;`,
       )
       .replace(
         '#include <begin_vertex>',
         `#include <begin_vertex>
 vSurface = ${SURFACE_ATTRIBUTE};
 vGlowColor = ${GLOW_COLOR_ATTRIBUTE};
-vDim = ${DIM_ATTRIBUTE};`,
+vDim = ${DIM_ATTRIBUTE};
+vPhase = ${PHASE_ATTRIBUTE};`,
       );
     shader.fragmentShader = shader.fragmentShader
       .replace(
@@ -63,9 +72,22 @@ uniform float uTime;
 uniform float uGlowScale;
 uniform float uPulseSpeed;
 uniform float uDimStrength;
+uniform float uGasFade;
 varying vec4 vSurface;
 varying vec3 vGlowColor;
-varying float vDim;`,
+varying float vDim;
+varying float vPhase;
+// 4x4 ordered-dither thresholds, centred in (0, 1).
+const float BAYER[16] = float[16](
+  0.5, 8.5, 2.5, 10.5, 12.5, 4.5, 14.5, 6.5, 3.5, 11.5, 1.5, 9.5, 15.5, 7.5, 13.5, 5.5);`,
+      )
+      // Gas tiles turn see-through by a screen door: drop the pixels under the dither threshold.
+      .replace(
+        '#include <clipping_planes_fragment>',
+        `#include <clipping_planes_fragment>
+float gas = smoothstep(0.0, 1.0, clamp(vPhase - 1.0, 0.0, 1.0));
+ivec2 cell = ivec2(gl_FragCoord.xy) & 3;
+if (gas * uGasFade * 16.0 > BAYER[cell.y * 4 + cell.x]) discard;`,
       )
       // Dimmed tiles (filtered out by the explorer) go grey and dark; metals' reflections follow,
       // since their specular colour is this diffuse colour.
@@ -101,9 +123,11 @@ export function updateTileMaterial(
   pulseSpeed: number,
   envIntensity: number,
   dimStrength: number,
+  gasFade: number,
 ): void {
   const uniforms = material.userData.uniforms as TileUniforms;
   uniforms.uDimStrength.value = dimStrength;
+  uniforms.uGasFade.value = gasFade;
   uniforms.uTime.value = time;
   uniforms.uGlowScale.value = glowScale;
   uniforms.uPulseSpeed.value = pulseSpeed;

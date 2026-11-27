@@ -2,6 +2,8 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
   BoxGeometry,
+  type BufferAttribute,
+  type InterleavedBufferAttribute,
   Color,
   DynamicDrawUsage,
   InstancedBufferAttribute,
@@ -27,12 +29,14 @@ import {
 } from '../core/lens.ts';
 import type { Rgb } from '../core/palette.ts';
 import { LAYOUT, TILES } from '../core/layout.ts';
+import type { PhaseEase } from '../core/temperature.ts';
 import { THEMES, surfaceAt } from '../core/themes.ts';
 import { useAppStore } from '../state/store.ts';
 import {
   createTileMaterial,
   DIM_ATTRIBUTE,
   GLOW_COLOR_ATTRIBUTE,
+  PHASE_ATTRIBUTE,
   SURFACE_ATTRIBUTE,
   updateTileMaterial,
 } from './tileMaterial.ts';
@@ -68,10 +72,25 @@ function createDim(filters: Filters): Dim {
 
 const EMPTY_DIM = createDim(NO_FILTERS);
 
-/** Writes every tile's shown dim (its dim, lifted as it wakes) into the `aDim` buffer. */
-function writeDim(out: Float32Array, dim: Dim, activation: Activation): void {
-  for (let i = 0; i < out.length; i++)
-    out[i] = shownDim(dim.levels[i]!, easeLevel(activation.levels[i]!));
+/**
+ * Writes every tile's shown dim into the `aDim` buffer: the filters' dim or the temperature lens's
+ * unknown dim (`CONFIG.tiles.unknownDim` of it), whichever is stronger, lifted as the tile wakes.
+ */
+function writeDim(out: Float32Array, dim: Dim, phase: PhaseEase, activation: Activation): void {
+  const unknownDim = CONFIG.tiles.unknownDim;
+  for (let i = 0; i < out.length; i++) {
+    const level = Math.max(dim.levels[i]!, phase.unknown[i]! * unknownDim);
+    out[i] = shownDim(level, easeLevel(activation.levels[i]!));
+  }
+}
+
+/** Copies the temperature lens's shown phase into the `aPhase` buffer. */
+function writePhase(
+  attribute: BufferAttribute | InterleavedBufferAttribute,
+  phase: PhaseEase,
+): void {
+  (attribute.array as Float32Array).set(phase.levels);
+  attribute.needsUpdate = true;
 }
 
 function writeTile(
@@ -120,6 +139,8 @@ function createTileGeometry(): BoxGeometry {
   geometry.setAttribute(GLOW_COLOR_ATTRIBUTE, new InstancedBufferAttribute(glow, 3));
   const dim = new InstancedBufferAttribute(new Float32Array(TILES.length), 1);
   geometry.setAttribute(DIM_ATTRIBUTE, dim.setUsage(DynamicDrawUsage));
+  const phase = new InstancedBufferAttribute(new Float32Array(TILES.length), 1);
+  geometry.setAttribute(PHASE_ATTRIBUTE, phase.setUsage(DynamicDrawUsage));
   return geometry;
 }
 
@@ -134,8 +155,18 @@ function createTileGeometry(): BoxGeometry {
  * `CONFIG.tiles.dimDuration` (at once with reduced motion); the tile underfoot keeps its colour.
  * Instance colours come from the colour lens's `tint` (`ColourLens`): all of them while it eases,
  * otherwise only tiles whose activation changed, since the tile underfoot blends back to its theme.
+ * The temperature lens's `phase` (`TemperatureLens`) fills `aPhase`, which fades gas tiles by a
+ * screen door, and dims tiles whose state is unknown; both are rewritten only while it moves.
  */
-export function Tiles({ activation, tint }: { activation: Activation; tint: TintEase }) {
+export function Tiles({
+  activation,
+  tint,
+  phase,
+}: {
+  activation: Activation;
+  tint: TintEase;
+  phase: PhaseEase;
+}) {
   const mesh = useRef<InstancedMesh>(null);
   const dummy = useMemo(() => new Object3D(), []);
   const gl = useThree((s) => s.gl);
@@ -167,7 +198,7 @@ export function Tiles({ activation, tint }: { activation: Activation; tint: Tint
     const m = mesh.current;
     if (!m) return;
     const dim = dimRef.current;
-    const { glowScale, pulseSpeed, envIntensity, dimStrength, dimDuration } = CONFIG.tiles;
+    const { glowScale, pulseSpeed, envIntensity, dimStrength, dimDuration, gasFade } = CONFIG.tiles;
     updateTileMaterial(
       m.material as MeshStandardMaterial,
       clock.elapsedTime,
@@ -175,15 +206,17 @@ export function Tiles({ activation, tint }: { activation: Activation; tint: Tint
       pulseSpeed,
       envIntensity,
       dimStrength,
+      gasFade,
     );
     const dimChanged = dim.moving;
     if (dim.moving)
       dim.moving = stepDim(dim.levels, dim.targets, dt, prefersReducedMotion() ? 0 : dimDuration);
-    if (dimChanged || activation.anyDirty) {
+    if (dimChanged || phase.moved || activation.anyDirty) {
       const shown = m.geometry.getAttribute(DIM_ATTRIBUTE) as InstancedBufferAttribute;
-      writeDim(shown.array as Float32Array, dim, activation);
+      writeDim(shown.array as Float32Array, dim, phase, activation);
       shown.needsUpdate = true;
     }
+    if (phase.moved) writePhase(m.geometry.getAttribute(PHASE_ATTRIBUTE), phase);
     const colours = m.instanceColor;
     if (colours && (tint.moved || activation.anyDirty)) {
       const out = colours.array as Float32Array;
@@ -210,13 +243,14 @@ export function Tiles({ activation, tint }: { activation: Activation; tint: Tint
       writeColour(m.instanceColor!.array as Float32Array, tint, activation, i);
     }
     const shown = m.geometry.getAttribute(DIM_ATTRIBUTE) as InstancedBufferAttribute;
-    writeDim(shown.array as Float32Array, dimRef.current, activation);
+    writeDim(shown.array as Float32Array, dimRef.current, phase, activation);
     shown.needsUpdate = true;
+    writePhase(m.geometry.getAttribute(PHASE_ATTRIBUTE), phase);
     m.instanceMatrix.needsUpdate = true;
     surface.needsUpdate = true;
     if (m.instanceColor) m.instanceColor.needsUpdate = true;
     m.computeBoundingSphere();
-  }, [activation, dummy, tint]);
+  }, [activation, dummy, tint, phase]);
 
   // The height lens moves tiles after the bounds are computed; the table is always in view anyway.
   return (

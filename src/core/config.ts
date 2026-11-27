@@ -37,6 +37,15 @@ export const CONFIG_DEFAULTS = {
     lensDuration: 0.6,
     /** Colour lens (`core/lens.ts`): how long the table takes to ease between colourings, s. */
     tintDuration: 0.4,
+    /**
+     * Temperature lens (`core/temperature.ts`): time per change of state, s; how high a gas tile
+     * floats; how much of it the screen-door fade drops (0–1); how dim an unknown tile is, as a
+     * share of the filters' dim.
+     */
+    phaseDuration: 0.4,
+    gasLift: 0.3,
+    gasFade: 0.55,
+    unknownDim: 0.6,
   },
   labels: {
     /** Cap height of the element symbol, in world units. */
@@ -164,6 +173,10 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     lensFloor: { min: 0, max: 0.5, step: 0.01 },
     lensDuration: { min: 0, max: 2, step: 0.05 },
     tintDuration: { min: 0, max: 2, step: 0.05 },
+    phaseDuration: { min: 0, max: 2, step: 0.01 },
+    gasLift: { min: 0, max: 1, step: 0.01 },
+    gasFade: { min: 0, max: 1, step: 0.01 },
+    unknownDim: { min: 0, max: 1, step: 0.01 },
   },
   labels: {
     symbolSize: { min: 0.1, max: 0.8, step: 0.01 },

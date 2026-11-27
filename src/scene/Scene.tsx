@@ -14,6 +14,8 @@ import { createTapMarker } from '../core/tapMarker.ts';
 import { CameraRig } from './CameraRig.tsx';
 import { ColourLens } from './ColourLens.tsx';
 import { createSceneTint } from './sceneTint.ts';
+import { createScenePhase } from './scenePhase.ts';
+import { TemperatureLens } from './TemperatureLens.tsx';
 import { Character } from './Character.tsx';
 import { FlightHandler } from './FlightHandler.tsx';
 import { FramePacer } from './FramePacer.tsx';
@@ -60,6 +62,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
   const marker = useMemo(() => createTapMarker(), []);
   const pacer = useMemo(() => createPacer(), []);
   const tint = useMemo(() => createSceneTint(), []);
+  const phase = useMemo(() => createScenePhase(), []);
   return (
     <>
       <Canvas
@@ -94,7 +97,8 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         <TileActivator activation={activation} controller={controller} ledge={ledge} />
         <HeightLens key={`lens-${version}`} activation={activation} />
         <ColourLens tint={tint} />
-        <Tiles key={`tiles-${version}`} activation={activation} tint={tint} />
+        <TemperatureLens activation={activation} phase={phase} />
+        <Tiles key={`tiles-${version}`} activation={activation} tint={tint} phase={phase} />
         <TileRings key={`rings-${version}`} activation={activation} />
         <Labels key={`labels-${version}`} activation={activation} />
         <Character
@@ -119,6 +123,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           ledge={ledge}
           activation={activation}
           tint={tint}
+          phase={phase}
         />
       </Canvas>
       <Joystick stick={stick} />

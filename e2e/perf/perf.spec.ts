@@ -184,6 +184,41 @@ test('frame work while the colour lens eases', async ({ page }) => {
   expect(result.p95Ms).toBeLessThan(8);
 });
 
+test('frame work while the temperature lens sweeps', async ({ page }) => {
+  await page.addInitScript(INIT);
+  await page.goto('/?perf&quality=off#/H?t=298.15');
+  await expect(page.locator('#tile-status')).toHaveAttribute('data-tile', '1', {
+    timeout: 20_000,
+  });
+  await page.waitForTimeout(3_500);
+  await page.evaluate(() => ((window as unknown as { perfFrames: number[] }).perfFrames = []));
+  // Walk with the lens on while the temperature sweeps up and back: tiles melt, boil (rise and
+  // fade) and condense along the way, every tile rewritten while the ease runs.
+  await page.keyboard.down('ArrowRight');
+  for (const t of [600, 1500, 3000, 6000, 1200, 298.15]) {
+    await page.evaluate((k) => (window.location.hash = `#/H?t=${k}`), t);
+    await page.waitForTimeout(600);
+  }
+  await page.keyboard.up('ArrowRight');
+  await expect(page).toHaveURL(/t=298.15/);
+  const frames = await page.evaluate(
+    () => (window as unknown as { perfFrames: number[] }).perfFrames,
+  );
+  const overlay = page.locator('output.perf');
+  const sorted = frames.toSorted((a, b) => a - b);
+  const result = {
+    frames: sorted.length,
+    medianMs: +quantile(sorted, 0.5).toFixed(2),
+    p95Ms: +quantile(sorted, 0.95).toFixed(2),
+    maxMs: +(sorted.at(-1) ?? 0).toFixed(2),
+    drawCalls: Number(await overlay.getAttribute('data-calls')),
+  };
+  console.log(`perf:temp ${JSON.stringify(result)}`);
+  expect(result.frames).toBeGreaterThan(60);
+  expect(result.drawCalls).toBe(11);
+  expect(result.p95Ms).toBeLessThan(8);
+});
+
 /** Idle seconds counted, after the establishing shot and the pacer's settle time. */
 const IDLE_SECONDS = 5;
 

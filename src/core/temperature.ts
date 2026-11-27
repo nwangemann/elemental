@@ -131,3 +131,96 @@ export function temperatureFromHash(hash: string): number | null {
 export function temperatureParam(kelvin: number): string {
   return String(Math.round(kelvin * 100) / 100);
 }
+
+/**
+ * The temperature lens as the scene draws it. `levels[i]` is tile i's shown phase, 0 solid →
+ * 1 liquid → 2 gas, easing toward `targets` at one state per `duration`; `unknown[i]` (0–1) eases
+ * toward 1 for tiles whose phase is unknown, which keep the solid look and take the dim. With the
+ * lens off every target is 0. `moved` is true when the last `stepPhase` changed anything, so
+ * renderers rewrite only then; `moving` while it is still on its way.
+ */
+export interface PhaseEase {
+  levels: Float32Array;
+  targets: Float32Array;
+  unknown: Float32Array;
+  unknownTargets: Float32Array;
+  moved: boolean;
+  moving: boolean;
+}
+
+/** Writes each tile's target shown phase (0–2) and unknown flag (0 or 1) at `kelvin` (null = off). */
+export function phaseEaseTargets(
+  elements: readonly Element[],
+  kelvin: number | null,
+  phase: Float32Array,
+  unknown: Float32Array,
+): void {
+  for (let i = 0; i < elements.length; i++) {
+    const p = kelvin === null ? 'solid' : phaseAt(elements[i]!, kelvin);
+    phase[i] = p === 'unknown' ? 0 : PHASE_CODE[p];
+    unknown[i] = p === 'unknown' ? 1 : 0;
+  }
+}
+
+/** An ease resting at the lens for `kelvin`, so a lens present at mount starts in place. */
+export function createPhaseEase(elements: readonly Element[], kelvin: number | null): PhaseEase {
+  const targets = new Float32Array(elements.length);
+  const unknownTargets = new Float32Array(elements.length);
+  phaseEaseTargets(elements, kelvin, targets, unknownTargets);
+  return {
+    levels: targets.slice(),
+    targets,
+    unknown: unknownTargets.slice(),
+    unknownTargets,
+    moved: false,
+    moving: false,
+  };
+}
+
+/** Points the ease at `kelvin` (null = off); tiles move on from wherever they are now. */
+export function retargetPhase(
+  ease: PhaseEase,
+  elements: readonly Element[],
+  kelvin: number | null,
+): void {
+  phaseEaseTargets(elements, kelvin, ease.targets, ease.unknownTargets);
+  ease.moving = true;
+}
+
+function approach(levels: Float32Array, targets: Float32Array, step: number): boolean {
+  let changed = false;
+  for (let i = 0; i < levels.length; i++) {
+    const level = levels[i]!;
+    const target = targets[i]!;
+    if (level === target) continue;
+    levels[i] = level < target ? Math.min(target, level + step) : Math.max(target, level - step);
+    changed = true;
+  }
+  return changed;
+}
+
+/**
+ * Moves every tile toward its targets at a constant rate, one state (solid to liquid, say) per
+ * `duration` seconds (0 snaps). Sets `moved` and `moving`; returns `moved`. Allocation-free.
+ */
+export function stepPhase(ease: PhaseEase, dt: number, duration: number): boolean {
+  ease.moved = false;
+  if (!ease.moving) return false;
+  const step = duration > 0 ? dt / duration : Infinity;
+  const a = approach(ease.levels, ease.targets, step);
+  const b = approach(ease.unknown, ease.unknownTargets, step);
+  ease.moved = a || b;
+  ease.moving = false;
+  for (let i = 0; i < ease.levels.length; i++)
+    if (ease.levels[i] !== ease.targets[i] || ease.unknown[i] !== ease.unknownTargets[i]) {
+      ease.moving = true;
+      break;
+    }
+  return ease.moved;
+}
+
+/** How far a shown phase (0–2) is into gas, 0–1, smoothstepped: what lifts and fades a tile. */
+export function gasAmount(phase: number): number {
+  const g = Math.min(1, Math.max(0, phase - 1));
+  return g * g * (3 - 2 * g);
+}
