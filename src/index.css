@@ -508,9 +508,10 @@ kbd {
   left: 1.25rem;
   z-index: 1;
   display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 0.3rem 0.4rem 0.3rem 0.7rem;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 16.5rem;
+  padding: 0.35rem 0.4rem 0.35rem 0.7rem;
   border: 1px solid #30363d;
   border-radius: 6px;
   background: rgb(22 27 34 / 90%);
@@ -518,10 +519,101 @@ kbd {
   font-size: 0.875rem;
 }
 
+.lens-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .lens-control label {
   display: flex;
   gap: 0.4rem;
   align-items: center;
+}
+
+.colour-legend {
+  margin: 0.2rem 0.3rem 0.1rem 0;
+  font-size: 0.8rem;
+}
+
+.colour-legend figcaption {
+  margin-bottom: 0.25rem;
+}
+
+.colour-legend-log {
+  color: #9da7b3;
+}
+
+.colour-legend-bar {
+  height: 0.6rem;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--ramp));
+}
+
+/* Narrow screens: the lenses sit along the bottom, just above the element sheet when it is open,
+   so they never cover the figure (the camera centres it in the space the sheet leaves). */
+@media (width < 40rem) {
+  .lens-control {
+    top: auto;
+    right: 0.5rem;
+    bottom: 4.5rem;
+    left: 0.5rem;
+    flex-flow: row wrap;
+    gap: 0.3rem 0.75rem;
+    width: auto;
+    font-size: 0.8rem;
+  }
+
+  body:has(.panel[data-open='true']) .lens-control {
+    bottom: calc(45dvh + 1rem);
+  }
+
+  .lens-row {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .lens-row select {
+    min-width: 0;
+    max-width: 8.5rem;
+  }
+
+  /* Phones rarely have the keys; the selects need the room. */
+  .lens-row kbd {
+    display: none;
+  }
+
+  .colour-legend {
+    flex-basis: 100%;
+    margin-top: 0;
+  }
+}
+
+@supports (background: linear-gradient(to right in srgb-linear, red, blue)) {
+  .colour-legend-bar {
+    background: linear-gradient(to right in srgb-linear, var(--ramp));
+  }
+}
+
+.colour-legend-ends,
+.colour-legend-nodata {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  margin: 0.2rem 0 0;
+}
+
+.colour-legend-ends {
+  justify-content: space-between;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.colour-legend-swatch {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 2px;
 }
 
 .lens-control select {

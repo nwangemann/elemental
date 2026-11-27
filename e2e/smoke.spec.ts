@@ -131,7 +131,7 @@ test('] and [ step by atomic number', async ({ page }) => {
 test('the height lens follows the deep link, the H key and the list', async ({ page }) => {
   await page.goto('/#/Fe?lens=density');
   await expect(page.getByRole('complementary', { name: 'Iron' })).toBeVisible({ timeout: 15_000 });
-  const lens = page.getByRole('combobox', { name: /lens/i });
+  const lens = page.getByRole('combobox', { name: /height/i });
   await expect(lens).toHaveValue('density');
 
   // H cycles to the next lens, keeps the element in the link and is announced.
@@ -148,6 +148,35 @@ test('the height lens follows the deep link, the H key and the list', async ({ p
   await expect(page.getByRole('columnheader', { name: 'Electronegativity' })).toBeVisible();
   await page.keyboard.press('Escape');
   await lens.selectOption('');
+  await expect(page).toHaveURL(/#\/Fe$/);
+});
+
+test('the colour lens follows the deep link and the G key, with a legend', async ({ page }) => {
+  await page.goto('/#/Fe?colour=meltingPoint');
+  await expect(page.getByRole('complementary', { name: 'Iron' })).toBeVisible({ timeout: 15_000 });
+  const colour = page.getByRole('combobox', { name: /colour/i });
+  await expect(colour).toHaveValue('meltingPoint');
+  const legend = page.getByRole('figure', { name: 'Melting point' });
+  await expect(legend).toContainText('Lowest: 0.95 K (−272.2 °C)');
+  await expect(legend).toContainText('Highest: 3823 K (3550 °C)');
+  await expect(legend).toContainText('No data (15)');
+
+  // G cycles to the next lens and is announced; Shift G goes back; the link keeps up.
+  await page.locator('#scene').focus();
+  await page.keyboard.press('g');
+  await expect(colour).toHaveValue('boilingPoint');
+  await expect(page).toHaveURL(/#\/Fe\?colour=boilingPoint$/);
+  await expect(page.locator('.lens-control [role=status]')).toHaveText(
+    'Colour lens: Boiling point',
+  );
+  await page.keyboard.press('Shift+G');
+  await expect(colour).toHaveValue('meltingPoint');
+
+  // Density reads on a log scale; family colours remove the legend and the parameter.
+  await colour.selectOption('density');
+  await expect(page.getByRole('figure', { name: /Density/ })).toContainText('log scale');
+  await colour.selectOption('');
+  await expect(page.getByRole('figure')).toHaveCount(0);
   await expect(page).toHaveURL(/#\/Fe$/);
 });
 

@@ -1,52 +1,83 @@
-import { useEffect, useId, useState } from 'react';
-import { LENS_KEYS, LENS_LABELS, cycleLens, isLensKey } from '../core/lens.ts';
+import { Suspense, lazy, useEffect, useId, useState } from 'react';
+import { LENS_KEYS, LENS_LABELS, cycleLens, isLensKey, type LensKey } from '../core/lens.ts';
 import { isTextEntry } from '../scene/useKeyboardInput.ts';
 import { useAppStore } from '../state/store.ts';
 
+// The legend reads the element data for its ends, so it shares the data chunk and loads only once
+// a colour lens is on; the selects themselves need only the lens core.
+const ColourLegend = lazy(() =>
+  import('./ColourLegend.tsx').then((m) => ({ default: m.ColourLegend })),
+);
+
+/** The two lenses the control drives: which store field, key, and words each uses. */
+const LENSES = [
+  { which: 'height', code: 'KeyH', key: 'H', label: 'Height', off: 'Flat' },
+  { which: 'colour', code: 'KeyG', key: 'G', label: 'Colour', off: 'Family' },
+] as const;
+
+type Which = (typeof LENSES)[number]['which'];
+
+function setLens(which: Which, key: LensKey | null) {
+  const store = useAppStore.getState();
+  if (which === 'height') store.setLensHeight(key);
+  else store.setLensColour(key);
+}
+
 /**
- * The height lens control: a select in the HUD that raises each tile by a property (the scene
- * eases them, `scene/HeightLens.tsx`), and the H key (Shift H backward) that cycles through the
- * lenses outside text fields. A key press is announced, since focus stays on the table.
+ * The lens controls in the HUD: a Height select that raises each tile by a property
+ * (`scene/HeightLens.tsx`) and a Colour select that tints it (`scene/ColourLens.tsx`), with the
+ * colour lens's legend under them. H and G (Shift backward) cycle each lens outside text fields;
+ * a key press is announced, since focus stays on the table.
  */
 export function LensControl() {
   const id = useId();
-  const height = useAppStore((s) => s.lens.height);
+  const lens = useAppStore((s) => s.lens);
   const [announce, setAnnounce] = useState('');
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code !== 'KeyH' || e.metaKey || e.ctrlKey || e.altKey || isTextEntry(e.target)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey || isTextEntry(e.target)) return;
+      const l = LENSES.find((x) => x.code === e.code);
+      if (!l) return;
       e.preventDefault();
-      const store = useAppStore.getState();
-      const next = cycleLens(store.lens.height, e.shiftKey ? -1 : 1);
-      store.setLensHeight(next);
-      setAnnounce(next === null ? 'Height lens off' : `Height lens: ${LENS_LABELS[next]}`);
+      const next = cycleLens(useAppStore.getState().lens[l.which], e.shiftKey ? -1 : 1);
+      setLens(l.which, next);
+      setAnnounce(`${l.label} lens${next === null ? ' off' : `: ${LENS_LABELS[next]}`}`);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
   return (
-    <section className="lens-control" aria-label="Height lens">
-      <label htmlFor={id}>
-        Lens <kbd>H</kbd>
-      </label>
-      <select
-        id={id}
-        value={height ?? ''}
-        aria-keyshortcuts="H"
-        onChange={(e) => {
-          const v = e.target.value;
-          useAppStore.getState().setLensHeight(isLensKey(v) ? v : null);
-        }}
-      >
-        <option value="">Flat</option>
-        {LENS_KEYS.map((k) => (
-          <option key={k} value={k}>
-            {LENS_LABELS[k]}
-          </option>
-        ))}
-      </select>
+    <section className="lens-control" aria-label="Lenses">
+      {LENSES.map((l) => (
+        <div key={l.which} className="lens-row">
+          <label htmlFor={`${id}-${l.which}`}>
+            {l.label} <kbd>{l.key}</kbd>
+          </label>
+          <select
+            id={`${id}-${l.which}`}
+            value={lens[l.which] ?? ''}
+            aria-keyshortcuts={l.key}
+            onChange={(e) => {
+              const v = e.target.value;
+              setLens(l.which, isLensKey(v) ? v : null);
+            }}
+          >
+            <option value="">{l.off}</option>
+            {LENS_KEYS.map((k) => (
+              <option key={k} value={k}>
+                {LENS_LABELS[k]}
+              </option>
+            ))}
+          </select>
+        </div>
+      ))}
+      {lens.colour && (
+        <Suspense>
+          <ColourLegend lensKey={lens.colour} />
+        </Suspense>
+      )}
       <span className="visually-hidden" role="status">
         {announce}
       </span>

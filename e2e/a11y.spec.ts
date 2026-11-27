@@ -44,6 +44,12 @@ test('a transition metal panel passes too', async ({ page }) => {
   await audit(page);
 });
 
+test('the colour lens legend passes an accessibility audit', async ({ page }) => {
+  await ready(page, '/#/Fe?colour=density', '26');
+  await expect(page.getByRole('figure', { name: /Density/ })).toBeVisible();
+  await audit(page);
+});
+
 test('the explorer, key map and element list pass an accessibility audit', async ({ page }) => {
   await ready(page);
   await page.keyboard.press('/');
@@ -64,7 +70,7 @@ test('the explorer, key map and element list pass an accessibility audit', async
 test('tab order runs from the title buttons to the table, then the panel', async ({ page }) => {
   await ready(page);
   const order: string[] = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 7; i++) {
     await page.keyboard.press('Tab');
     order.push(
       await page.evaluate(() => {
@@ -74,15 +80,16 @@ test('tab order runs from the title buttons to the table, then the panel', async
       }),
     );
   }
-  expect(order.slice(0, 5)).toEqual([
+  expect(order.slice(0, 6)).toEqual([
     expect.stringMatching(/^Explore/),
     expect.stringMatching(/^Keys/),
     'List',
     'lens',
+    'lens',
     'scene',
   ]);
   // After the table, focus moves into the open panel (its selected tab).
-  expect(order[5]).toBe('Overview');
+  expect(order[6]).toBe('Overview');
 });
 
 test('the element list reads the table as text and walks to a choice', async ({ page }) => {

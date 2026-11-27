@@ -17,7 +17,7 @@ const ElementPanel = lazy(() =>
 // The explorer shares that chunk: it needs the element data too.
 const Explorer = lazy(() => import('./ui/Explorer.tsx').then((m) => ({ default: m.Explorer })));
 
-// The height lens control needs only the lens core, not the element data.
+// The lens controls need only the lens core; the colour legend loads the element data itself.
 const LensControl = lazy(() =>
   import('./ui/LensControl.tsx').then((m) => ({ default: m.LensControl })),
 );
