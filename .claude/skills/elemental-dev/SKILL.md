@@ -47,3 +47,4 @@ The preview pane runs `requestAnimationFrame` at about 30 Hz, so the overlay's f
 - Vite tree-shakes named imports from JSON: `import { cpk } from '../data/compound-shapes.json'` ships only that key. A default import ships the whole file.
 - `dev/plan.md` is long (over 70 KB). Read its "Next" line and `grep -n` the current phase rather than printing the whole file.
 - Drive walking from the page console with `KeyboardEvent`s dispatched on `window` (keydown by `code`, wait, keyup); clicking the canvas is a tap-to-walk.
+- To set up a Combine carry quickly: in the page console, import `src/state/store.ts` at the URL the app loaded (as for `config.ts`) and call `useAppStore.getState().setCarry(['H','H','O'])` after `setCombineOpen(true)`. In e2e, set `location.hash = '#/Cl'` to fly to a tile: the store survives, so press `c` there (see the forming perf test). Forming's clock caps each frame at 0.1 s, so in a hidden pane a lattice takes many seconds to finish growing.
