@@ -16,7 +16,7 @@ The scene rendered every display frame for as long as the tab was open, 60 or 12
 
 The canvas runs with React Three Fiber's `frameloop="demand"`, and one component, `scene/FramePacer.tsx`, decides when the next frame comes, using `core/pacer.ts`:
 
-- While anything moves it asks for the next display frame. "Moves" means held keys, the joystick, a walk target, the figure's speed or lean, a hop, fall or landing squash, tiles easing (`activation.anyDirty`, which also covers the height lens) or the camera's pose changing by more than 1e-4.
+- While anything moves it asks for the next display frame. "Moves" means held keys, the joystick, a walk target, the figure's speed or lean, a hop, fall or landing squash, tiles easing (`activation.anyDirty`, which also covers the height lens), the colour lens's tint easing or the camera's pose changing by more than 1e-4.
 - After `CONFIG.pacing.settle` (1.5 s) of stillness it asks for a frame every `1 / CONFIG.pacing.idleFps` (20 fps). The wait is shortened by half a display frame, since a requested frame lands on the next refresh. `idleFps` 0 stops drawing until woken.
 - Key, pointer press, wheel, resize, focus and visibility events on the window, a pointer drag, and every app-store change (fly-to, panel, lens, filters) wake it to full rate at once.
 - The quality governor ignores frames that follow an idle wait (`pacer.paced`), because their interval is the idle rate, not frame cost.

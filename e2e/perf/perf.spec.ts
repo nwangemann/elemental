@@ -150,6 +150,40 @@ test('frame work while walking', async ({ page }) => {
   expect(result.p95Ms).toBeLessThan(8);
 });
 
+test('frame work while the colour lens eases', async ({ page }) => {
+  await page.addInitScript(INIT);
+  await page.goto('/?perf&quality=off#/H?colour=meltingPoint');
+  await expect(page.locator('#tile-status')).toHaveAttribute('data-tile', '1', {
+    timeout: 20_000,
+  });
+  await page.waitForTimeout(3_500);
+  await page.evaluate(() => ((window as unknown as { perfFrames: number[] }).perfFrames = []));
+  // Walk with the lens on, switching it (each switch eases the whole table) along the way.
+  await page.keyboard.down('ArrowRight');
+  for (const colour of ['density', 'electronegativity', 'yearDiscovered', 'meltingPoint']) {
+    await page.evaluate((c) => (window.location.hash = `#/H?colour=${c}`), colour);
+    await page.waitForTimeout(700);
+  }
+  await page.keyboard.up('ArrowRight');
+  await expect(page).toHaveURL(/colour=meltingPoint/);
+  const frames = await page.evaluate(
+    () => (window as unknown as { perfFrames: number[] }).perfFrames,
+  );
+  const overlay = page.locator('output.perf');
+  const sorted = frames.toSorted((a, b) => a - b);
+  const result = {
+    frames: sorted.length,
+    medianMs: +quantile(sorted, 0.5).toFixed(2),
+    p95Ms: +quantile(sorted, 0.95).toFixed(2),
+    maxMs: +(sorted.at(-1) ?? 0).toFixed(2),
+    drawCalls: Number(await overlay.getAttribute('data-calls')),
+  };
+  console.log(`perf:tint ${JSON.stringify(result)}`);
+  expect(result.frames).toBeGreaterThan(60);
+  expect(result.drawCalls).toBe(11);
+  expect(result.p95Ms).toBeLessThan(8);
+});
+
 /** Idle seconds counted, after the establishing shot and the pacer's settle time. */
 const IDLE_SECONDS = 5;
 

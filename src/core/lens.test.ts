@@ -16,6 +16,7 @@ import { themeOf } from './themes.ts';
 import {
   colourTargets,
   createLiftEase,
+  createTintEase,
   cycleLens,
   filterDim,
   hasFilters,
@@ -32,9 +33,12 @@ import {
   NO_DATA,
   rampColour,
   retargetLift,
+  retargetTint,
   shownDim,
   stepDim,
   stepLift,
+  stepTint,
+  tintAt,
 } from './lens.ts';
 
 const byNumber = (n: number) => ELEMENTS[n - 1]!;
@@ -362,6 +366,54 @@ describe('stepLift', () => {
     retargetLift(ease, lift, new Float32Array([0]));
     expect(stepLift(ease, lift, new Uint8Array(1), 0, 0)).toBe(true);
     expect(lift[0]).toBe(0);
+  });
+});
+
+describe('tint ease', () => {
+  const theme = new Float32Array([0.2, 0.4, 0.6, 0, 0, 0]);
+  const lens = new Float32Array([1, 1, 1, 0.5, 0.5, 0.5]);
+  const c = { r: 0, g: 0, b: 0 };
+
+  it('rests, eases the whole table together, then goes quiet', () => {
+    const ease = createTintEase(theme);
+    expect(stepTint(ease, 0.1, 0.4)).toBe(false);
+    expect(tintAt(ease, theme, 0, 0, c)).toEqual({
+      r: theme[0],
+      g: theme[1],
+      b: theme[2],
+    });
+    retargetTint(ease, lens);
+    expect(stepTint(ease, 0.2, 0.4)).toBe(true);
+    tintAt(ease, theme, 0, 0, c);
+    expect(c.r).toBeCloseTo((0.2 + 1) / 2, 5);
+    tintAt(ease, theme, 1, 0, c);
+    expect(c.r).toBeCloseTo(0.25, 5);
+    expect(stepTint(ease, 1, 0.4)).toBe(true);
+    expect(tintAt(ease, theme, 1, 0, c).g).toBeCloseTo(0.5, 6);
+    expect(stepTint(ease, 0.1, 0.4)).toBe(false);
+  });
+
+  it('retargets from mid-ease without a jump', () => {
+    const ease = createTintEase(theme);
+    retargetTint(ease, lens);
+    stepTint(ease, 0.1, 0.4);
+    const before = tintAt(ease, theme, 0, 0, { r: 0, g: 0, b: 0 });
+    retargetTint(ease, theme);
+    expect(tintAt(ease, theme, 0, 0, c).r).toBeCloseTo(before.r, 6);
+  });
+
+  it('snaps with no duration', () => {
+    const ease = createTintEase(theme);
+    retargetTint(ease, lens);
+    expect(stepTint(ease, 0, 0)).toBe(true);
+    expect(tintAt(ease, theme, 0, 0, c).b).toBeCloseTo(1, 6);
+  });
+
+  it('blends the awake tile back to its family colour', () => {
+    const ease = createTintEase(lens);
+    tintAt(ease, theme, 0, 1, c);
+    expect([c.r, c.g, c.b].map((v) => +v.toFixed(5))).toEqual([0.2, 0.4, 0.6]);
+    expect(tintAt(ease, theme, 0, 0.5, c).r).toBeCloseTo(0.6, 5);
   });
 });
 

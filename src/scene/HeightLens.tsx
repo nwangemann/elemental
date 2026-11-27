@@ -8,7 +8,7 @@ import { useAppStore } from '../state/store.ts';
 import { ACTIVATION_FRAME_PRIORITY } from './TileActivator.tsx';
 
 /** After the activation step (which clears `dirty`) and before tiles, labels and rings draw. */
-const LIFT_FRAME_PRIORITY = ACTIVATION_FRAME_PRIORITY + 0.25;
+export const LIFT_FRAME_PRIORITY = ACTIVATION_FRAME_PRIORITY + 0.25;
 const MAX_DT = 0.1;
 
 // A deep link's `?lens=` is the starting lens. Read once as the scene chunk loads, before

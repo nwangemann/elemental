@@ -17,7 +17,15 @@ import { easeLevel, tileTop, type Activation } from '../core/activation.ts';
 import { CONFIG } from '../core/config.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
 import { NO_FILTERS, type Filters } from '../core/explorer.ts';
-import { filterDim, shownDim, stepDim } from '../core/lens.ts';
+import {
+  colourTargets,
+  filterDim,
+  shownDim,
+  stepDim,
+  tintAt,
+  type TintEase,
+} from '../core/lens.ts';
+import type { Rgb } from '../core/palette.ts';
 import { LAYOUT, TILES } from '../core/layout.ts';
 import { THEMES, surfaceAt } from '../core/themes.ts';
 import { useAppStore } from '../state/store.ts';
@@ -30,6 +38,17 @@ import {
 } from './tileMaterial.ts';
 
 const THEME_OF_TILE = ELEMENTS.map((e) => THEMES[e.category]);
+/** Each tile's family colour in linear light: what the tile underfoot blends back to. */
+const THEME_COLOURS = colourTargets(ELEMENTS, null);
+const TINT: Rgb = { r: 0, g: 0, b: 0 };
+
+/** Writes tile i's instance colour: its colour-lens tint, back toward its theme as it wakes. */
+function writeColour(out: Float32Array, tint: TintEase, activation: Activation, i: number): void {
+  tintAt(tint, THEME_COLOURS, i, easeLevel(activation.levels[i]!), TINT);
+  out[i * 3] = TINT.r;
+  out[i * 3 + 1] = TINT.g;
+  out[i * 3 + 2] = TINT.b;
+}
 
 const prefersReducedMotion = (): boolean =>
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
@@ -113,8 +132,10 @@ function createTileGeometry(): BoxGeometry {
  * this material only, so nothing is downloaded and the rest of the scene is lit as before.
  * Tiles the explorer's filters exclude fade to a grey, darker look (`aDim`, `core/lens.ts`) over
  * `CONFIG.tiles.dimDuration` (at once with reduced motion); the tile underfoot keeps its colour.
+ * Instance colours come from the colour lens's `tint` (`ColourLens`): all of them while it eases,
+ * otherwise only tiles whose activation changed, since the tile underfoot blends back to its theme.
  */
-export function Tiles({ activation }: { activation: Activation }) {
+export function Tiles({ activation, tint }: { activation: Activation; tint: TintEase }) {
   const mesh = useRef<InstancedMesh>(null);
   const dummy = useMemo(() => new Object3D(), []);
   const gl = useThree((s) => s.gl);
@@ -163,6 +184,13 @@ export function Tiles({ activation }: { activation: Activation }) {
       writeDim(shown.array as Float32Array, dim, activation);
       shown.needsUpdate = true;
     }
+    const colours = m.instanceColor;
+    if (colours && (tint.moved || activation.anyDirty)) {
+      const out = colours.array as Float32Array;
+      for (let i = 0; i < TILES.length; i++)
+        if (tint.moved || activation.dirty[i]) writeColour(out, tint, activation, i);
+      colours.needsUpdate = true;
+    }
     if (!activation.anyDirty) return;
     const surface = m.geometry.getAttribute(SURFACE_ATTRIBUTE) as InstancedBufferAttribute;
     for (let i = 0; i < TILES.length; i++)
@@ -178,7 +206,8 @@ export function Tiles({ activation }: { activation: Activation }) {
     const color = new Color();
     for (let i = 0; i < TILES.length; i++) {
       writeTile(m, dummy, surface.array as Float32Array, activation, i);
-      m.setColorAt(i, color.set(THEME_OF_TILE[i]!.color));
+      m.setColorAt(i, color); // creates `instanceColor`; the tint writes the real colour below
+      writeColour(m.instanceColor!.array as Float32Array, tint, activation, i);
     }
     const shown = m.geometry.getAttribute(DIM_ATTRIBUTE) as InstancedBufferAttribute;
     writeDim(shown.array as Float32Array, dimRef.current, activation);
@@ -187,7 +216,7 @@ export function Tiles({ activation }: { activation: Activation }) {
     surface.needsUpdate = true;
     if (m.instanceColor) m.instanceColor.needsUpdate = true;
     m.computeBoundingSphere();
-  }, [activation, dummy]);
+  }, [activation, dummy, tint]);
 
   // The height lens moves tiles after the bounds are computed; the table is always in view anyway.
   return (

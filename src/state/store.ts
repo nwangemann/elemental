@@ -43,6 +43,8 @@ export interface AppState {
   setLensFilters: (filters: Filters) => void;
   /** Sets the property the tiles' heights show (null = flat); the scene eases them there. */
   setLensHeight: (height: LensKey | null) => void;
+  /** Sets the property the tiles' colours show (null = family colours); the scene eases them. */
+  setLensColour: (colour: LensKey | null) => void;
 }
 
 /**
@@ -76,4 +78,6 @@ export const useAppStore = create<AppState>()((set) => ({
   setLensFilters: (filters) => set((s) => ({ lens: { ...s.lens, filters } })),
   setLensHeight: (height) =>
     set((s) => (s.lens.height === height ? s : { lens: { ...s.lens, height } })),
+  setLensColour: (colour) =>
+    set((s) => (s.lens.colour === colour ? s : { lens: { ...s.lens, colour } })),
 }));

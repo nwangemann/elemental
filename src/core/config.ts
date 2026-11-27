@@ -35,6 +35,8 @@ export const CONFIG_DEFAULTS = {
     lensHeight: 1.2,
     lensFloor: 0.04,
     lensDuration: 0.6,
+    /** Colour lens (`core/lens.ts`): how long the table takes to ease between colourings, s. */
+    tintDuration: 0.4,
   },
   labels: {
     /** Cap height of the element symbol, in world units. */
@@ -161,6 +163,7 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     lensHeight: { min: 0, max: 3, step: 0.05 },
     lensFloor: { min: 0, max: 0.5, step: 0.01 },
     lensDuration: { min: 0, max: 2, step: 0.05 },
+    tintDuration: { min: 0, max: 2, step: 0.05 },
   },
   labels: {
     symbolSize: { min: 0.1, max: 0.8, step: 0.01 },

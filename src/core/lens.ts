@@ -368,6 +368,67 @@ export function colourTargets(
   return out;
 }
 
+/**
+ * A colour lens change in flight: every tile's lens colour eases together from `from` to `to`
+ * (linear-light RGB triples, as `colourTargets` writes them), smoothstepped as `t` runs 0 → 1.
+ * `moved` is true when the last `stepTint` changed the colours, so renderers rewrite them only
+ * then (and for tiles whose activation changed).
+ */
+export interface TintEase {
+  from: Float32Array;
+  to: Float32Array;
+  t: number;
+  moved: boolean;
+}
+
+/** An ease resting at `targets` (copied). */
+export function createTintEase(targets: Float32Array): TintEase {
+  return { from: targets.slice(), to: targets.slice(), t: 1, moved: false };
+}
+
+const smoothstep = (t: number): number => t * t * (3 - 2 * t);
+
+/** Starts easing from the colours shown now (mid-ease included) toward `targets` (copied). */
+export function retargetTint(ease: TintEase, targets: Float32Array): void {
+  const k = smoothstep(ease.t);
+  for (let j = 0; j < ease.from.length; j++)
+    ease.from[j] = ease.from[j]! + (ease.to[j]! - ease.from[j]!) * k;
+  ease.to.set(targets);
+  ease.t = 0;
+}
+
+/**
+ * Advances the ease by `dt` over `duration` seconds (0 snaps) and sets `moved`. Returns `moved`.
+ */
+export function stepTint(ease: TintEase, dt: number, duration: number): boolean {
+  ease.moved = ease.t < 1;
+  if (ease.moved) ease.t = duration > 0 ? Math.min(1, ease.t + dt / duration) : 1;
+  return ease.moved;
+}
+
+/**
+ * Tile i's drawn colour in linear light, into `out`: its eased lens colour, blended back toward
+ * its family colour (`theme`, `colourTargets` with no lens) by how awake it is (0–1), so the tile
+ * underfoot keeps its theme. Allocation-free.
+ */
+export function tintAt(
+  ease: TintEase,
+  theme: Float32Array,
+  i: number,
+  awake: number,
+  out: Rgb,
+): Rgb {
+  const k = smoothstep(ease.t);
+  const j = i * 3;
+  const r = ease.from[j]! + (ease.to[j]! - ease.from[j]!) * k;
+  const g = ease.from[j + 1]! + (ease.to[j + 1]! - ease.from[j + 1]!) * k;
+  const b = ease.from[j + 2]! + (ease.to[j + 2]! - ease.from[j + 2]!) * k;
+  out.r = r + (theme[j]! - r) * awake;
+  out.g = g + (theme[j + 1]! - g) * awake;
+  out.b = b + (theme[j + 2]! - b) * awake;
+  return out;
+}
+
 /** What the colour lens's legend shows: the ends and middle of the ramp as text with units. */
 export interface LensLegend {
   key: LensKey;

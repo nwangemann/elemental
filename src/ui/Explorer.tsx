@@ -77,6 +77,7 @@ function useDeepLinks(): void {
       if (!e) return;
       const store = useAppStore.getState();
       store.setLensHeight(lensFromHash(window.location.hash));
+      store.setLensColour(lensFromHash(window.location.hash, 'colour'));
       // A hand-typed `#/gold` or `#/79` reads back as the canonical `#/Au`.
       const { lens } = useAppStore.getState();
       replaceHash(deepLink(e, lens.height, lens.colour));
