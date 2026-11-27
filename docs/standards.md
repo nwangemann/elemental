@@ -9,3 +9,4 @@
 - Accessibility: the DOM interface is fully keyboard-usable with a visible focus ring, text meets WCAG AA contrast, and everything the 3D scene shows is also reachable as text (the tile status, the element panel and the element list). `e2e/a11y.spec.ts` enforces the audit and contrast, including text over the scene.
 - The scene is playable with the keyboard alone: WASD and arrow keys walk, other keys step from tile to tile and open and close the element panel, and no control needs a key chord or precise timing.
 - Conventional Commits. `npm run check` must pass before every commit (pre-commit hook) and in CI.
+- Browser tests that wait on the scene (walking, eases, forming) wrap their timeout in `slow()`: CI draws WebGL on the CPU, often below 10 fps, where per-frame steps capped at 0.1 s run slower than real time.

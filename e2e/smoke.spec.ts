@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+// CI runners draw with a software GPU, often below 10 fps. Walking caps each frame's step at
+// 0.1 s, so there it moves slower than real time: give anything that waits on the scene longer.
+const slow = (ms: number) => (process.env.CI ? ms * 4 : ms);
+
 test('the app loads', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'elemental' })).toBeVisible();
@@ -8,7 +12,7 @@ test('the app loads', async ({ page }) => {
 test('the panel shows the element under the character', async ({ page }) => {
   await page.goto('/');
   const panel = page.getByRole('complementary', { name: 'Hydrogen' });
-  await expect(panel).toBeVisible({ timeout: 15_000 });
+  await expect(panel).toBeVisible({ timeout: slow(15_000) });
   await panel.getByRole('tab', { name: 'Properties' }).click();
   await expect(panel.getByText('Melting point', { exact: true })).toBeVisible();
   await expect(panel.getByRole('list', { name: 'Highlights' })).toContainText(
@@ -19,24 +23,26 @@ test('the panel shows the element under the character', async ({ page }) => {
 test('clicking the tile below hydrogen walks onto lithium', async ({ page }) => {
   await page.goto('/');
   const status = page.locator('[data-tile]');
-  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
   // Let the establishing shot settle, so the camera frames hydrogen at the centre.
   await page.waitForTimeout(3_000);
   const box = (await page.locator('canvas').boundingBox())!;
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2 + box.height * 0.22);
-  await expect(status).toHaveAttribute('data-tile', '3', { timeout: 5_000 });
+  await expect(status).toHaveAttribute('data-tile', '3', { timeout: slow(5_000) });
   await expect(page.getByRole('complementary', { name: 'Lithium' })).toBeVisible();
 });
 
 test('a deep link starts on its element', async ({ page }) => {
   await page.goto('/#/Au');
-  await expect(page.getByRole('complementary', { name: 'Gold' })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('complementary', { name: 'Gold' })).toBeVisible({
+    timeout: slow(15_000),
+  });
 });
 
 test('the explorer finds an element and flies there', async ({ page }) => {
   await page.goto('/');
   const status = page.locator('[data-tile]');
-  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
   await page.keyboard.press('/');
   const search = page.getByRole('combobox', { name: /search/i });
   await expect(search).toBeFocused();
@@ -53,7 +59,7 @@ test('the explorer finds an element and flies there', async ({ page }) => {
 test('the keyboard alone tours tiles and reads a panel', async ({ page }) => {
   await page.goto('/');
   const status = page.locator('[data-tile]');
-  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
 
   // Tab reaches the focusable table.
   const scene = page.getByRole('application', { name: /periodic table/i });
@@ -69,7 +75,7 @@ test('the keyboard alone tours tiles and reads a panel', async ({ page }) => {
     ['l', '6'],
   ] as const) {
     await page.keyboard.press(key);
-    await expect(status).toHaveAttribute('data-tile', tile, { timeout: 10_000 });
+    await expect(status).toHaveAttribute('data-tile', tile, { timeout: slow(10_000) });
   }
 
   // Esc closes the panel; Enter opens it with focus inside.
@@ -102,20 +108,20 @@ test('the keyboard alone tours tiles and reads a panel', async ({ page }) => {
 test('walking off the table and pressing R returns to the last tile', async ({ page }) => {
   await page.goto('/');
   const status = page.locator('[data-tile]');
-  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
 
   // Hydrogen sits on the left edge: walk left off it onto the ground.
   await page.keyboard.down('ArrowLeft');
-  await expect(status).toHaveAttribute('data-off', 'true', { timeout: 5_000 });
+  await expect(status).toHaveAttribute('data-off', 'true', { timeout: slow(5_000) });
   await page.keyboard.up('ArrowLeft');
   await expect(status).toHaveText('Off the table. Press R to return.');
   await expect(status).toHaveAttribute('data-tile', '');
   await expect(page.getByRole('button', { name: /back to the table/i })).toBeVisible({
-    timeout: 5_000,
+    timeout: slow(5_000),
   });
 
   await page.keyboard.press('r');
-  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 10_000 });
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(10_000) });
   await expect(status).toHaveAttribute('data-off', 'false');
   await expect(page.getByRole('button', { name: /back to the table/i })).toBeHidden();
 });
@@ -123,17 +129,19 @@ test('walking off the table and pressing R returns to the last tile', async ({ p
 test('] and [ step by atomic number', async ({ page }) => {
   await page.goto('/');
   const status = page.locator('[data-tile]');
-  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
   await page.keyboard.press(']');
-  await expect(status).toHaveAttribute('data-tile', '2', { timeout: 10_000 });
+  await expect(status).toHaveAttribute('data-tile', '2', { timeout: slow(10_000) });
   await expect(page.getByRole('complementary', { name: 'Helium' })).toBeVisible();
   await page.keyboard.press('[');
-  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 10_000 });
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(10_000) });
 });
 
 test('the height lens follows the deep link, the H key and the list', async ({ page }) => {
   await page.goto('/#/Fe?lens=density');
-  await expect(page.getByRole('complementary', { name: 'Iron' })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('complementary', { name: 'Iron' })).toBeVisible({
+    timeout: slow(15_000),
+  });
   const lens = page.getByRole('combobox', { name: /height/i });
   await expect(lens).toHaveValue('density');
 
@@ -156,7 +164,9 @@ test('the height lens follows the deep link, the H key and the list', async ({ p
 
 test('the colour lens follows the deep link and the G key, with a legend', async ({ page }) => {
   await page.goto('/#/Fe?colour=meltingPoint');
-  await expect(page.getByRole('complementary', { name: 'Iron' })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('complementary', { name: 'Iron' })).toBeVisible({
+    timeout: slow(15_000),
+  });
   const colour = page.getByRole('combobox', { name: /colour/i });
   await expect(colour).toHaveValue('meltingPoint');
   const legend = page.getByRole('figure', { name: 'Melting point' });
@@ -186,7 +196,7 @@ test('the colour lens follows the deep link and the G key, with a legend', async
 test('the temperature lens follows the deep link, the T key and its presets', async ({ page }) => {
   await page.goto('/#/Ga?t=310.15');
   const panel = page.getByRole('complementary', { name: 'Gallium' });
-  await expect(panel).toBeVisible({ timeout: 15_000 });
+  await expect(panel).toBeVisible({ timeout: slow(15_000) });
   await expect(panel.getByText('At 310 K')).toBeVisible();
   await expect(panel.locator('dt', { hasText: 'At 310 K' }).locator('+ dd')).toHaveText('Liquid');
   const slider = page.getByRole('slider', { name: 'Temperature' });
@@ -229,7 +239,7 @@ test('the discovery timeline follows the deep link, the Y key and its presets', 
 }) => {
   await page.goto('/#/Ne?year=1869');
   const panel = page.getByRole('complementary', { name: 'Neon' });
-  await expect(panel).toBeVisible({ timeout: 15_000 });
+  await expect(panel).toBeVisible({ timeout: slow(15_000) });
   await expect(panel.locator('dt', { hasText: 'In 1869' }).locator('+ dd')).toHaveText(
     'Not yet discovered',
   );
@@ -270,7 +280,7 @@ test('the timeline plays to today, and the slider pauses it', async ({ page }) =
   test.setTimeout(60_000);
   await page.goto('/#/Ne?year=antiquity');
   const slider = page.getByRole('slider', { name: 'Discovery' });
-  await expect(slider).toBeVisible({ timeout: 15_000 });
+  await expect(slider).toBeVisible({ timeout: slow(15_000) });
   const status = page.locator('.lens-control [role=status]');
   const play = page.locator('.era-play');
 
@@ -278,7 +288,7 @@ test('the timeline plays to today, and the slider pauses it', async ({ page }) =
   await play.click();
   await expect(status).toHaveText('Playing the timeline from Antiquity');
   await expect(play).toHaveText('Pause');
-  await expect(page).toHaveURL(/year=1[6-9]\d\d$/, { timeout: 10_000 });
+  await expect(page).toHaveURL(/year=1[6-9]\d\d$/, { timeout: slow(10_000) });
   await slider.focus();
   await page.keyboard.press('ArrowRight');
   await expect(play).toHaveText('Play');
@@ -287,7 +297,7 @@ test('the timeline plays to today, and the slider pauses it', async ({ page }) =
   // Played again, it reaches today and says so; the counts stay quiet until then.
   await play.click();
   await expect(status).toHaveText(/^Playing the timeline from \d{4}$/);
-  await expect(page).toHaveURL(/year=2010$/, { timeout: 25_000 });
+  await expect(page).toHaveURL(/year=2010$/, { timeout: slow(25_000) });
   await expect(status).toHaveText('Timeline reached today');
   await expect(play).toHaveText('Play');
   await expect(page.locator('.era-lens .scrub-summary').first()).toHaveText('118 known, 0 to come');
@@ -296,10 +306,12 @@ test('the timeline plays to today, and the slider pauses it', async ({ page }) =
 test('with reduced motion the timeline plays a decade at a time', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/#/Ne?year=antiquity');
-  await expect(page.getByRole('slider', { name: 'Discovery' })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('slider', { name: 'Discovery' })).toBeVisible({
+    timeout: slow(15_000),
+  });
   await page.locator('.era-play').click();
-  await expect(page).toHaveURL(/year=1650$/, { timeout: 5_000 });
-  await expect(page).toHaveURL(/year=1660$/, { timeout: 5_000 });
+  await expect(page).toHaveURL(/year=1650$/, { timeout: slow(5_000) });
+  await expect(page).toHaveURL(/year=1660$/, { timeout: slow(5_000) });
   await page.locator('.era-play').click();
   await expect(page.locator('.lens-control [role=status]')).toHaveText(
     /^Timeline paused at 16[67]0$/,
@@ -311,15 +323,15 @@ test('walking a density landscape climbs small steps and stops at a cliff', asyn
 
   // Potassium to iron rises a little at each tile: the walk climbs on through.
   await page.goto('/#/K?lens=density');
-  await expect(status).toHaveAttribute('data-tile', '19', { timeout: 15_000 });
+  await expect(status).toHaveAttribute('data-tile', '19', { timeout: slow(15_000) });
   await page.waitForTimeout(1_000);
   await page.keyboard.down('ArrowRight');
-  await expect(status).toHaveAttribute('data-tile', '26', { timeout: 10_000 });
+  await expect(status).toHaveAttribute('data-tile', '26', { timeout: slow(10_000) });
   await page.keyboard.up('ArrowRight');
 
   // Krypton is a gas, bromine a liquid far denser: walking left from krypton meets a cliff.
   await page.goto('/#/Kr?lens=density');
-  await expect(status).toHaveAttribute('data-tile', '36', { timeout: 15_000 });
+  await expect(status).toHaveAttribute('data-tile', '36', { timeout: slow(15_000) });
   await page.waitForTimeout(1_000);
   await page.keyboard.down('ArrowLeft');
   await page.waitForTimeout(1_500);
@@ -329,13 +341,13 @@ test('walking a density landscape climbs small steps and stops at a cliff', asyn
 
   // A keyboard tile step is a "go to that element": it climbs the cliff.
   await page.keyboard.press('j');
-  await expect(status).toHaveAttribute('data-tile', '35', { timeout: 10_000 });
+  await expect(status).toHaveAttribute('data-tile', '35', { timeout: slow(10_000) });
 });
 
 test('the atom tab draws chromium and notes its filling-rule exception', async ({ page }) => {
   await page.goto('/#/Cr');
   const panel = page.getByRole('complementary', { name: 'Chromium' });
-  await expect(panel).toBeVisible({ timeout: 15_000 });
+  await expect(panel).toBeVisible({ timeout: slow(15_000) });
   await panel.getByRole('tab', { name: 'Atom' }).click();
   const diagram = panel.getByRole('img', { name: '2, 8, 13, 1 electrons; outer shell 1' });
   await expect(diagram).toBeVisible();
@@ -346,7 +358,7 @@ test('the atom tab draws chromium and notes its filling-rule exception', async (
 test('C picks up atoms into the Combine tray, which steps, clears and closes', async ({ page }) => {
   await page.goto('/');
   const status = page.locator('[data-tile]');
-  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
 
   await page.keyboard.press('c');
   await page.keyboard.press('c');
@@ -385,7 +397,7 @@ test('C picks up atoms into the Combine tray, which steps, clears and closes', a
 test('the tray suggests the nearest compounds and fills in the right amounts', async ({ page }) => {
   await page.goto('/');
   const status = page.locator('[data-tile]');
-  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
   await page.keyboard.press('c');
   const tray = page.getByRole('region', { name: 'Combine' });
   await expect(tray.getByRole('list', { name: 'Nearest compounds' })).toContainText(
@@ -399,7 +411,7 @@ test('the tray suggests the nearest compounds and fills in the right amounts', a
     page.getByRole('listbox', { name: 'Elements' }).getByRole('option').first(),
   ).toContainText('Oxygen');
   await page.keyboard.press('Enter');
-  await expect(status).toHaveAttribute('data-tile', '8', { timeout: 10_000 });
+  await expect(status).toHaveAttribute('data-tile', '8', { timeout: slow(10_000) });
   await page.keyboard.press('c');
   await expect(tray).toContainText('Water is H₂O: 2 hydrogen, 1 oxygen.');
   await tray.getByRole('button', { name: 'Fill in water' }).click();
@@ -410,7 +422,7 @@ test('the tray suggests the nearest compounds and fills in the right amounts', a
 test('a matching carry forms, and one formula offers each of its compounds', async ({ page }) => {
   await page.goto('/#/C');
   const status = page.locator('[data-tile]');
-  await expect(status).toHaveAttribute('data-tile', '6', { timeout: 15_000 });
+  await expect(status).toHaveAttribute('data-tile', '6', { timeout: slow(15_000) });
   await page.keyboard.press('c');
   await page.keyboard.press('c');
   for (const [symbol, number] of [
