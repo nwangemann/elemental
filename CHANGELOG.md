@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.2.0 — 2026-11-27
+
+Four lenses for reading the whole table, an Atom tab, and Combine mode, which carries atoms and forms real compounds.
+
+- Combine mode: `C` or the panel's **Add to Combine** picks up one atom of the element underfoot, and the atoms float after the figure as small coloured orbs, stacked by element (up to 5 elements and 24 atoms); `Backspace` drops the last one. A tray along the bottom lists what you carry with − / + steppers and **Clear**, says in words what it makes or could become, suggests starters when you carry nothing, and lists the nearest three compounds with the atoms each needs. Carrying the right elements in the wrong amounts teaches the ratio and offers **Fill in**. While you carry, the table dims the elements that lead nowhere. An exact match springs the orbs together over the figure into the compound's real 3D shape (a ball-and-stick molecule, a crystal chunk for salts and minerals, an ingot for alloys), and thin arcs link its elements' tiles; when one formula is several molecules (ethanol and dimethyl ether), the tray offers each. 40 everyday compounds to start with.
 - Combine cards: when what you carry forms a compound, its card opens in the tray, with its formula, a chip for how it holds together (shares electrons, hands them over, metal mix), where you meet it, why it holds together, what it's made of (each element a button that takes you to its tile) and what it leads to, with links to other compounds' cards. **Show me** on the starters walks or flies the figure to each element and picks the atoms up, so water, table salt or carbon dioxide forms in front of you; any key or tap stops it. Recently made keeps the last eight compounds you formed in this browser, to reopen their cards, and can be cleared.
 - Live at https://nwangemann.github.io/elemental/: each release tag deploys itself to GitHub Pages.
 - The Atom tab reads "1 electron" for hydrogen, not "1 electrons".
