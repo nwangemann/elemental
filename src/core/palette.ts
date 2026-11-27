@@ -31,9 +31,51 @@ export const GROUND_COLOR = '#2c3442';
 /** Background behind the scene (also the fog colour). */
 export const SKY_COLOR = '#0d1117';
 
+/**
+ * The colour lens's ramp, low to high: the light half of viridis (0.5 → 1, teal → green →
+ * yellow). Viridis is perceptually even and reads for every common colour-vision deficiency; its
+ * dark half is dropped so dark tile labels keep a 4.5 contrast on every stop. Luminance rises
+ * from stop to stop, so the ramp also reads in greyscale. `rampColour` in `lens.ts` blends it.
+ */
+export const COLOUR_RAMP: readonly string[] = [
+  '#21918c',
+  '#1fa187',
+  '#35b779',
+  '#5ec962',
+  '#90d743',
+  '#c8e020',
+  '#fde725',
+];
+
+/**
+ * Tiles with no value under the colour lens: a neutral cool grey, so "unknown" reads apart from
+ * every ramp colour (all saturated) and every family colour, with labels still readable on it.
+ */
+export const NO_DATA_COLOUR = '#8a8f96';
+
+/** A colour as red, green and blue in linear light, 0–1 (the shape of three's `Color`). */
+export interface Rgb {
+  r: number;
+  g: number;
+  b: number;
+}
+
 function channel(hex: string, offset: number): number {
   const c = parseInt(hex.slice(offset, offset + 2), 16) / 255;
   return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}
+
+/** A `#rrggbb` colour in linear light, written into `out`. */
+export function linearRgb(hex: string, out: Rgb = { r: 0, g: 0, b: 0 }): Rgb {
+  out.r = channel(hex, 1);
+  out.g = channel(hex, 3);
+  out.b = channel(hex, 5);
+  return out;
+}
+
+/** WCAG relative luminance of a linear-light colour. */
+export function rgbLuminance(c: Rgb): number {
+  return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
 }
 
 /** WCAG relative luminance of a `#rrggbb` colour. */

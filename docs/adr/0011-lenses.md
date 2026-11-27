@@ -27,3 +27,12 @@ Several planned features read the whole table at once by one property: tile heig
 - **Unknown values stay at rest height**; the lowest known value sits a little above it (`lensFloor`), so "unknown" and "lowest" stay apart.
 - **The lens is part of the deep link** as a query in the hash (`#/Au?lens=density`), so links stay static-host friendly and older `#/Au` links still work.
 - For now the figure rides any height difference with its standing smoothing; tap-to-walk aims at the resting plane, and the camera does not follow the figure's height. Cliffs that block, hops that scale with the step and tap targets on raised tiles come with climbing.
+
+## Addendum: the colour lens ramp
+
+- **The ramp is the light half of viridis** (`COLOUR_RAMP` in `core/palette.ts`, seven stops from teal `#21918c` to yellow `#fde725`). Viridis is perceptually even and stays readable for the common colour-vision deficiencies. Its dark half is dropped because tile labels are dark ink (`LABEL_COLOR`): every stop, and every blend between them, keeps a WCAG contrast of at least 4.5 with the labels (the lowest is about 4.8). Full viridis, or any ramp that starts near black, would make low values unreadable.
+- **Luminance rises along the whole ramp**, so it still reads as low to high in greyscale. Stops are blended in linear light (`rampColour`), which makes luminance strictly rising between stops as well as at them. Tests sample the ramp to check this.
+- **Higher values are lighter.** On the dark ground the high end stands out most, which suits a heat map.
+- **Unknown values get a neutral grey** (`NO_DATA_COLOUR`, `#8a8f96`). It is the one unsaturated colour in the lens, it stays well apart from every ramp colour and every family colour, and labels on it keep AA contrast.
+- **The colour lens has its own deep-link parameter**, `?colour=`, beside `?lens=` for height, so one link can carry both (`#/Fe?lens=density&colour=meltingPoint`).
+- **The legend reads from the data** (`lensLegend`): the lowest and highest elements' values with their own units (a gas's density in g/L, the earliest discoveries as "Antiquity"), the value halfway along the scale (the geometric middle for density, which the legend flags as log scale), and how many elements have no value.

@@ -59,13 +59,18 @@ function replaceHash(hash: string): void {
 function useDeepLinks(): void {
   useEffect(() => {
     const unsubscribe = useAppStore.subscribe((s, prev) => {
-      if (s.activeTile === prev.activeTile && s.lens.height === prev.lens.height) return;
+      if (
+        s.activeTile === prev.activeTile &&
+        s.lens.height === prev.lens.height &&
+        s.lens.colour === prev.lens.colour
+      )
+        return;
       // Off the table, the link keeps the element it already names (or the last one stood on).
       const e =
         (s.activeTile && elementByNumber(s.activeTile.number)) ??
         parseDeepLink(window.location.hash, ELEMENTS) ??
         (s.lastTile === null ? undefined : elementByNumber(s.lastTile));
-      if (e) replaceHash(deepLink(e, s.lens.height));
+      if (e) replaceHash(deepLink(e, s.lens.height, s.lens.colour));
     });
     const onHash = () => {
       const e = parseDeepLink(window.location.hash, ELEMENTS);
@@ -73,7 +78,8 @@ function useDeepLinks(): void {
       const store = useAppStore.getState();
       store.setLensHeight(lensFromHash(window.location.hash));
       // A hand-typed `#/gold` or `#/79` reads back as the canonical `#/Au`.
-      replaceHash(deepLink(e, useAppStore.getState().lens.height));
+      const { lens } = useAppStore.getState();
+      replaceHash(deepLink(e, lens.height, lens.colour));
       if (e.number !== store.activeTile?.number) store.flyTo(e.number);
     };
     window.addEventListener('hashchange', onHash);

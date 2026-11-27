@@ -171,9 +171,19 @@ export function sortValueLabel(e: Element, key: SortKey): string {
   }
 }
 
-/** The hash for an element's deep link: `#/Au`, or `#/Au?lens=density` with a height lens on. */
-export function deepLink(e: Pick<Element, 'symbol'>, lens: string | null = null): string {
-  return lens === null ? `#/${e.symbol}` : `#/${e.symbol}?lens=${lens}`;
+/**
+ * The hash for an element's deep link: `#/Au`, with the lenses that are on as a query:
+ * `#/Au?lens=density` (height), `#/Au?colour=meltingPoint`, or both.
+ */
+export function deepLink(
+  e: Pick<Element, 'symbol'>,
+  lens: string | null = null,
+  colour: string | null = null,
+): string {
+  const query = [lens === null ? '' : `lens=${lens}`, colour === null ? '' : `colour=${colour}`]
+    .filter(Boolean)
+    .join('&');
+  return query === '' ? `#/${e.symbol}` : `#/${e.symbol}?${query}`;
 }
 
 /**

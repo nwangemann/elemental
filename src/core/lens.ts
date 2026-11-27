@@ -1,6 +1,8 @@
 import type { Element } from './elements/schema.ts';
 import { formatDensity, formatNumber, formatTemperature, UNKNOWN } from './elementFacts.ts';
 import { NO_FILTERS, passesFilters, type Filters } from './explorer.ts';
+import { COLOUR_RAMP, linearRgb, NO_DATA_COLOUR, type Rgb } from './palette.ts';
+import { themeOf } from './themes.ts';
 
 /**
  * Lenses: ways of reading the whole table at once. A lens maps one numeric property to a level in
@@ -65,26 +67,34 @@ export function cycleLens(current: LensKey | null, step: 1 | -1): LensKey | null
 
 /** An element's value for a lens as text, with its unit, for the list's lens column. */
 export function lensValueLabel(e: Element, key: LensKey): string {
+  return formatLensValue(lensValue(e, key), key, e.standardState);
+}
+
+/**
+ * A raw lens value as text with its unit. Density reads in g/L for a gas (`state`), as on the
+ * panel; `-Infinity` on the discovery lens is antiquity.
+ */
+export function formatLensValue(
+  v: number | null,
+  key: LensKey,
+  state: Element['standardState'] = 'solid',
+): string {
   switch (key) {
     case 'yearDiscovered':
-      return e.discoveredInAntiquity
-        ? 'Antiquity'
-        : e.yearDiscovered === null
-          ? UNKNOWN
-          : String(e.yearDiscovered);
+      return v === -Infinity ? 'Antiquity' : v === null ? UNKNOWN : String(Math.round(v));
     case 'density':
-      return formatDensity(e.density, e.standardState);
+      return formatDensity(v, state);
     case 'meltingPoint':
     case 'boilingPoint':
-      return formatTemperature(e[key]);
+      return formatTemperature(v);
     case 'electronegativity':
-      return withUnit(e.electronegativity, '');
+      return withUnit(v, '');
     case 'atomicMass':
-      return withUnit(e.atomicMass, ' u');
+      return withUnit(v, ' u');
     case 'atomicRadius':
-      return withUnit(e.atomicRadius, ' pm');
+      return withUnit(v, ' pm');
     case 'ionizationEnergy':
-      return withUnit(e.ionizationEnergy, ' eV');
+      return withUnit(v, ' eV');
   }
 }
 
@@ -92,14 +102,20 @@ function withUnit(v: number | null, unit: string): string {
   return v === null ? UNKNOWN : formatNumber(v) + unit;
 }
 
+/** The query parameter each lens takes in a deep link: `?lens=` for height, `?colour=` for tint. */
+export const LENS_PARAMS = { height: 'lens', colour: 'colour' } as const;
+
 /**
- * The height lens's key in a deep link's query (`#/Au?lens=density`), or null when there is
- * none or it names no lens.
+ * A lens's key in a deep link's query (`#/Au?lens=density&colour=meltingPoint`), or null when
+ * there is none or it names no lens. `which` picks the height lens (default) or the colour lens.
  */
-export function lensFromHash(hash: string): LensKey | null {
+export function lensFromHash(
+  hash: string,
+  which: keyof typeof LENS_PARAMS = 'height',
+): LensKey | null {
   const q = hash.indexOf('?');
   if (q < 0) return null;
-  const key = new URLSearchParams(hash.slice(q + 1)).get('lens');
+  const key = new URLSearchParams(hash.slice(q + 1)).get(LENS_PARAMS[which]);
   return isLensKey(key) ? key : null;
 }
 
@@ -308,4 +324,101 @@ export function stepLift(
     moved = true;
   }
   return moved;
+}
+
+/**
+ * The colour lens's ramp at `level` (0–1), or `NO_DATA_COLOUR` for `NO_DATA`, in linear light,
+ * written into `out` (a three `Color` fits). Stops are blended in linear light, so luminance rises
+ * steadily along the ramp. Allocation-free.
+ */
+export function rampColour(level: number, out: Rgb): Rgb {
+  if (level === NO_DATA || Number.isNaN(level)) return linearRgb(NO_DATA_COLOUR, out);
+  const x = Math.min(1, Math.max(0, level)) * (RAMP_LINEAR.length - 1);
+  const i = Math.min(RAMP_LINEAR.length - 2, Math.floor(x));
+  const k = x - i;
+  const a = RAMP_LINEAR[i]!;
+  const b = RAMP_LINEAR[i + 1]!;
+  out.r = a.r + (b.r - a.r) * k;
+  out.g = a.g + (b.g - a.g) * k;
+  out.b = a.b + (b.b - a.b) * k;
+  return out;
+}
+
+const RAMP_LINEAR: readonly Rgb[] = COLOUR_RAMP.map((hex) => linearRgb(hex));
+
+/**
+ * Each tile's target colour for the colour lens, as linear-light RGB triples in element order
+ * (`out[3i…3i+2]`): its ramp colour (or the no-data colour) with a lens on, its family colour
+ * with the lens off. The scene eases instance colours toward these.
+ */
+export function colourTargets(
+  elements: readonly Element[],
+  key: LensKey | null,
+  out: Float32Array = new Float32Array(elements.length * 3),
+): Float32Array {
+  const levels = key === null ? null : lensLevels(elements, key);
+  const c: Rgb = { r: 0, g: 0, b: 0 };
+  for (let i = 0; i < elements.length; i++) {
+    if (levels) rampColour(levels[i]!, c);
+    else linearRgb(themeOf(elements[i]!.category).color, c);
+    out[i * 3] = c.r;
+    out[i * 3 + 1] = c.g;
+    out[i * 3 + 2] = c.b;
+  }
+  return out;
+}
+
+/** What the colour lens's legend shows: the ends and middle of the ramp as text with units. */
+export interface LensLegend {
+  key: LensKey;
+  label: string;
+  /** Values at level 0, 0.5 and 1. */
+  min: string;
+  mid: string;
+  max: string;
+  /** True when the ramp spreads on a log scale, so the middle is not the average. */
+  log: boolean;
+  /** How many elements have no value (drawn in the no-data colour). */
+  noData: number;
+}
+
+/**
+ * The legend for a lens over `elements`, or null when no element has a usable value. The ends
+ * are the actual lowest and highest elements (so a gas's density reads in g/L, and the earliest
+ * discoveries read "Antiquity"); the middle is the value at level 0.5 on the lens's scale.
+ */
+export function lensLegend(elements: readonly Element[], key: LensKey): LensLegend | null {
+  const scale = LENS_SCALES[key];
+  const domain = lensDomain(elements, key, scale);
+  if (!domain) return null;
+  const levels = lensLevels(elements, key, scale);
+  let lo = -1;
+  let hi = -1;
+  let noData = 0;
+  for (let i = 0; i < elements.length; i++) {
+    const level = levels[i]!;
+    if (level === NO_DATA) {
+      noData++;
+      continue;
+    }
+    // Ties keep the first at the low end, so antiquity (−Infinity) wins over the earliest year.
+    if (lo < 0 || level < levels[lo]! || (level === levels[lo] && isLower(elements, key, i, lo)))
+      lo = i;
+    if (hi < 0 || level > levels[hi]!) hi = i;
+  }
+  const midT = (domain.min + domain.max) / 2;
+  const mid = scale === 'log' ? 10 ** midT : midT;
+  return {
+    key,
+    label: LENS_LABELS[key],
+    min: lensValueLabel(elements[lo]!, key),
+    mid: formatLensValue(mid, key),
+    max: lensValueLabel(elements[hi]!, key),
+    log: scale === 'log',
+    noData,
+  };
+}
+
+function isLower(elements: readonly Element[], key: LensKey, i: number, j: number): boolean {
+  return (lensValue(elements[i]!, key) ?? Infinity) < (lensValue(elements[j]!, key) ?? Infinity);
 }
