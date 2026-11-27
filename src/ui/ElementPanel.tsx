@@ -19,12 +19,13 @@ import {
 } from '../core/elementFacts.ts';
 import { comparison, rankFacts } from '../core/elementRanks.ts';
 import { ELEMENTS, elementByNumber, type Element } from '../core/elements/index.ts';
+import { phaseFact } from '../core/temperature.ts';
 import { accentTokens } from '../core/themes.ts';
 import { useAppStore } from '../state/store.ts';
 import { AtomDiagram } from './AtomDiagram.tsx';
 
 const TABS: readonly { id: string; label: string; render: (e: Element) => ReactNode }[] = [
-  { id: 'overview', label: 'Overview', render: (e) => <FactList facts={overviewFacts(e)} /> },
+  { id: 'overview', label: 'Overview', render: (e) => <OverviewTab element={e} /> },
   { id: 'properties', label: 'Properties', render: (e) => <FactList facts={propertyFacts(e)} /> },
   { id: 'atom', label: 'Atom', render: (e) => <AtomTab element={e} /> },
 ];
@@ -217,6 +218,17 @@ function Tabs({ element }: { element: Element }) {
       </div>
     </>
   );
+}
+
+/**
+ * The overview facts; while the temperature lens is on, the state at its temperature follows the
+ * state at room temperature ("At 310 K: Liquid").
+ */
+function OverviewTab({ element }: { element: Element }) {
+  const kelvin = useAppStore((s) => s.lens.temperature);
+  const facts = overviewFacts(element);
+  if (kelvin !== null) facts.splice(2, 0, phaseFact(element, kelvin));
+  return <FactList facts={facts} />;
 }
 
 function FactList({ facts }: { facts: readonly Fact[] }) {

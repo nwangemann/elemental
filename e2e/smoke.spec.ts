@@ -180,6 +180,47 @@ test('the colour lens follows the deep link and the G key, with a legend', async
   await expect(page).toHaveURL(/#\/Fe$/);
 });
 
+test('the temperature lens follows the deep link, the T key and its presets', async ({ page }) => {
+  await page.goto('/#/Ga?t=310.15');
+  const panel = page.getByRole('complementary', { name: 'Gallium' });
+  await expect(panel).toBeVisible({ timeout: 15_000 });
+  await expect(panel.getByText('At 310 K')).toBeVisible();
+  await expect(panel.locator('dt', { hasText: 'At 310 K' }).locator('+ dd')).toHaveText('Liquid');
+  const slider = page.getByRole('slider', { name: 'Temperature' });
+  await expect(slider).toHaveAttribute('aria-valuetext', '310.1 K (37 °C), body');
+  await expect(page.getByRole('button', { name: 'Body' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.temp-counts')).toHaveText('87 solid, 4 liquid, 11 gas, 16 unknown');
+
+  // A preset moves the slider and the link; the counts are announced once it settles.
+  await page.getByRole('button', { name: 'Water boils' }).click();
+  await expect(page).toHaveURL(/#\/Ga\?t=373\.15$/);
+  await expect(page.locator('.temp-lens [aria-live]')).toHaveText(/\d+ solid, \d+ liquid/);
+
+  // T turns the lens off from the table, which drops the parameter and the panel line...
+  await page.locator('#scene').focus();
+  await page.keyboard.press('t');
+  await expect(slider).toHaveCount(0);
+  await expect(page).toHaveURL(/#\/Ga$/);
+  await expect(page.locator('.lens-control [role=status]')).toHaveText('Temperature lens off');
+  await expect(panel.getByText('At 373 K')).toHaveCount(0);
+
+  // ...and back on at the last temperature, with focus on the slider, whose keys move it.
+  await page.keyboard.press('t');
+  await expect(slider).toBeFocused();
+  await expect(page).toHaveURL(/#\/Ga\?t=373\.15$/);
+  await page.keyboard.press('ArrowRight');
+  await expect(page).not.toHaveURL(/t=373\.15$/);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#scene')).toBeFocused();
+
+  // A link edited by hand to carry all three lenses keeps them all.
+  await page.evaluate(() => {
+    location.hash = '#/Fe?lens=density&colour=meltingPoint&t=1200';
+  });
+  await expect(page).toHaveURL(/#\/Fe\?lens=density&colour=meltingPoint&t=1200$/);
+  await expect(slider).toHaveAttribute('aria-valuetext', /^1200 K/);
+});
+
 test('walking a density landscape climbs small steps and stops at a cliff', async ({ page }) => {
   const status = page.locator('[data-tile]');
 

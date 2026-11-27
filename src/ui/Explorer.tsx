@@ -78,12 +78,15 @@ function useDeepLinks(): void {
       if (e) replaceHash(deepLink(e, s.lens.height, s.lens.colour, s.lens.temperature));
     });
     const onHash = () => {
-      const e = parseDeepLink(window.location.hash, ELEMENTS);
+      // Read once: each setter below rewrites the hash through the subscription above, so a
+      // later read would see the old lenses and drop what the link set.
+      const hash = window.location.hash;
+      const e = parseDeepLink(hash, ELEMENTS);
       if (!e) return;
       const store = useAppStore.getState();
-      store.setLensHeight(lensFromHash(window.location.hash));
-      store.setLensColour(lensFromHash(window.location.hash, 'colour'));
-      store.setLensTemperature(temperatureFromHash(window.location.hash));
+      store.setLensHeight(lensFromHash(hash));
+      store.setLensColour(lensFromHash(hash, 'colour'));
+      store.setLensTemperature(temperatureFromHash(hash));
       // A hand-typed `#/gold` or `#/79` reads back as the canonical `#/Au`.
       const { lens } = useAppStore.getState();
       replaceHash(deepLink(e, lens.height, lens.colour, lens.temperature));

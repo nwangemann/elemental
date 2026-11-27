@@ -3,6 +3,11 @@ import { ELEMENTS } from './elements/index.ts';
 import { deepLink, parseDeepLink } from './explorer.ts';
 import {
   createPhaseEase,
+  detentAt,
+  phaseFact,
+  phaseSummary,
+  shortKelvin,
+  sliderKelvin,
   DETENTS,
   gasAmount,
   retargetPhase,
@@ -204,5 +209,40 @@ describe('gasAmount', () => {
     expect(gasAmount(1)).toBe(0);
     expect(gasAmount(1.5)).toBeCloseTo(0.5);
     expect(gasAmount(2)).toBe(1);
+  });
+});
+
+describe('slider readout', () => {
+  it('snaps to detents and otherwise rounds to what the readout shows', () => {
+    expect(sliderKelvin(positionOf(BODY) + 0.001)).toBe(BODY);
+    expect(sliderKelvin(positionOf(ROOM))).toBe(ROOM);
+    expect(sliderKelvin(positionOf(4.123))).toBe(4.1);
+    expect(sliderKelvin(positionOf(612.4))).toBe(612);
+    expect(sliderKelvin(positionOf(1234))).toBe(1230);
+    expect(sliderKelvin(1)).toBe(T_MAX);
+    expect(sliderKelvin(0)).toBe(0);
+    // Without snapping (keyboard steps), one step off a detent leaves it.
+    expect(sliderKelvin(positionOf(373.15) + 0.001, false)).toBe(375);
+  });
+
+  it('names detents only at their exact temperature', () => {
+    expect(detentAt(BODY)?.label).toBe('Body');
+    expect(detentAt(373.15)?.label).toBe('Water boils');
+    expect(detentAt(311)).toBeNull();
+  });
+});
+
+describe('panel line and summary', () => {
+  it('writes the state at the lens temperature', () => {
+    expect(phaseFact(bySymbol('Ga'), BODY)).toEqual({ label: 'At 310 K', value: 'Liquid' });
+    expect(phaseFact(bySymbol('Fr'), BODY)).toEqual({ label: 'At 310 K', value: 'Unknown' });
+    expect(phaseFact(bySymbol('He'), 0.5)).toEqual({ label: 'At 0.5 K', value: 'Liquid' });
+    expect(shortKelvin(3000)).toBe('3,000 K');
+  });
+
+  it('puts the counts in words', () => {
+    expect(phaseSummary(phaseCounts(ELEMENTS, BODY))).toBe(
+      '87 solid, 4 liquid, 11 gas, 16 unknown',
+    );
   });
 });

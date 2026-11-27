@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useId, useState } from 'react';
 import { LENS_KEYS, LENS_LABELS, cycleLens, isLensKey, type LensKey } from '../core/lens.ts';
 import { isTextEntry } from '../scene/useKeyboardInput.ts';
 import { useAppStore } from '../state/store.ts';
+import { TemperatureControl } from './TemperatureControl.tsx';
 
 // The legend reads the element data for its ends, so it shares the data chunk and loads only once
 // a colour lens is on; the selects themselves need only the lens core.
@@ -26,8 +27,9 @@ function setLens(which: Which, key: LensKey | null) {
 /**
  * The lens controls in the HUD: a Height select that raises each tile by a property
  * (`scene/HeightLens.tsx`) and a Colour select that tints it (`scene/ColourLens.tsx`), with the
- * colour lens's legend under them. H and G (Shift backward) cycle each lens outside text fields;
- * a key press is announced, since focus stays on the table.
+ * colour lens's legend under them, then the temperature lens (`TemperatureControl`,
+ * `scene/TemperatureLens.tsx`). H and G (Shift backward) cycle each lens outside text fields, T
+ * toggles the temperature; a key press is announced, since focus stays on the table.
  */
 export function LensControl() {
   const id = useId();
@@ -78,6 +80,7 @@ export function LensControl() {
           <ColourLegend lensKey={lens.colour} />
         </Suspense>
       )}
+      <TemperatureControl announce={setAnnounce} />
       <span className="visually-hidden" role="status">
         {announce}
       </span>

@@ -19,7 +19,8 @@ A walkable periodic table. A small figure strolls across a 3D table of the eleme
 - List: the List button shows every element as a plain table (number, symbol, name, family, period, group); choose a name to walk there. Use it with a screen reader or instead of the 3D scene.
 - Height lens: the Height menu or `H` (`Shift H` backward) raises every tile by a property (density, melting point, discovery year and more), turning the table into a landscape you can walk over: small steps are hopped up, taller cliffs stop a walk (the I J K L steps and R still climb them). Elements with no known value stay flat. The element list adds a column for the property.
 - Colour lens: the Colour menu or `G` (`Shift G` backward) tints every tile by a property on a light green-to-yellow scale, with a key showing the lowest and highest values; elements with no known value turn grey. The tile you stand on keeps its own colour. Pair it with the height lens to read two properties at once.
-- Link to an element: add `#/` and its symbol to the address, for example `#/Au`, `?lens=` to raise the tiles and `?colour=` to tint them, for example `#/Au?lens=density&colour=meltingPoint`.
+- Temperature lens: the Temperature switch or `T` shows every element as it is at a temperature from 0 to 6,000 K at normal pressure. Drag the slider (or use Room, Body and Water boils): melted tiles ripple, boiling ones float up and turn see-through, and elements whose state isn't known grey out. A line under the slider counts each state, and the element panel adds the state at that temperature ("At 310 K: Liquid" for gallium).
+- Link to an element: add `#/` and its symbol to the address, for example `#/Au`, `?lens=` to raise the tiles and `?colour=` to tint them and `?t=` for a temperature in kelvin, for example `#/Au?lens=density&colour=meltingPoint` or `#/Ga?t=310.15`.
 
 ## Stack
 

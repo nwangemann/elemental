@@ -1,3 +1,4 @@
+import type { Fact } from './elementFacts.ts';
 import type { Element } from './elements/index.ts';
 
 /**
@@ -111,6 +112,50 @@ export function snapKelvin(p: number): number {
     }
   }
   return best ?? kelvinAt(p);
+}
+
+/**
+ * The temperature a slider drag at `p` sets: the detent it snaps to, or `kelvinAt(p)` rounded to
+ * what the readout can show (tenths below 10 K, whole kelvin below 1,000 K, tens above), so the
+ * value and the deep link stay short. Keyboard steps pass `snap: false`: a step is smaller than
+ * the snap window, so snapping would hold the slider on a detent.
+ */
+export function sliderKelvin(p: number, snap = true): number {
+  const k = snap ? snapKelvin(p) : kelvinAt(p);
+  if (DETENTS.some((d) => d.kelvin === k)) return k;
+  if (k < 10) return Math.round(k * 10) / 10;
+  if (k < 1000) return Math.round(k);
+  return Math.round(k / 10) * 10;
+}
+
+/** The detent at exactly `kelvin`, or null. */
+export function detentAt(kelvin: number): (typeof DETENTS)[number] | null {
+  return DETENTS.find((d) => d.kelvin === kelvin) ?? null;
+}
+
+/** A temperature as the panel's short label writes it: "310 K", "0.5 K", "1,200 K". */
+export function shortKelvin(kelvin: number): string {
+  const k = kelvin < 10 ? Math.round(kelvin * 10) / 10 : Math.round(kelvin);
+  return `${k.toLocaleString('en-GB')} K`;
+}
+
+/** The panel's line for the lens: "At 310 K" → "Liquid". */
+export function phaseFact(
+  e: Pick<Element, 'symbol' | 'meltingPoint' | 'boilingPoint'>,
+  kelvin: number,
+): Fact {
+  const phase = phaseAt(e, kelvin);
+  return {
+    label: `At ${shortKelvin(kelvin)}`,
+    value: phase.charAt(0).toUpperCase() + phase.slice(1),
+  };
+}
+
+/** The counts in words, as the lens announces them: "87 solid, 4 liquid, 11 gas, 16 unknown". */
+export function phaseSummary(counts: Readonly<Record<Phase, number>>): string {
+  return (['solid', 'liquid', 'gas', 'unknown'] as const)
+    .map((p) => `${String(counts[p])} ${p}`)
+    .join(', ');
 }
 
 /** The query parameter the temperature takes in a deep link: `#/Ga?t=310.15`. */

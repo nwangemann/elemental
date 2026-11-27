@@ -23,10 +23,11 @@ const KEY_GROUPS: readonly { title: string; rows: readonly [keys: string[], acti
       rows: [
         [['Enter'], 'Open the element panel and move focus into it'],
         [['Space'], 'Same as Enter'],
-        [['Esc'], 'Close the panel and return to the table'],
+        [['Esc'], 'Close the panel, or leave the temperature slider, and return to the table'],
         [[IS_MAC ? '⌘ K' : 'Ctrl K', '/'], 'Search, sort and filter the elements'],
         [['H', 'Shift H'], 'Raise the tiles by the next or previous property (height lens)'],
         [['G', 'Shift G'], 'Tint the tiles by the next or previous property (colour lens)'],
+        [['T'], 'Turn the temperature lens on (focuses its slider) or off'],
         [['?'], 'Show or hide this list'],
       ],
     },
