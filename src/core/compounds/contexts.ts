@@ -3,7 +3,7 @@
 // kitchen is a list of compounds only, with no mass shares. Combine's context picker (8.9)
 // lights these elements and sets tile height to each one's share through the height lens.
 import { ELEMENTS } from '../elements/index.ts';
-import { parseFormula } from './normalize.ts';
+import { parseFormula } from './formula.ts';
 import type { Context } from './source.ts';
 
 /** The reference adult's body mass, in kg, that `BODY_KG` describes. */
@@ -184,4 +184,115 @@ const SHARES: Readonly<Record<Exclude<Context, 'kitchen'>, ReadonlyMap<string, n
  */
 export function contextShares(context: Context): ReadonlyMap<string, number> | null {
   return context === 'kitchen' ? null : SHARES[context];
+}
+
+/** The picker's order. The same as `CONTEXTS`, which lives with the compound source list. */
+export const CONTEXT_ORDER: readonly Context[] = ['body', 'air', 'kitchen', 'earth'];
+
+/** What the context picker and the element panel call each context. */
+export const CONTEXT_LABELS: Readonly<Record<Context, string>> = {
+  body: 'Your body',
+  air: 'Air',
+  kitchen: 'Kitchen',
+  earth: 'Earth & building',
+};
+
+/** The tray's line under the picker: what the table now shows for the context. */
+export const CONTEXT_NOTES: Readonly<Record<Context, string>> = {
+  body: "Lit: what a 70 kg adult is made of. Taller tiles make up more of the body's mass.",
+  air: 'Lit: what dry air is made of. Taller tiles make up more of its mass.',
+  kitchen: 'Lit: the elements in these kitchen compounds.',
+  earth: "Lit: what the Earth's crust is made of. Taller tiles make up more of its mass.",
+};
+
+/**
+ * The elements of the kitchen's compounds. Written out so the element panel and the scene can
+ * light them without loading the compound set; a test checks it against `COMPOUNDS`.
+ */
+export const KITCHEN_ELEMENTS: readonly string[] = ['H', 'C', 'N', 'O', 'Na', 'Cl', 'Ca'];
+
+/** The elements a context lights on the table: those it has a share for, or the kitchen's. */
+export function contextMembers(context: Context): ReadonlySet<string> {
+  return new Set(context === 'kitchen' ? KITCHEN_ELEMENTS : SHARES[context].keys());
+}
+
+/**
+ * The smallest share the height spreads over (one part per billion). The crust's rarest
+ * elements go down to 10⁻³³ by mass; below this floor they all stand at the lowest height.
+ */
+export const SHARE_FLOOR = 1e-9;
+
+/**
+ * Each element's height level for a context, in `symbols` order, into `out`: its share on a log
+ * scale from the context's smallest share (or `SHARE_FLOOR`) at 0 to its largest at 1, and −1
+ * (the lens's no-data level) for an element the context lacks. Null for the kitchen, which has
+ * no shares and leaves the heights to the height lens.
+ */
+export function contextLevels(
+  context: Context,
+  symbols: readonly string[],
+  out: Float32Array = new Float32Array(symbols.length),
+): Float32Array | null {
+  const shares = contextShares(context);
+  if (!shares) return null;
+  const values = [...shares.values()];
+  const max = Math.log10(values[0]!);
+  const min = Math.log10(Math.max(SHARE_FLOOR, values.at(-1)!));
+  for (let i = 0; i < symbols.length; i++) {
+    const share = shares.get(symbols[i]!);
+    if (share === undefined) out[i] = -1;
+    else if (max <= min) out[i] = 1;
+    else out[i] = Math.min(1, Math.max(0, (Math.log10(share) - min) / (max - min)));
+  }
+  return out;
+}
+
+/** Where the panel says an element is found, and its share there (null for the kitchen). */
+export interface FoundIn {
+  context: Context;
+  share: number | null;
+}
+
+/** The contexts an element is found in, in picker order. */
+export function foundIn(symbol: string): FoundIn[] {
+  const found: FoundIn[] = [];
+  for (const context of CONTEXT_ORDER) {
+    if (context === 'kitchen') {
+      if (KITCHEN_ELEMENTS.includes(symbol)) found.push({ context, share: null });
+      continue;
+    }
+    const share = SHARES[context].get(symbol);
+    if (share !== undefined) found.push({ context, share });
+  }
+  return found;
+}
+
+const sig = (v: number) => String(Number(v.toPrecision(2)));
+
+/**
+ * What a share reads as: a percentage down to 0.01 % ("64 %", "0.14 %"), then parts per million
+ * or per billion ("14 parts per million", "4 parts per billion"), and "a trace" below that.
+ */
+export function formatShare(share: number): string {
+  if (share >= 0.1) return `${Math.round(share * 100)} %`;
+  if (share >= 1e-4) return `${sig(share * 100)} %`;
+  if (share >= 1e-6) return `${sig(share * 1e6)} parts per million`;
+  if (share >= 1e-9) return `${sig(share * 1e9)} parts per billion`;
+  return 'a trace';
+}
+
+/** The panel's line for one context: "Your body: 65 % by mass", "Kitchen: in its compounds". */
+export function foundInLine({ context, share }: FoundIn): string {
+  const where = context === 'earth' ? "Earth's crust" : CONTEXT_LABELS[context];
+  if (share === null) return `${where}: in its compounds`;
+  const amount = formatShare(share);
+  return amount === 'a trace' ? `${where}: a trace` : `${where}: ${amount} by mass`;
+}
+
+/** A context named in a deep link's query (`#/O?context=body`), or null. */
+export function contextFromHash(hash: string): Context | null {
+  const q = hash.indexOf('?');
+  if (q < 0) return null;
+  const v = new URLSearchParams(hash.slice(q + 1)).get('context');
+  return v === 'body' || v === 'air' || v === 'kitchen' || v === 'earth' ? v : null;
 }

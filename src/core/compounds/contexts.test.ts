@@ -1,6 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import { ELEMENTS } from '../elements/index.ts';
-import { AIR_PPMV, BODY_KG, CRUST_PPM, contextShares, massSharesOfGases } from './contexts.ts';
+import {
+  AIR_PPMV,
+  BODY_KG,
+  CRUST_PPM,
+  contextFromHash,
+  contextLevels,
+  contextMembers,
+  contextShares,
+  CONTEXT_ORDER,
+  formatShare,
+  foundIn,
+  foundInLine,
+  KITCHEN_ELEMENTS,
+  massSharesOfGases,
+} from './contexts.ts';
 import { COMPOUNDS } from './index.ts';
 import { CONTEXTS } from './source.ts';
 
@@ -60,5 +74,75 @@ describe('context compositions', () => {
       for (const c of COMPOUNDS.filter((k) => k.contexts.includes(context)))
         for (const { symbol } of c.elements) expect([...shares.keys()], c.id).toContain(symbol);
     }
+  });
+});
+
+describe('context picker', () => {
+  const symbols = ELEMENTS.map((e) => e.symbol);
+
+  it('orders the picker as the compound source lists contexts', () => {
+    expect(CONTEXT_ORDER).toEqual(CONTEXTS);
+  });
+
+  it('lists the kitchen elements its compounds use', () => {
+    const used = new Set(
+      COMPOUNDS.filter((c) => c.contexts.includes('kitchen')).flatMap((c) =>
+        c.elements.map((e) => e.symbol),
+      ),
+    );
+    expect(new Set(KITCHEN_ELEMENTS)).toEqual(used);
+  });
+
+  it('lights the elements a context has a share for', () => {
+    expect([...contextMembers('air')].toSorted()).toEqual(
+      ['Ar', 'C', 'H', 'He', 'Kr', 'N', 'Ne', 'O'].toSorted(),
+    );
+    expect(contextMembers('kitchen').has('Na')).toBe(true);
+  });
+
+  it('spreads heights by log share, largest at 1, missing elements at −1', () => {
+    const levels = contextLevels('body', symbols)!;
+    expect(levels[symbols.indexOf('O')]).toBe(1);
+    expect(levels[symbols.indexOf('Si')]).toBe(0);
+    expect(levels[symbols.indexOf('Au')]).toBe(-1);
+    const c = levels[symbols.indexOf('C')]!;
+    expect(c).toBeGreaterThan(levels[symbols.indexOf('N')]!);
+    expect(c).toBeLessThan(1);
+  });
+
+  it('floors the crust at one part per billion', () => {
+    const levels = contextLevels('earth', symbols)!;
+    expect(levels[symbols.indexOf('O')]).toBe(1);
+    expect(levels[symbols.indexOf('Fr')]).toBe(0);
+    expect(levels[symbols.indexOf('Au')]).toBeGreaterThan(0);
+  });
+
+  it('leaves kitchen heights to the height lens', () => {
+    expect(contextLevels('kitchen', symbols)).toBeNull();
+  });
+
+  it('says where an element is found', () => {
+    expect(foundIn('O').map(foundInLine)).toEqual([
+      'Your body: 64 % by mass',
+      'Air: 23 % by mass',
+      'Kitchen: in its compounds',
+      "Earth's crust: 46 % by mass",
+    ]);
+    expect(foundIn('Au').map(foundInLine)).toEqual(["Earth's crust: 4 parts per billion by mass"]);
+    expect(foundIn('Fr').map(foundInLine)).toEqual(["Earth's crust: a trace"]);
+    expect(foundIn('Og')).toEqual([]);
+  });
+
+  it('formats shares', () => {
+    expect(formatShare(0.0014)).toBe('0.14 %');
+    expect(formatShare(0.012)).toBe('1.2 %');
+    expect(formatShare(1.4e-5)).toBe('14 parts per million');
+  });
+
+  it('reads a context from a link', () => {
+    expect(contextFromHash('#/O?context=body')).toBe('body');
+    expect(contextFromHash('#/O?lens=density&context=earth')).toBe('earth');
+    expect(contextFromHash('#/O?context=moon')).toBeNull();
+    expect(contextFromHash('#/O')).toBeNull();
   });
 });

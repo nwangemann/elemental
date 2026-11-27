@@ -125,6 +125,7 @@ describe('deep links', () => {
     expect(deepLink(au, 'density')).toBe('#/Au?lens=density');
     expect(deepLink(au, null, 'meltingPoint')).toBe('#/Au?colour=meltingPoint');
     expect(deepLink(au, 'density', 'meltingPoint')).toBe('#/Au?lens=density&colour=meltingPoint');
+    expect(deepLink(au, null, null, null, null, 'earth')).toBe('#/Au?context=earth');
     expect(parseDeepLink('#/au?lens=density&colour=meltingPoint', ELEMENTS)).toBe(au);
     expect(parseDeepLink('#/au?lens=density', ELEMENTS)).toBe(au);
   });

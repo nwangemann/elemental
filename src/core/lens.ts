@@ -317,9 +317,20 @@ export function liftTargets(
   out: Float32Array = new Float32Array(elements.length),
 ): Float32Array {
   if (key === null) return out.fill(0);
-  lensLevels(elements, key, LENS_SCALES[key], out);
-  for (let i = 0; i < out.length; i++) {
-    const level = out[i]!;
+  return liftFromLevels(lensLevels(elements, key, LENS_SCALES[key], out), p, out);
+}
+
+/**
+ * Lifts for levels in [0, 1] (or `NO_DATA`, which stays at rest), as `liftTargets` spreads them.
+ * Combine's contexts raise tiles by share this way. `out` may be `levels`.
+ */
+export function liftFromLevels(
+  levels: Float32Array,
+  p: LiftParams,
+  out: Float32Array = new Float32Array(levels.length),
+): Float32Array {
+  for (let i = 0; i < levels.length; i++) {
+    const level = levels[i]!;
     out[i] = level === NO_DATA ? 0 : p.lensFloor + level * (p.lensHeight - p.lensFloor);
   }
   return out;

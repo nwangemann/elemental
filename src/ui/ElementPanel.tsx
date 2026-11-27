@@ -19,6 +19,7 @@ import {
 } from '../core/elementFacts.ts';
 import { comparison, rankFacts } from '../core/elementRanks.ts';
 import { ELEMENTS, elementByNumber, type Element } from '../core/elements/index.ts';
+import { foundIn, foundInLine } from '../core/compounds/contexts.ts';
 import { eraFact } from '../core/discovery.ts';
 import { phaseFact } from '../core/temperature.ts';
 import { accentTokens } from '../core/themes.ts';
@@ -234,7 +235,8 @@ function Tabs({ element }: { element: Element }) {
 /**
  * The overview facts; while the temperature lens is on, the state at its temperature follows the
  * state at room temperature ("At 310 K: Liquid"); while the discovery lens is on, whether it was
- * known in its year follows the discovery year ("In 1800: Not yet discovered").
+ * known in its year follows the discovery year ("In 1800: Not yet discovered"). Below them,
+ * where the element is found among Combine's contexts, with its share by mass.
  */
 function OverviewTab({ element }: { element: Element }) {
   const kelvin = useAppStore((s) => s.lens.temperature);
@@ -245,7 +247,24 @@ function OverviewTab({ element }: { element: Element }) {
     const at = facts.findIndex((f) => f.label === 'Discovered');
     facts.splice(at < 0 ? facts.length : at + 1, 0, eraFact(element, year));
   }
-  return <FactList facts={facts} />;
+  const found = foundIn(element.symbol);
+  return (
+    <>
+      <FactList facts={facts} />
+      {found.length > 0 && (
+        <>
+          <h3 className="panel-found-title" id="panel-found-title">
+            Found in
+          </h3>
+          <ul className="panel-found" aria-labelledby="panel-found-title">
+            {found.map((f) => (
+              <li key={f.context}>{foundInLine(f)}</li>
+            ))}
+          </ul>
+        </>
+      )}
+    </>
+  );
 }
 
 function FactList({ facts }: { facts: readonly Fact[] }) {

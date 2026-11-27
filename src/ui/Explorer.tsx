@@ -28,11 +28,12 @@ import {
   type Filters,
   type SortKey,
 } from '../core/explorer.ts';
+import { contextFromHash } from '../core/compounds/contexts.ts';
 import { lensFromHash } from '../core/lens.ts';
 import { yearFromHash } from '../core/discovery.ts';
 import { temperatureFromHash } from '../core/temperature.ts';
 import { accentTokens } from '../core/themes.ts';
-import { useAppStore } from '../state/store.ts';
+import { useAppStore, type AppState } from '../state/store.ts';
 import { isTextEntry } from '../scene/useKeyboardInput.ts';
 
 const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
@@ -52,6 +53,23 @@ function replaceHash(hash: string): void {
   window.history.replaceState(window.history.state, '', pathname + search + hash);
 }
 
+/** The context the link carries: Combine's picked context, while Combine is open. */
+const linkedContext = (s: AppState) => (s.combine.open ? s.combine.context : null);
+
+/** The link for an element with everything the store shows. */
+function linkFor(e: { symbol: string }, s: AppState): string {
+  const { lens } = s;
+  return deepLink(e, lens.height, lens.colour, lens.temperature, lens.year, linkedContext(s));
+}
+
+/** A link's `?context=` picks that context and opens Combine; a link without one clears it. */
+function setContextFromHash(hash: string): void {
+  const context = contextFromHash(hash);
+  const store = useAppStore.getState();
+  store.setCombineContext(context);
+  if (context) store.setCombineOpen(true);
+}
+
 /**
  * Keeps the address bar on the element under the character and the height lens
  * (`#/Au?lens=density`, replaced, not pushed, so walking does not fill the history), and flies to
@@ -65,13 +83,15 @@ function useDeepLinks(): void {
     // rewrite must not drop them.
     useAppStore.getState().setLensTemperature(temperatureFromHash(window.location.hash));
     useAppStore.getState().setLensYear(yearFromHash(window.location.hash));
+    setContextFromHash(window.location.hash);
     const unsubscribe = useAppStore.subscribe((s, prev) => {
       if (
         s.activeTile === prev.activeTile &&
         s.lens.height === prev.lens.height &&
         s.lens.colour === prev.lens.colour &&
         s.lens.temperature === prev.lens.temperature &&
-        s.lens.year === prev.lens.year
+        s.lens.year === prev.lens.year &&
+        linkedContext(s) === linkedContext(prev)
       )
         return;
       // Off the table, the link keeps the element it already names (or the last one stood on).
@@ -79,8 +99,7 @@ function useDeepLinks(): void {
         (s.activeTile && elementByNumber(s.activeTile.number)) ??
         parseDeepLink(window.location.hash, ELEMENTS) ??
         (s.lastTile === null ? undefined : elementByNumber(s.lastTile));
-      if (e)
-        replaceHash(deepLink(e, s.lens.height, s.lens.colour, s.lens.temperature, s.lens.year));
+      if (e) replaceHash(linkFor(e, s));
     });
     const onHash = () => {
       // Read once: each setter below rewrites the hash through the subscription above, so a
@@ -93,9 +112,9 @@ function useDeepLinks(): void {
       store.setLensColour(lensFromHash(hash, 'colour'));
       store.setLensTemperature(temperatureFromHash(hash));
       store.setLensYear(yearFromHash(hash));
+      setContextFromHash(hash);
       // A hand-typed `#/gold` or `#/79` reads back as the canonical `#/Au`.
-      const { lens } = useAppStore.getState();
-      replaceHash(deepLink(e, lens.height, lens.colour, lens.temperature, lens.year));
+      replaceHash(linkFor(e, useAppStore.getState()));
       if (e.number !== store.activeTile?.number) store.flyTo(e.number);
     };
     window.addEventListener('hashchange', onHash);

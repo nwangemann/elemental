@@ -268,6 +268,27 @@ body {
   font-size: 0.8rem;
 }
 
+/* The overview's "Found in" list: Combine's contexts and the element's share in each. */
+.panel-found-title {
+  margin: 0.35rem 0 0;
+  padding-top: 0.35rem;
+  border-top: 1px solid #21262d;
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: #9da7b3;
+}
+
+.panel-found {
+  margin: 0.1rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.panel-found li::marker {
+  color: var(--accent);
+}
+
 .panel-actions {
   margin: 0;
   padding: 0 1.1rem 0.6rem;
@@ -1095,6 +1116,11 @@ body:has(.combine-tray:not([hidden])) .back-to-table {
   justify-content: space-between;
 }
 
+.combine-starters li button {
+  flex: none;
+  white-space: nowrap;
+}
+
 .combine-count {
   min-width: 2.4rem;
   text-align: center;
@@ -1183,6 +1209,25 @@ body:has(.combine-tray:not([hidden])) .back-to-table {
   margin-top: 0.45rem;
 }
 
+.combine-contexts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.45rem;
+}
+
+.combine-context-note {
+  margin: 0 0 0.35rem;
+  color: #9da7b3;
+}
+
+.combine-tray .combine-context-list {
+  flex-wrap: nowrap;
+  max-height: 11rem;
+  overflow-y: auto;
+}
+
+.combine-tray .combine-contexts button[aria-pressed='true'],
 .combine-tray .combine-isomers button[aria-pressed='true'] {
   border-color: #79c0ff;
   background: #1f3a5f;

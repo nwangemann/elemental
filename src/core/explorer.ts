@@ -184,12 +184,14 @@ export function deepLink(
   colour: string | null = null,
   temperature: number | null = null,
   year: number | null = null,
+  context: string | null = null,
 ): string {
   const query = [
     lens === null ? '' : `lens=${lens}`,
     colour === null ? '' : `colour=${colour}`,
     temperature === null ? '' : `${TEMPERATURE_PARAM}=${temperatureParam(temperature)}`,
     year === null ? '' : `${YEAR_PARAM}=${yearParam(year)}`,
+    context === null ? '' : `context=${context}`,
   ]
     .filter(Boolean)
     .join('&');

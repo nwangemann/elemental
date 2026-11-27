@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom';
 import { canAdd, carriedCounts, dropOne, pickUp, withCounts, type Carry } from '../core/carry.ts';
 import { exactMatches, fillIn, nearest } from '../core/combine.ts';
 import { addRecent, parseRecent } from '../core/compoundCard.ts';
+import { CONTEXT_LABELS, CONTEXT_NOTES, CONTEXT_ORDER } from '../core/compounds/contexts.ts';
 import { COMPOUNDS, type Compound } from '../core/compounds/index.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
 import { pickFormed } from '../core/forming.ts';
@@ -46,7 +47,9 @@ interface CardState {
  * is open: the carried elements with − / + steppers and Clear, or the starters when nothing is
  * carried, and a live region that says what is carried and where it leads. Below it, the
  * ratio when the carried elements are right but the amounts are not (Fill in sets them), and
- * the nearest three compounds with the atoms each needs. When the carry is several
+ * the nearest three compounds with the atoms each needs. With nothing carried, a context picker
+ * (Your body, Air, Kitchen, Earth & building) lights that context's elements, raises tiles by
+ * their share, and lists its compounds, each with Show me. When the carry is several
  * compounds at once (isomers), toggle buttons choose the one the model shows. Close (or Esc
  * inside the tray) hides it and keeps what is carried.
  *
@@ -58,6 +61,12 @@ export default function CombineTray() {
   const open = useAppStore((s) => s.combine.open);
   const carry = useAppStore((s) => s.combine.carry);
   const refused = useAppStore((s) => s.combine.refused);
+  const context = useAppStore((s) => s.combine.context);
+  const setContext = useAppStore((s) => s.setCombineContext);
+  const listed = useMemo(
+    () => (context ? COMPOUNDS.filter((c) => c.contexts.includes(context)) : STARTERS),
+    [context],
+  );
   const tray = useRef<HTMLElement>(null);
 
   const counts = useMemo(() => carriedCounts(carry), [carry]);
@@ -200,22 +209,40 @@ export default function CombineTray() {
           })}
         </ul>
       ) : (
-        <ul className="combine-starters" aria-label="Starters">
-          {STARTERS.map((c) => (
-            <li key={c.id}>
-              <span>
-                {c.name} <span className="combine-formula">{c.formula}</span>
-              </span>
+        <>
+          <div className="combine-contexts" role="group" aria-label="Where to look">
+            {CONTEXT_ORDER.map((c) => (
               <button
+                key={c}
                 type="button"
-                aria-label={`Show me ${nameInSentence(c)}`}
-                onClick={() => showMe.start(c)}
+                aria-pressed={c === context}
+                onClick={() => setContext(c === context ? null : c)}
               >
-                Show me
+                {CONTEXT_LABELS[c]}
               </button>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+          {context && <p className="combine-context-note">{CONTEXT_NOTES[context]}</p>}
+          <ul
+            className={context ? 'combine-starters combine-context-list' : 'combine-starters'}
+            aria-label={context ? `${CONTEXT_LABELS[context]} compounds` : 'Starters'}
+          >
+            {listed.map((c) => (
+              <li key={c.id}>
+                <span>
+                  {c.name} <span className="combine-formula">{c.formula}</span>
+                </span>
+                <button
+                  type="button"
+                  aria-label={`Show me ${nameInSentence(c)}`}
+                  onClick={() => showMe.start(c)}
+                >
+                  Show me
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
       <p className="combine-summary" role="status">
         {summary}

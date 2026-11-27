@@ -34,3 +34,7 @@ The discovery timeline (ADR 19) brought the total to 299 KB against the 300 KB c
 ## Amendment (2026-11-26): forming ships the shapes
 
 Forming (the ball-and-stick models, lattice chunks and ingots) brings the baked shapes into combine's lazy chunk: about 6 KB gzipped of coordinates and bonds for 39 compounds, plus about 2 KB of code. The total reached 321 KB against the 318 KB ceiling. Rounding the coordinates to 0.1 Å would save only about 1 KB, so the shapes keep their 0.01 Å precision and the total ceiling rises to 324 KB. Nothing new loads before Combine first opens. The shell ceiling (76 KB) and the 450 KB budget are unchanged; the drop back to just above the measured total still comes when the phase is built.
+
+## Amendment (2026-11-27): contexts
+
+Combine's contexts (Your body, Air, Kitchen, Earth & building) light their elements, raise tiles by each element's share by mass, and give the element panel a "Found in" list. The composition tables and the code that reads them are about 2 KB gzipped, in a small `contexts` chunk shared by the panel, the scene, the explorer's deep links and the tray, since all four need it. The total reached 326 KB against the 324 KB ceiling; the ceiling rises to 327 KB. Formula parsing moved out of the compound normaliser on the way, so this chunk does not pull in zod (which would have added 23 KB). The shell ceiling (76 KB) and the 450 KB budget are unchanged; the drop back to just above the measured total comes when the phase is built.

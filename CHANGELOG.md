@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Combine contexts: with nothing carried, the Combine tray offers Your body, Air, Kitchen and Earth & building. Picking one lights the elements it is made of and dims the rest, raises each tile by its share of the context's mass (a 70 kg adult, dry air, the Earth's crust; on a log scale, so trace elements still show), and lists the context's compounds, each with **Show me**. The kitchen lights the elements of its compounds and keeps the table's heights. The element panel's overview adds where each element is found, with its share ("Your body: 64 % by mass", "Earth's crust: 4 parts per billion by mass"). The context goes into the link (`#/O?context=body`).
+
 ## 0.2.0 — 2026-11-27
 
 Four lenses for reading the whole table, an Atom tab, and Combine mode, which carries atoms and forms real compounds.

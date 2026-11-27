@@ -325,8 +325,14 @@ test('walking a density landscape climbs small steps and stops at a cliff', asyn
   await page.goto('/#/K?lens=density');
   await expect(status).toHaveAttribute('data-tile', '19', { timeout: slow(15_000) });
   await page.waitForTimeout(1_000);
+  // The walk keeps going past iron, faster than `expect` polls: watch every frame instead.
+  const reachedIron = page.waitForFunction(
+    () => document.querySelector('[data-tile]')?.getAttribute('data-tile') === '26',
+    null,
+    { polling: 'raf', timeout: slow(10_000) },
+  );
   await page.keyboard.down('ArrowRight');
-  await expect(status).toHaveAttribute('data-tile', '26', { timeout: slow(10_000) });
+  await reachedIron;
   await page.keyboard.up('ArrowRight');
 
   // Krypton is a gas, bromine a liquid far denser: walking left from krypton meets a cliff.
@@ -493,4 +499,36 @@ test('Show me gathers water, its card opens, and Recently made reopens it', asyn
   await expect(recent.getByRole('button', { name: 'Water' })).toBeVisible();
   await tray.getByRole('button', { name: 'Clear recently made' }).click();
   await expect(recent).toHaveCount(0);
+});
+
+test('a context lights its elements, lists its compounds and goes into the link', async ({
+  page,
+}) => {
+  await page.goto('/#/O?context=body');
+  const panel = page.getByRole('complementary', { name: 'Oxygen' });
+  await expect(panel).toBeVisible({ timeout: slow(15_000) });
+  await expect(panel.getByRole('list', { name: 'Found in' })).toHaveText(
+    /Your body: 64 % by mass.*Air: 23 % by mass.*Kitchen: in its compounds.*Earth's crust: 46 % by mass/,
+  );
+
+  const tray = page.getByRole('region', { name: 'Combine' });
+  const picker = tray.getByRole('group', { name: 'Where to look' });
+  await expect(picker.getByRole('button', { name: 'Your body' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(tray.getByRole('list', { name: 'Your body compounds' })).toContainText('Urea');
+
+  // Another context swaps the list and the link; pressing it again clears both.
+  await picker.getByRole('button', { name: 'Kitchen' }).click();
+  await expect(page).toHaveURL(/#\/O\?context=kitchen$/);
+  await expect(tray.getByRole('button', { name: /Show me sugar/i })).toBeVisible();
+  await picker.getByRole('button', { name: 'Kitchen' }).click();
+  await expect(page).toHaveURL(/#\/O$/);
+  await expect(tray.getByRole('list', { name: 'Starters' })).toBeVisible();
+
+  // Closing Combine drops the context from the link.
+  await picker.getByRole('button', { name: 'Air' }).click();
+  await tray.getByRole('button', { name: 'Close Combine' }).click();
+  await expect(page).toHaveURL(/#\/O$/);
 });
