@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 
-const CEILING_KB = { shell: 80, total: 380 };
+const CEILING_KB = { shell: 76, total: 300 };
 
 const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 const B64_INDEX = Object.fromEntries([...B64].map((c, i) => [c, i]));

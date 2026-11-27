@@ -37,6 +37,6 @@ The preview pane runs `requestAnimationFrame` at about 30 Hz, so the overlay's f
 - Scripts run with Node 24's built-in TypeScript support, so imports inside `src/core` use explicit `.ts` extensions.
 - Commits run `npm run check` in the Husky hook, so `git commit` also needs Node on PATH (`export PATH=~/.local/node/bin:$PATH &&`), or the hook fails with `npm: command not found`.
 - Tile labels draw from a committed atlas (`src/assets/label-atlas.*`). A label character the atlas lacks fails `npm test`; run `npm run atlas` (about 5 s, launches Playwright's Chromium) and commit both files.
-- `npm run check` ends with `size:check`, which builds the app (about a second) and fails above 400 KB of gzipped JS.
+- `npm run check` ends with `size:check`, which builds the app (about a second) and fails above its ceilings (shell 76 KB, total 300 KB of gzipped JS).
 - If the preview pane is hidden (`tabs_context` says so), rAF drops to 1–2 Hz and walking crawls: frame numbers are useless. Show it with the app's show-pane tool (`preview`) first. Failing that, measure headless with a throwaway Playwright spec in `e2e/` that wraps `requestAnimationFrame` with `gl.finish()` timing, then delete the spec.
 - Drive walking from the page console with `KeyboardEvent`s dispatched on `window` (keydown by `code`, wait, keyup); clicking the canvas is a tap-to-walk.

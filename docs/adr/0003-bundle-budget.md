@@ -22,3 +22,7 @@ Alternatives considered: keeping one 350 KB budget would block bloom and the UI 
 - The shell paints after about 68 KB; the scene adds one request after the entry has run. If that round trip shows up in the 2 s target, preload the scene chunk (a `modulepreload` hint from a small Vite plugin). Measured in ADR 0010: not needed, the first move comes at about 0.6 s. Tried in [ADR 15](0015-no-preload-hints.md): on a slow connection it delays the shell's first paint more than it speeds the first move, so there are no hints.
 - UI that should be usable before the scene (the explorer, a text list of elements) belongs in the shell and counts against its 100 KB.
 - Element data lives in the scene chunk today. If the shell needs it, split the data into its own chunk rather than pulling three into the shell.
+
+## Amendment (2026-11-26): ceilings lowered
+
+The optimisation pass cut the total from 361 KB to 289 KB: the curated `three` namespace (ADR 12), the baked label atlas in place of troika (ADR 13) and the trimmed element data (ADR 17). The shell is 71 KB. The ceilings now sit just above those sizes again, 76 KB for the shell and 300 KB in total, so the savings cannot drift back unnoticed. The budgets (100 KB and 450 KB) are unchanged. The element data has since moved to its own `elements` chunk, which the shell's list view can load without three.
