@@ -7,10 +7,19 @@ import { expect, test, type Page } from '@playwright/test';
 
 /** Time to first move target (ADR 0003) on the throttled "fast connection" profile. */
 const FIRST_MOVE_BUDGET_MS = 2000;
-/** Fast connection: 20 Mbps down, 5 Mbps up, 40 ms round trip. */
 /** Cold-cache loads per run; the report gives each and the median first move. */
 const RUNS = 3;
+/** Fast connection: 20 Mbps down, 5 Mbps up, 40 ms round trip. Held to the budget. */
 const FAST = { latency: 40, downloadThroughput: (20e6 / 8) | 0, uploadThroughput: (5e6 / 8) | 0 };
+/**
+ * Slow connection, Lighthouse's mobile profile: 1.6 Mbps down, 750 kbps up, 150 ms round trip.
+ * Reported only, as the baseline for load work (preloading, smaller chunks).
+ */
+const SLOW = {
+  latency: 150,
+  downloadThroughput: (1.6e6 / 8) | 0,
+  uploadThroughput: (750e3 / 8) | 0,
+};
 
 interface LoadNumbers {
   firstPaint: number;
@@ -72,7 +81,7 @@ async function loadNumbers(page: Page): Promise<LoadNumbers> {
 const quantile = (sorted: number[], q: number) =>
   sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))] ?? 0;
 
-test('load: time to first move', async ({ page }) => {
+async function measureLoad(page: Page, network: typeof FAST, label: string) {
   // A fresh browser also starts its GPU process on the first WebGL page, which a visitor's
   // running browser has already done. Pay that on a blank page first.
   await page.goto('about:blank');
@@ -82,7 +91,7 @@ test('load: time to first move', async ({ page }) => {
   const client = await page.context().newCDPSession(page);
   await client.send('Network.enable');
   await client.send('Network.setCacheDisabled', { cacheDisabled: true });
-  await client.send('Network.emulateNetworkConditions', { offline: false, ...FAST });
+  await client.send('Network.emulateNetworkConditions', { offline: false, ...network });
   const runs: LoadNumbers[] = [];
   for (let i = 0; i < RUNS; i++) {
     await page.goto('/');
@@ -90,8 +99,17 @@ test('load: time to first move', async ({ page }) => {
   }
   const firstMoves = runs.map((r) => r.firstMove).toSorted((a, b) => a - b);
   const median = quantile(firstMoves, 0.5);
-  console.log(`perf:load ${JSON.stringify({ medianFirstMove: median, runs })}`);
-  expect(median).toBeLessThan(FIRST_MOVE_BUDGET_MS);
+  console.log(`${label} ${JSON.stringify({ medianFirstMove: median, runs })}`);
+  return median;
+}
+
+test('load: time to first move', async ({ page }) => {
+  expect(await measureLoad(page, FAST, 'perf:load')).toBeLessThan(FIRST_MOVE_BUDGET_MS);
+});
+
+test('load: time to first move on a slow connection', async ({ page }) => {
+  test.setTimeout(120_000);
+  expect(await measureLoad(page, SLOW, 'perf:load-slow')).toBeGreaterThan(0);
 });
 
 test('frame work while walking', async ({ page }) => {
