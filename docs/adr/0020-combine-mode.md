@@ -38,4 +38,4 @@ The table shows 118 elements, but not what they make. Combine mode answers "what
 - Growing the set means adding rows and copy to the data script's source list, not writing code.
 - Exact-count matching means a visitor carrying C, H₂, O₆ gets "right elements, wrong amounts" with a **Fill in** that sets the ratio, rather than a near-miss product.
 - Combine opens on its first use with one extra request; if that delay shows, preload the chunk when the visitor hovers or focuses the Combine button.
-- Adding a chain to the ladder means a few lines in `core/ladder.ts` (a test checks every linked compound exists). The ladder and links fit within the 327 KB total ceiling with no room left, so the next feature that adds code must trim or amend ADR 3 first.
+- Adding a chain to the ladder means a few lines in `core/ladder.ts` (a test checks every linked compound exists). The ladder and links filled the 327 KB total ceiling; the data trim that followed (ADR 3 amendment, 2026-11-27) won back 3 KB.

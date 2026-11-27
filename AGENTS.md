@@ -1,4 +1,4 @@
-elemental is a walkable 3D periodic table for the browser: a small figure walks across the tiles, each element reacts when stepped on, and a panel shows its data. Built with Vite, React 19, TypeScript 7 and, from milestone 1, three.js through React Three Fiber.
+elemental is a walkable 3D periodic table for the browser: a small figure walks across the tiles, each element reacts when stepped on, and a panel shows its data. It also reads the whole table through lenses (height, colour, temperature, discovery year) and combines atoms into real compounds. Built with Vite, React 19, TypeScript 7 and three.js through React Three Fiber.
 
 ## Library APIs
 

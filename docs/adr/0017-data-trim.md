@@ -4,6 +4,8 @@
 - Date: 2026-11-26
 - Amends: [ADR 3](0003-bundle-budget.md)
 
+> The "one JSON object per element" part of this decision is reversed by the [ADR 3 amendment of 2026-11-27](0003-bundle-budget.md#amendment-2026-11-27-data-trim-headroom-for-the-next-phase): with the bundle at its ceiling, the 2 KB was worth the cost. The decoding is one shared function (`core/columns.ts`, unit-tested), the `Element` type is kept through `Columns<Element>`, and a data refresh's diff is now per field rather than per element.
+
 ## Context
 
 ADR 15 found the slow profile bound by bandwidth and named fewer bytes as the lever. The element data is the one part of the bundle the project fully controls, so it was checked first. Every consumer of each field in `src` was listed: two fields had none, the CPK colour and the Wikidata item ID. The data lands in the `elementFacts` chunk, which the shell's list view and the scene share without three.

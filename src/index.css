@@ -65,6 +65,31 @@ body {
   font-size: 0.875rem;
 }
 
+/* The scene could not start: a notice in the space the table would fill, clear of the title
+   buttons, the lenses and the panel, which all keep working. */
+.loading.scene-fallback {
+  inset: 1rem auto auto 50%;
+  display: block;
+  width: min(26rem, calc(100vw - 30rem));
+  min-width: 14rem;
+  padding: 0.75rem 1rem;
+  transform: translateX(-50%);
+  border: 1px solid #30363d;
+  border-radius: 0.5rem;
+  background: #161b22;
+  color: #c9d1d9;
+  line-height: 1.4;
+}
+
+@media (width < 40rem) {
+  .loading.scene-fallback {
+    inset: 4.25rem 0.75rem auto 9.5rem;
+    width: auto;
+    min-width: 0;
+    transform: none;
+  }
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

@@ -3,6 +3,7 @@ import type { PerfReport } from './scene/PerfProbe.tsx';
 import { BackToTable } from './ui/BackToTable.tsx';
 import { CombineKeys } from './ui/CombineKeys.tsx';
 import { KeyHelp } from './ui/KeyHelp.tsx';
+import { SceneBoundary } from './ui/SceneBoundary.tsx';
 import { TileStatus } from './ui/TileStatus.tsx';
 import { useAppStore } from './state/store.ts';
 
@@ -85,15 +86,17 @@ export function App() {
       <Suspense>
         <LensControl />
       </Suspense>
-      <Suspense
-        fallback={
-          <p className="loading" role="status">
-            Loading the table…
-          </p>
-        }
-      >
-        <Scene {...(showPerf ? { onPerf } : {})} />
-      </Suspense>
+      <SceneBoundary>
+        <Suspense
+          fallback={
+            <p className="loading" role="status">
+              Loading the table…
+            </p>
+          }
+        >
+          <Scene {...(showPerf ? { onPerf } : {})} />
+        </Suspense>
+      </SceneBoundary>
       <Suspense>
         <ElementPanel />
       </Suspense>

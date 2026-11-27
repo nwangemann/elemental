@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Without WebGL the page no longer goes blank: it says the table can't be drawn, opens the element panel (on the linked element, or hydrogen), and the explorer and element list switch the panel between elements.
 - About 3.5 KB less JavaScript to download: the element and compound data are stored more compactly, and crystal models work out their bonds instead of shipping them. Nothing on screen changes.
 
 ## 0.3.0 — 2026-11-27

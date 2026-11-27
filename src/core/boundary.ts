@@ -60,14 +60,6 @@ export function surfaceAt(x: number, z: number): number {
 }
 
 /**
- * Resting height of the surface under (x, z): the tile height over a tile, 0 on the ground. An
- * active tile's extra rise is not included; it belongs to the activation state.
- */
-export function groundHeightAt(x: number, z: number, tileHeight: number): number {
-  return surfaceAt(x, z) === GROUND ? 0 : tileHeight;
-}
-
-/**
  * Limits for the centre of a body of `radius`: the table's footprint grown by `margin` of ground
  * on every side.
  */

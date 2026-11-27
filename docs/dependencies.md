@@ -12,7 +12,7 @@
 | `@commitlint/cli`                 | Checks commit messages                                                                                                   |
 | `@commitlint/config-conventional` | Conventional Commits rules for commitlint                                                                                |
 | `@axe-core/playwright`            | Accessibility audit (axe) in the Playwright tests                                                                        |
-| `@playwright/test`                | Browser smoke test                                                                                                       |
+| `@playwright/test`                | Browser tests and performance runs; its Chromium also renders the label atlas                                            |
 | `@types/node`                     | Node types for config files and scripts                                                                                  |
 | `@types/three`                    | three.js types                                                                                                           |
 | `@types/react`                    | React types                                                                                                              |

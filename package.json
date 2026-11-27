@@ -28,7 +28,6 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "three": "^0.187.0",
-    "zod": "^4.6.7",
     "zustand": "^5.1.0"
   },
   "devDependencies": {
@@ -48,7 +47,8 @@
     "prettier": "^3.10.1",
     "typescript": "~7.0.2",
     "vite": "^8.3.6",
-    "vitest": "^5.1.2"
+    "vitest": "^5.1.2",
+    "zod": "^4.6.7"
   },
   "description": "Walk a little figure across a 3D periodic table; each element wakes up as you step onto it. Built with three.js and React Three Fiber.",
   "license": "MIT",

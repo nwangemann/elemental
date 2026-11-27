@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BOUNDARY, GROUND, groundHeightAt, outerBounds, surfaceAt } from './boundary.ts';
+import { BOUNDARY, GROUND, outerBounds, surfaceAt } from './boundary.ts';
 import { tableBounds } from './controller.ts';
 import { cellCenterX, cellCenterZ, LAYOUT, PITCH, TABLE_SIZE, TILES } from './layout.ts';
 
@@ -57,14 +57,6 @@ describe('surfaceAt', () => {
   it('keeps the support margin within the geometry it relies on', () => {
     expect(BOUNDARY.support).toBeGreaterThan(LAYOUT.gap / 2);
     expect(BOUNDARY.support).toBeLessThan(PITCH / 2);
-  });
-});
-
-describe('groundHeightAt', () => {
-  it('is the tile height over a tile and 0 on the ground', () => {
-    const fe = tile(26);
-    expect(groundHeightAt(fe.x, fe.z, 0.18)).toBe(0.18);
-    expect(groundHeightAt(cellCenterX(8), cellCenterZ(0), 0.18)).toBe(0);
   });
 });
 
