@@ -19,6 +19,6 @@ Alternatives considered: keeping one 350 KB budget would block bloom and the UI 
 
 ## Consequences
 
-- The shell paints after about 68 KB; the scene adds one request after the entry has run. If that round trip shows up in the 2 s target, preload the scene chunk (a `modulepreload` hint from a small Vite plugin). Measured in ADR 0010: not needed, the first move comes at about 0.6 s.
+- The shell paints after about 68 KB; the scene adds one request after the entry has run. If that round trip shows up in the 2 s target, preload the scene chunk (a `modulepreload` hint from a small Vite plugin). Measured in ADR 0010: not needed, the first move comes at about 0.6 s. Tried in [ADR 15](0015-no-preload-hints.md): on a slow connection it delays the shell's first paint more than it speeds the first move, so there are no hints.
 - UI that should be usable before the scene (the explorer, a text list of elements) belongs in the shell and counts against its 100 KB.
 - Element data lives in the scene chunk today. If the shell needs it, split the data into its own chunk rather than pulling three into the shell.

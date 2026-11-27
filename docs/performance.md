@@ -23,8 +23,8 @@ Budgets and how to measure them. The decisions behind them are in [ADR 3](adr/00
 
 2026-11-26, M1 Pro, headless Chromium, production build:
 
-- Time to first move, fast connection: 0.59 s median (scene chunk arrives at 0.29 s, first frame at 0.55 s).
-- Time to first move, slow connection: 2.18 s median. First paint at 0.73 s; the scene chunk is requested only then (0.71 s) and arrives at 2.0 s, so its download sits behind the shell's.
+- Time to first move, fast connection: 0.61 s median (scene chunk arrives at 0.32 s, first frame at 0.58 s).
+- Time to first move, slow connection: 2.27 s median. First paint at 0.73 s; the scene chunk is requested then and arrives at 2.1 s. The connection is bandwidth-bound: preloading the scene was measured and rejected ([ADR 15](adr/0015-no-preload-hints.md)).
 - Frame work while walking: 0.3 ms median, 0.4 ms p95; 11 draw calls.
 - JavaScript: 71 KB shell, 287 KB total (ceilings 80 and 380 KB). Plus the 32 KB label atlas image, fetched with the scene.
 
