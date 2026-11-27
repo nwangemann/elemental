@@ -7,4 +7,4 @@
 
 ## Fonts
 
-- **Inter** (Bold, Latin subset) by The Inter Project Authors, via `@fontsource/inter`: tile labels. SIL Open Font License 1.1. https://github.com/rsms/inter
+- **Inter** (Bold, Latin subset) by The Inter Project Authors, via `@fontsource/inter`: tile labels, shipped as a signed-distance-field atlas rendered from the font (`src/assets/label-atlas.png`). SIL Open Font License 1.1. https://github.com/rsms/inter

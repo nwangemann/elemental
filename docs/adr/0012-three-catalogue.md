@@ -9,7 +9,7 @@ React Three Fiber 9 does `import * as THREE from 'three'` and, when a `<Canvas>`
 
 ## Decision
 
-- **In the production build, R3F's `three` import resolves to `src/scene/threeCatalogue.ts`**, which re-exports only the names R3F reads and the classes behind the lowercase JSX elements the scene uses. A small Vite plugin (`scripts/three-catalogue.ts`, build only) does the redirect, and only for importers inside `@react-three/fiber`; app code and troika still import the real `three`, by name.
+- **In the production build, R3F's `three` import resolves to `src/scene/threeCatalogue.ts`**, which re-exports only the names R3F reads and the classes behind the lowercase JSX elements the scene uses. A small Vite plugin (`scripts/three-catalogue.ts`, build only) does the redirect, and only for importers inside `@react-three/fiber`; app code still imports the real `three`, by name.
 - **The dev server keeps the full namespace.** It pre-bundles R3F before plugins see the import, and redirecting there would mean taking R3F out of dependency pre-bundling for no saving.
 - **A unit test (`scripts/three-catalogue.test.ts`) guards the gap** between the two: every lowercase JSX tag in `src` that names a three class must be in the catalogue, and every `THREE.X` in R3F's installed `dist` must be too. A new JSX element or an R3F upgrade that reads a new name fails `npm run check`, not the built app at runtime.
 

@@ -17,5 +17,5 @@ Several planned features read the whole table at once by one property: tile heig
 ## Consequences
 
 - New lenses are a key in `LENS_KEYS` plus a renderer; the maths and the "no data" rule are already tested.
-- Labels on dimmed tiles stay at full brightness (they are one troika batch; recolouring members would rebuild it). The planned baked label atlas can dim them per instance.
+- Labels on dimmed tiles stay at full brightness (they are one troika batch; recolouring members would rebuild it). The baked label atlas (ADR 13) can dim them per instance.
 - The fade rewrites the 118-float `aDim` buffer only while a fade runs or a tile changes.

@@ -24,22 +24,21 @@ Budgets and how to measure them. The decisions behind them are in [ADR 3](adr/00
 2026-11-26, M1 Pro, headless Chromium, production build:
 
 - Time to first move, fast connection: 0.59 s median (scene chunk arrives at 0.29 s, first frame at 0.55 s).
-- Time to first move, slow connection: 2.37 s median. First paint at 0.73 s; the scene chunk is requested only then (0.71 s) and arrives at 2.2 s, so its download sits behind the shell's.
-- Frame work while walking: 0.6 ms median, 0.7 ms p95; 11 draw calls.
-- JavaScript: 71 KB shell, 327 KB total (ceilings 80 and 380 KB).
+- Time to first move, slow connection: 2.18 s median. First paint at 0.73 s; the scene chunk is requested only then (0.71 s) and arrives at 2.0 s, so its download sits behind the shell's.
+- Frame work while walking: 0.3 ms median, 0.4 ms p95; 11 draw calls.
+- JavaScript: 71 KB shell, 287 KB total (ceilings 80 and 380 KB). Plus the 32 KB label atlas image, fetched with the scene.
 
 Gzipped JavaScript by package (`npm run size:check`, each part gzipped alone):
 
 | Package                                  | KB    | Chunk        |
 | ---------------------------------------- | ----- | ------------ |
-| three                                    | 130.5 | Scene        |
+| three                                    | 131.5 | Scene        |
 | react-dom                                | 62.2  | shell        |
 | @react-three/fiber                       | 51.1  | Scene        |
-| troika-three-text and its helpers        | 44.1  | Scene        |
-| app code                                 | 22.2  | all          |
+| app code                                 | 23.2  | all          |
 | element data JSON                        | 9.9   | elementFacts |
 | bundler runtime                          | 2.4   | Scene, shell |
 | react, scheduler                         | 4.5   | shell        |
 | small React Three Fiber helpers, zustand | 3.4   | Scene, shell |
 
-The troika row is troika-three-text 30.3, bidi-js 5.8, webgl-sdf-generator 4.2, troika-three-utils 2.0 and troika-worker-utils 1.8 KB, plus a 31 KB woff fetched at load. three is tree-shaken: in the production build React Three Fiber sees a curated `three` namespace instead of the whole one (ADR 0012).
+Tile labels cost no library: they draw from a baked atlas (ADR 13), which replaced 44 KB of troika text code and its 31 KB font fetch. three is tree-shaken: in the production build React Three Fiber sees a curated `three` namespace instead of the whole one (ADR 0012).

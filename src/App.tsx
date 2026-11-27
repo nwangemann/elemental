@@ -4,7 +4,7 @@ import { BackToTable } from './ui/BackToTable.tsx';
 import { KeyHelp } from './ui/KeyHelp.tsx';
 import { TileStatus } from './ui/TileStatus.tsx';
 
-// The scene (three, React Three Fiber, troika, element data) is its own chunk. The DOM shell
+// The scene (three, React Three Fiber, the label atlas, element data) is its own chunk. The DOM shell
 // paints first and the scene streams in behind it; see docs/adr/0003-bundle-budget.md.
 const Scene = lazy(() => import('./scene/Scene.tsx').then((m) => ({ default: m.Scene })));
 

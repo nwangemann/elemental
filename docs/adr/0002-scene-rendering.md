@@ -3,6 +3,8 @@
 - Status: accepted
 - Date: 2026-11-26
 
+> The label part of this decision is superseded by [ADR 13](0013-label-atlas.md): labels now draw from a baked SDF atlas, and troika is gone.
+
 ## Context
 
 The scene is a flat table of 118 tiles, a character and per-tile effects, next to real DOM interface (element panel, explorer, settings). It must hold 60 fps on an integrated-GPU laptop with fewer than 50 draw calls when idle. Every tile needs a crisp symbol and atomic number at any zoom.

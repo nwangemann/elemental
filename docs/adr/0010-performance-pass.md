@@ -3,6 +3,8 @@
 - Status: accepted
 - Date: 2026-11-26
 
+> The label part of this decision is superseded by [ADR 13](0013-label-atlas.md): labels now draw from a baked SDF atlas, and troika is gone.
+
 ## Context
 
 The MVP target is 60 fps on an integrated-GPU laptop and a first move within 2 s on a fast connection (ADR 0003). Before this pass nothing adapted to a slow GPU, nothing measured the time to first move, and the scene chunk's extra round trip (ADR 0003) was unmeasured.
