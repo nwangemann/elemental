@@ -22,6 +22,8 @@ The repo's `.claude/launch.json` defines `elemental-web` on port 5174, so it doe
 
 If `preview_start` fails with "Port 5174 is already in use", another session's server is serving this folder: open `http://localhost:5174/` with `preview_start {url}` instead; it serves the same files with HMR.
 
+`elemental-build` (port 4174) builds and serves the production build. Use it for anything that differs between dev and build: troika's warm-up removal and React Three Fiber's curated `three` namespace (a JSX element missing from `src/scene/threeCatalogue.ts` breaks only the build; `npm test` catches it first).
+
 With `?tune` the dev server shows a leva panel over `CONFIG`; it never exists in a production build.
 
 The preview pane runs `requestAnimationFrame` at about 30 Hz, so the overlay's frame interval reads about 30 ms there whatever the scene costs. To measure the scene's own frame work, time each rAF callback with `gl.finish()` from the page's JavaScript console instead.

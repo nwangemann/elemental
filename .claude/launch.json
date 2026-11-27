@@ -9,6 +9,15 @@
         "export PATH=$HOME/.local/node/bin:$PATH && npx vite --port 5174 --strictPort"
       ],
       "port": 5174
+    },
+    {
+      "name": "elemental-build",
+      "runtimeExecutable": "/bin/zsh",
+      "runtimeArgs": [
+        "-c",
+        "export PATH=$HOME/.local/node/bin:$PATH && npm run build && npx vite preview --port 4174 --strictPort"
+      ],
+      "port": 4174
     }
   ]
 }

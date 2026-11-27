@@ -92,6 +92,7 @@ With `?tune` in the URL, the dev server shows a [leva](https://github.com/pmndrs
 ## Testing
 
 - Unit tests (`*.test.ts` next to the code) cover `src/core`. The normalizer is tested against small recorded responses in `src/core/elements/__fixtures__/`; another test validates the whole committed dataset.
+- `scripts/three-catalogue.ts` points React Three Fiber's `three` import at `src/scene/threeCatalogue.ts` in the production build, so three is tree-shaken (ADR 0012). `scripts/three-catalogue.test.ts` checks the catalogue holds every class a JSX element names and every name R3F reads; add a class there when the scene uses a new lowercase JSX element.
 - `scripts/size-check.mjs` builds the app and fails `npm run check` if the gzipped JavaScript passes either ceiling: 80 KB for the shell (the entry chunk and its static imports, read from the Vite manifest) and 380 KB for all chunks together.
 - `npm run perf` runs `e2e/perf/perf.spec.ts` with `playwright.perf.config.ts` (the smoke run ignores `e2e/perf`): time to first move and frame work, see [performance](performance.md).
 - `e2e/smoke.spec.ts` builds the app, serves it with `vite preview` and checks in Chromium that it loads, that the panel shows hydrogen, where the character starts, with its properties tab, that clicking a tile walks there, that a deep link starts on its element, and that the explorer finds neon and flies there, and that the keyboard alone tabs to the scene, steps H → Li → Be → B → C, closes and reopens the panel with Esc and Enter, moves through its tabs and opens the key map.
