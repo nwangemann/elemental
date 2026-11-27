@@ -65,14 +65,6 @@ export function parseConfiguration(raw: string): { configuration: string; predic
   return { configuration: raw.replace(/\(predicted\)/i, '').trim(), predicted };
 }
 
-/** PubChem drops leading zeros from some colours (Pd is "6985" for 006985), so pad them back. */
-export function parseHexColor(raw: string): string | null {
-  const s = raw.trim().toLowerCase();
-  if (s === '') return null;
-  if (!/^[0-9a-f]{1,6}$/.test(s)) throw new Error(`Bad colour: "${raw}"`);
-  return `#${s.padStart(6, '0')}`;
-}
-
 export function parseCategory(raw: string): Category {
   const category = PUBCHEM_CATEGORIES[raw.trim()];
   if (!category) throw new Error(`Unknown category: "${raw}"`);
@@ -130,7 +122,6 @@ export function buildElements(
     symbol: col('Symbol'),
     name: col('Name'),
     mass: col('AtomicWeight'),
-    cpk: col('CPKHexColor'),
     config: col('ElectronConfiguration'),
     electronegativity: col('Electronegativity'),
     radius: col('AtomicRadius'),
@@ -152,7 +143,6 @@ export function buildElements(
     const state = parseState(get(c.state));
     const config = parseConfiguration(get(c.config));
     const year = get(c.year).trim();
-    const cpk = parseHexColor(get(c.cpk));
     const facts = wikidata.get(number);
     if (!facts) throw new Error(`No Wikidata facts for element ${number}`);
     const mass = parseNumber(get(c.mass));
@@ -183,8 +173,6 @@ export function buildElements(
       discoveredInAntiquity: year === 'Ancient',
       discoverers: facts.discoverers,
       namedAfter: facts.namedAfter,
-      cpkColor: cpk,
-      wikidataId: facts.wikidataId,
     };
   });
 

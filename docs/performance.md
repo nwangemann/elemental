@@ -14,7 +14,7 @@ Budgets and how to measure them. The decisions behind them are in [ADR 3](adr/00
 
 ## Measuring
 
-- `npm run size:check` (part of `npm run check`) builds the app, fails above the ceilings and prints the gzipped JavaScript by npm package, with the chunks each package lands in. It splits each minified chunk by its sourcemap and gzips each package's part alone, so the parts add up to a few KB more than the real total; read them as shares. Bytes no source maps to are listed per chunk: in `elementFacts` that is the element data JSON, in `Scene` a little bundler runtime.
+- `npm run size:check` (part of `npm run check`) builds the app, fails above the ceilings and prints the gzipped JavaScript by npm package, with the chunks each package lands in. It splits each minified chunk by its sourcemap and gzips each package's part alone, so the parts add up to a few KB more than the real total; read them as shares. Bytes no source maps to are listed per chunk: in `elements` that is the element data JSON (ADR 17), in `Scene` a little bundler runtime.
 - `npm run perf` builds the app, serves it and runs `e2e/perf/perf.spec.ts` in Chromium. It prints four JSON lines. `perf:load` holds the median time to first move on the fast connection and, per load, first paint, the scene chunk's request and arrival, the first scene frame and the first move, in milliseconds from navigation. `perf:load-slow` holds the same on a slow connection (1.6 Mbps down, 150 ms round trip, Lighthouse's mobile profile); it has no budget and is the baseline for load work. `perf:frames` holds the median, p95 and worst frame work while walking, the draw calls and the pixel ratio. `perf:idle` counts frames drawn over five still seconds, after the establishing shot and the idle settle time ([ADR 16](adr/0016-idle-frame-pacing.md)).
 - `?perf` on any build shows draw calls, triangles, mean and p95 frame interval and the pixel ratio in an overlay. While the scene is still the interval is the idle rate (about 50 ms); walk to read frame cost. The numbers are also on its `data-*` attributes.
 - `?quality=off` pins the pixel ratio. Use it when the browser throttles the frame loop (headless, embedded previews), which the adaptive resolution would otherwise read as a slow GPU.
@@ -37,7 +37,7 @@ Gzipped JavaScript by package (`npm run size:check`, each part gzipped alone):
 | react-dom                                | 62.2  | shell        |
 | @react-three/fiber                       | 51.1  | Scene        |
 | app code                                 | 23.2  | all          |
-| element data JSON                        | 9.9   | elementFacts |
+| element data JSON                        | 8.9   | elements     |
 | bundler runtime                          | 2.4   | Scene, shell |
 | react, scheduler                         | 4.5   | shell        |
 | small React Three Fiber helpers, zustand | 3.4   | Scene, shell |

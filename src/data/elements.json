@@ -23,9 +23,7 @@
     "yearDiscovered": 1766,
     "discoveredInAntiquity": false,
     "discoverers": ["Henry Cavendish"],
-    "namedAfter": ["water"],
-    "cpkColor": "#ffffff",
-    "wikidataId": "Q556"
+    "namedAfter": ["water"]
   },
   {
     "number": 2,
@@ -51,9 +49,7 @@
     "yearDiscovered": 1868,
     "discoveredInAntiquity": false,
     "discoverers": ["Norman Lockyer", "Pierre Janssen", "William Ramsay"],
-    "namedAfter": ["Helios"],
-    "cpkColor": "#d9ffff",
-    "wikidataId": "Q560"
+    "namedAfter": ["Helios"]
   },
   {
     "number": 3,
@@ -79,9 +75,7 @@
     "yearDiscovered": 1817,
     "discoveredInAntiquity": false,
     "discoverers": ["Johan August Arfwedson"],
-    "namedAfter": ["stone"],
-    "cpkColor": "#cc80ff",
-    "wikidataId": "Q568"
+    "namedAfter": ["stone"]
   },
   {
     "number": 4,
@@ -107,9 +101,7 @@
     "yearDiscovered": 1798,
     "discoveredInAntiquity": false,
     "discoverers": ["Louis Nicolas Vauquelin", "Antoine Bussy", "Friedrich Wöhler"],
-    "namedAfter": ["beryl"],
-    "cpkColor": "#c2ff00",
-    "wikidataId": "Q569"
+    "namedAfter": ["beryl"]
   },
   {
     "number": 5,
@@ -135,9 +127,7 @@
     "yearDiscovered": 1808,
     "discoveredInAntiquity": false,
     "discoverers": ["Humphry Davy"],
-    "namedAfter": ["borax"],
-    "cpkColor": "#ffb5b5",
-    "wikidataId": "Q618"
+    "namedAfter": ["borax"]
   },
   {
     "number": 6,
@@ -163,9 +153,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": ["Antoine Lavoisier"],
-    "namedAfter": ["coal"],
-    "cpkColor": "#909090",
-    "wikidataId": "Q623"
+    "namedAfter": ["coal"]
   },
   {
     "number": 7,
@@ -191,9 +179,7 @@
     "yearDiscovered": 1772,
     "discoveredInAntiquity": false,
     "discoverers": ["Daniel Rutherford"],
-    "namedAfter": ["life", "nitre"],
-    "cpkColor": "#3050f8",
-    "wikidataId": "Q627"
+    "namedAfter": ["life", "nitre"]
   },
   {
     "number": 8,
@@ -219,9 +205,7 @@
     "yearDiscovered": 1774,
     "discoveredInAntiquity": false,
     "discoverers": ["Carl Wilhelm Scheele"],
-    "namedAfter": ["acid"],
-    "cpkColor": "#ff0d0d",
-    "wikidataId": "Q629"
+    "namedAfter": ["acid"]
   },
   {
     "number": 9,
@@ -247,9 +231,7 @@
     "yearDiscovered": 1670,
     "discoveredInAntiquity": false,
     "discoverers": ["Henri Moissan", "André-Marie Ampère"],
-    "namedAfter": ["hydrofluoric acid"],
-    "cpkColor": "#90e050",
-    "wikidataId": "Q650"
+    "namedAfter": ["hydrofluoric acid"]
   },
   {
     "number": 10,
@@ -275,9 +257,7 @@
     "yearDiscovered": 1898,
     "discoveredInAntiquity": false,
     "discoverers": ["Morris Travers", "William Ramsay"],
-    "namedAfter": ["novelty"],
-    "cpkColor": "#b3e3f5",
-    "wikidataId": "Q654"
+    "namedAfter": ["novelty"]
   },
   {
     "number": 11,
@@ -303,9 +283,7 @@
     "yearDiscovered": 1807,
     "discoveredInAntiquity": false,
     "discoverers": ["Humphry Davy"],
-    "namedAfter": ["headache", "sodium hydroxide", "sodium carbonate", "natron"],
-    "cpkColor": "#ab5cf2",
-    "wikidataId": "Q658"
+    "namedAfter": ["headache", "sodium hydroxide", "sodium carbonate", "natron"]
   },
   {
     "number": 12,
@@ -331,9 +309,7 @@
     "yearDiscovered": 1808,
     "discoveredInAntiquity": false,
     "discoverers": ["Joseph Black"],
-    "namedAfter": ["magnesium oxide"],
-    "cpkColor": "#8aff00",
-    "wikidataId": "Q660"
+    "namedAfter": ["magnesium oxide"]
   },
   {
     "number": 13,
@@ -359,9 +335,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": ["Humphry Davy", "Hans Christian Ørsted"],
-    "namedAfter": ["alum"],
-    "cpkColor": "#bfa6a6",
-    "wikidataId": "Q663"
+    "namedAfter": ["alum"]
   },
   {
     "number": 14,
@@ -387,9 +361,7 @@
     "yearDiscovered": 1854,
     "discoveredInAntiquity": false,
     "discoverers": ["Jöns Jacob Berzelius"],
-    "namedAfter": ["flint"],
-    "cpkColor": "#f0c8a0",
-    "wikidataId": "Q670"
+    "namedAfter": ["flint"]
   },
   {
     "number": 15,
@@ -415,9 +387,7 @@
     "yearDiscovered": 1669,
     "discoveredInAntiquity": false,
     "discoverers": ["Hennig Brand"],
-    "namedAfter": ["Phosphorus"],
-    "cpkColor": "#ff8000",
-    "wikidataId": "Q674"
+    "namedAfter": ["Phosphorus"]
   },
   {
     "number": 16,
@@ -443,9 +413,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": ["Antoine Lavoisier"],
-    "namedAfter": [],
-    "cpkColor": "#ffff30",
-    "wikidataId": "Q682"
+    "namedAfter": []
   },
   {
     "number": 17,
@@ -471,9 +439,7 @@
     "yearDiscovered": 1774,
     "discoveredInAntiquity": false,
     "discoverers": ["Carl Wilhelm Scheele"],
-    "namedAfter": ["green"],
-    "cpkColor": "#1ff01f",
-    "wikidataId": "Q688"
+    "namedAfter": ["green"]
   },
   {
     "number": 18,
@@ -499,9 +465,7 @@
     "yearDiscovered": 1894,
     "discoveredInAntiquity": false,
     "discoverers": ["John William Strutt", "William Ramsay"],
-    "namedAfter": ["laziness"],
-    "cpkColor": "#80d1e3",
-    "wikidataId": "Q696"
+    "namedAfter": ["laziness"]
   },
   {
     "number": 19,
@@ -527,9 +491,7 @@
     "yearDiscovered": 1807,
     "discoveredInAntiquity": false,
     "discoverers": ["Humphry Davy"],
-    "namedAfter": ["potash"],
-    "cpkColor": "#8f40d4",
-    "wikidataId": "Q703"
+    "namedAfter": ["potash"]
   },
   {
     "number": 20,
@@ -555,9 +517,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": ["Humphry Davy"],
-    "namedAfter": ["lime"],
-    "cpkColor": "#3dff00",
-    "wikidataId": "Q706"
+    "namedAfter": ["lime"]
   },
   {
     "number": 21,
@@ -583,9 +543,7 @@
     "yearDiscovered": 1879,
     "discoveredInAntiquity": false,
     "discoverers": ["Lars Fredrik Nilson"],
-    "namedAfter": ["Scandinavia"],
-    "cpkColor": "#e6e6e6",
-    "wikidataId": "Q713"
+    "namedAfter": ["Scandinavia"]
   },
   {
     "number": 22,
@@ -611,9 +569,7 @@
     "yearDiscovered": 1791,
     "discoveredInAntiquity": false,
     "discoverers": ["Friedrich Wöhler"],
-    "namedAfter": ["titan"],
-    "cpkColor": "#bfc2c7",
-    "wikidataId": "Q716"
+    "namedAfter": ["titan"]
   },
   {
     "number": 23,
@@ -639,9 +595,7 @@
     "yearDiscovered": 1801,
     "discoveredInAntiquity": false,
     "discoverers": ["Andrés Manuel del Río"],
-    "namedAfter": ["Freyja"],
-    "cpkColor": "#a6a6ab",
-    "wikidataId": "Q722"
+    "namedAfter": ["Freyja"]
   },
   {
     "number": 24,
@@ -667,9 +621,7 @@
     "yearDiscovered": 1797,
     "discoveredInAntiquity": false,
     "discoverers": ["Louis Nicolas Vauquelin"],
-    "namedAfter": ["color field"],
-    "cpkColor": "#8a99c7",
-    "wikidataId": "Q725"
+    "namedAfter": ["color field"]
   },
   {
     "number": 25,
@@ -695,9 +647,7 @@
     "yearDiscovered": 1774,
     "discoveredInAntiquity": false,
     "discoverers": ["Johan Gottlieb Gahn"],
-    "namedAfter": ["Magnesia Prefecture"],
-    "cpkColor": "#9c7ac7",
-    "wikidataId": "Q731"
+    "namedAfter": ["Magnesia Prefecture"]
   },
   {
     "number": 26,
@@ -723,9 +673,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": [],
-    "namedAfter": [],
-    "cpkColor": "#e06633",
-    "wikidataId": "Q677"
+    "namedAfter": []
   },
   {
     "number": 27,
@@ -751,9 +699,7 @@
     "yearDiscovered": 1735,
     "discoveredInAntiquity": false,
     "discoverers": ["Georg Brandt"],
-    "namedAfter": ["kobold"],
-    "cpkColor": "#f090a0",
-    "wikidataId": "Q740"
+    "namedAfter": ["kobold"]
   },
   {
     "number": 28,
@@ -779,9 +725,7 @@
     "yearDiscovered": 1751,
     "discoveredInAntiquity": false,
     "discoverers": ["Axel Fredrik Cronstedt"],
-    "namedAfter": ["nickeline"],
-    "cpkColor": "#50d050",
-    "wikidataId": "Q744"
+    "namedAfter": ["nickeline"]
   },
   {
     "number": 29,
@@ -807,9 +751,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": [],
-    "namedAfter": ["Cyprus"],
-    "cpkColor": "#c88033",
-    "wikidataId": "Q753"
+    "namedAfter": ["Cyprus"]
   },
   {
     "number": 30,
@@ -835,9 +777,7 @@
     "yearDiscovered": 1746,
     "discoveredInAntiquity": false,
     "discoverers": [],
-    "namedAfter": ["tine"],
-    "cpkColor": "#7d80b0",
-    "wikidataId": "Q758"
+    "namedAfter": ["tine"]
   },
   {
     "number": 31,
@@ -863,9 +803,7 @@
     "yearDiscovered": 1875,
     "discoveredInAntiquity": false,
     "discoverers": ["Paul-Émile Lecoq de Boisbaudran"],
-    "namedAfter": ["Gaul"],
-    "cpkColor": "#c28f8f",
-    "wikidataId": "Q861"
+    "namedAfter": ["Gaul"]
   },
   {
     "number": 32,
@@ -891,9 +829,7 @@
     "yearDiscovered": 1886,
     "discoveredInAntiquity": false,
     "discoverers": ["Clemens Winkler"],
-    "namedAfter": ["Germany"],
-    "cpkColor": "#668f8f",
-    "wikidataId": "Q867"
+    "namedAfter": ["Germany"]
   },
   {
     "number": 33,
@@ -919,9 +855,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": ["Albertus Magnus"],
-    "namedAfter": ["gold", "virility", "orpiment"],
-    "cpkColor": "#bd80e3",
-    "wikidataId": "Q871"
+    "namedAfter": ["gold", "virility", "orpiment"]
   },
   {
     "number": 34,
@@ -947,9 +881,7 @@
     "yearDiscovered": 1817,
     "discoveredInAntiquity": false,
     "discoverers": ["Jöns Jacob Berzelius", "Johan Gottlieb Gahn"],
-    "namedAfter": ["Moon"],
-    "cpkColor": "#ffa100",
-    "wikidataId": "Q876"
+    "namedAfter": ["Moon"]
   },
   {
     "number": 35,
@@ -975,9 +907,7 @@
     "yearDiscovered": 1826,
     "discoveredInAntiquity": false,
     "discoverers": ["Antoine-Jérôme Balard", "Carl Jacob Löwig"],
-    "namedAfter": ["stink"],
-    "cpkColor": "#a62929",
-    "wikidataId": "Q879"
+    "namedAfter": ["stink"]
   },
   {
     "number": 36,
@@ -1003,9 +933,7 @@
     "yearDiscovered": 1898,
     "discoveredInAntiquity": false,
     "discoverers": ["Morris Travers", "William Ramsay"],
-    "namedAfter": ["hiding"],
-    "cpkColor": "#5cb8d1",
-    "wikidataId": "Q888"
+    "namedAfter": ["hiding"]
   },
   {
     "number": 37,
@@ -1031,9 +959,7 @@
     "yearDiscovered": 1861,
     "discoveredInAntiquity": false,
     "discoverers": ["Robert Bunsen", "Gustav Kirchhoff"],
-    "namedAfter": ["red"],
-    "cpkColor": "#702eb0",
-    "wikidataId": "Q895"
+    "namedAfter": ["red"]
   },
   {
     "number": 38,
@@ -1059,9 +985,7 @@
     "yearDiscovered": 1790,
     "discoveredInAntiquity": false,
     "discoverers": ["William Cruickshank"],
-    "namedAfter": ["Strontian"],
-    "cpkColor": "#00ff00",
-    "wikidataId": "Q938"
+    "namedAfter": ["Strontian"]
   },
   {
     "number": 39,
@@ -1087,9 +1011,7 @@
     "yearDiscovered": 1794,
     "discoveredInAntiquity": false,
     "discoverers": ["Johan Gadolin", "Friedrich Wöhler"],
-    "namedAfter": ["Ytterby mine"],
-    "cpkColor": "#94ffff",
-    "wikidataId": "Q941"
+    "namedAfter": ["Ytterby mine"]
   },
   {
     "number": 40,
@@ -1120,9 +1042,7 @@
       "Jan Hendrik de Boer",
       "Anton Eduard van Arkel"
     ],
-    "namedAfter": ["zircon"],
-    "cpkColor": "#94e0e0",
-    "wikidataId": "Q1038"
+    "namedAfter": ["zircon"]
   },
   {
     "number": 41,
@@ -1148,9 +1068,7 @@
     "yearDiscovered": 1801,
     "discoveredInAntiquity": false,
     "discoverers": ["Charles Hatchett"],
-    "namedAfter": ["Niobe"],
-    "cpkColor": "#73c2c9",
-    "wikidataId": "Q1046"
+    "namedAfter": ["Niobe"]
   },
   {
     "number": 42,
@@ -1176,9 +1094,7 @@
     "yearDiscovered": 1778,
     "discoveredInAntiquity": false,
     "discoverers": ["Carl Wilhelm Scheele"],
-    "namedAfter": ["lead"],
-    "cpkColor": "#54b5b5",
-    "wikidataId": "Q1053"
+    "namedAfter": ["lead"]
   },
   {
     "number": 43,
@@ -1204,9 +1120,7 @@
     "yearDiscovered": 1937,
     "discoveredInAntiquity": false,
     "discoverers": ["Emilio G. Segrè", "Carlo Perrier"],
-    "namedAfter": ["technique"],
-    "cpkColor": "#3b9e9e",
-    "wikidataId": "Q1054"
+    "namedAfter": ["technique"]
   },
   {
     "number": 44,
@@ -1232,9 +1146,7 @@
     "yearDiscovered": 1827,
     "discoveredInAntiquity": false,
     "discoverers": ["Karl Ernst Claus"],
-    "namedAfter": ["Ruthenia"],
-    "cpkColor": "#248f8f",
-    "wikidataId": "Q1086"
+    "namedAfter": ["Ruthenia"]
   },
   {
     "number": 45,
@@ -1260,9 +1172,7 @@
     "yearDiscovered": 1803,
     "discoveredInAntiquity": false,
     "discoverers": ["William Hyde Wollaston"],
-    "namedAfter": ["rose"],
-    "cpkColor": "#0a7d8c",
-    "wikidataId": "Q1087"
+    "namedAfter": ["rose"]
   },
   {
     "number": 46,
@@ -1288,9 +1198,7 @@
     "yearDiscovered": 1803,
     "discoveredInAntiquity": false,
     "discoverers": ["William Hyde Wollaston"],
-    "namedAfter": ["2 Pallas"],
-    "cpkColor": "#006985",
-    "wikidataId": "Q1089"
+    "namedAfter": ["2 Pallas"]
   },
   {
     "number": 47,
@@ -1316,9 +1224,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": [],
-    "namedAfter": ["white"],
-    "cpkColor": "#c0c0c0",
-    "wikidataId": "Q1090"
+    "namedAfter": ["white"]
   },
   {
     "number": 48,
@@ -1344,9 +1250,7 @@
     "yearDiscovered": 1817,
     "discoveredInAntiquity": false,
     "discoverers": ["Karl Samuel Leberecht Hermann", "Friedrich Stromeyer"],
-    "namedAfter": ["Cadmus"],
-    "cpkColor": "#ffd98f",
-    "wikidataId": "Q1091"
+    "namedAfter": ["Cadmus"]
   },
   {
     "number": 49,
@@ -1372,9 +1276,7 @@
     "yearDiscovered": 1863,
     "discoveredInAntiquity": false,
     "discoverers": ["Ferdinand Reich", "Hieronymous Theodor Richter"],
-    "namedAfter": ["indigo"],
-    "cpkColor": "#a67573",
-    "wikidataId": "Q1094"
+    "namedAfter": ["indigo"]
   },
   {
     "number": 50,
@@ -1400,9 +1302,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": [],
-    "namedAfter": [],
-    "cpkColor": "#668080",
-    "wikidataId": "Q1096"
+    "namedAfter": []
   },
   {
     "number": 51,
@@ -1428,9 +1328,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": [],
-    "namedAfter": [],
-    "cpkColor": "#9e63b5",
-    "wikidataId": "Q1099"
+    "namedAfter": []
   },
   {
     "number": 52,
@@ -1456,9 +1354,7 @@
     "yearDiscovered": 1782,
     "discoveredInAntiquity": false,
     "discoverers": ["Franz-Joseph Müller von Reichenstein"],
-    "namedAfter": ["Terra"],
-    "cpkColor": "#d47a00",
-    "wikidataId": "Q1100"
+    "namedAfter": ["Terra"]
   },
   {
     "number": 53,
@@ -1484,9 +1380,7 @@
     "yearDiscovered": 1811,
     "discoveredInAntiquity": false,
     "discoverers": ["Bernard Courtois"],
-    "namedAfter": ["violet"],
-    "cpkColor": "#940094",
-    "wikidataId": "Q1103"
+    "namedAfter": ["violet"]
   },
   {
     "number": 54,
@@ -1512,9 +1406,7 @@
     "yearDiscovered": 1898,
     "discoveredInAntiquity": false,
     "discoverers": ["Morris Travers", "William Ramsay"],
-    "namedAfter": ["stranger"],
-    "cpkColor": "#429eb0",
-    "wikidataId": "Q1106"
+    "namedAfter": ["stranger"]
   },
   {
     "number": 55,
@@ -1540,9 +1432,7 @@
     "yearDiscovered": 1860,
     "discoveredInAntiquity": false,
     "discoverers": ["Robert Bunsen", "Gustav Kirchhoff"],
-    "namedAfter": ["sky blue"],
-    "cpkColor": "#57178f",
-    "wikidataId": "Q1108"
+    "namedAfter": ["sky blue"]
   },
   {
     "number": 56,
@@ -1568,9 +1458,7 @@
     "yearDiscovered": 1808,
     "discoveredInAntiquity": false,
     "discoverers": ["Humphry Davy"],
-    "namedAfter": ["weight"],
-    "cpkColor": "#00c900",
-    "wikidataId": "Q1112"
+    "namedAfter": ["weight"]
   },
   {
     "number": 57,
@@ -1596,9 +1484,7 @@
     "yearDiscovered": 1839,
     "discoveredInAntiquity": false,
     "discoverers": ["Carl Gustaf Mosander"],
-    "namedAfter": ["hiding"],
-    "cpkColor": "#70d4ff",
-    "wikidataId": "Q1801"
+    "namedAfter": ["hiding"]
   },
   {
     "number": 58,
@@ -1624,9 +1510,7 @@
     "yearDiscovered": 1803,
     "discoveredInAntiquity": false,
     "discoverers": ["Jöns Jacob Berzelius", "Martin Heinrich Klaproth"],
-    "namedAfter": ["Ceres"],
-    "cpkColor": "#ffffc7",
-    "wikidataId": "Q1385"
+    "namedAfter": ["Ceres"]
   },
   {
     "number": 59,
@@ -1652,9 +1536,7 @@
     "yearDiscovered": 1885,
     "discoveredInAntiquity": false,
     "discoverers": ["Carl Gustaf Mosander"],
-    "namedAfter": ["twin", "green"],
-    "cpkColor": "#d9ffc7",
-    "wikidataId": "Q1386"
+    "namedAfter": ["twin", "green"]
   },
   {
     "number": 60,
@@ -1680,9 +1562,7 @@
     "yearDiscovered": 1885,
     "discoveredInAntiquity": false,
     "discoverers": ["Carl Auer von Welsbach"],
-    "namedAfter": ["novelty", "twin"],
-    "cpkColor": "#c7ffc7",
-    "wikidataId": "Q1388"
+    "namedAfter": ["novelty", "twin"]
   },
   {
     "number": 61,
@@ -1708,9 +1588,7 @@
     "yearDiscovered": 1945,
     "discoveredInAntiquity": false,
     "discoverers": ["Charles D. Coryell", "Jacob Akiba Marinsky", "Lawrence E. Glendenin"],
-    "namedAfter": ["Prometheus"],
-    "cpkColor": "#a3ffc7",
-    "wikidataId": "Q1809"
+    "namedAfter": ["Prometheus"]
   },
   {
     "number": 62,
@@ -1736,9 +1614,7 @@
     "yearDiscovered": 1879,
     "discoveredInAntiquity": false,
     "discoverers": ["Paul-Émile Lecoq de Boisbaudran"],
-    "namedAfter": ["samarskite-(Y)"],
-    "cpkColor": "#8fffc7",
-    "wikidataId": "Q1819"
+    "namedAfter": ["samarskite-(Y)"]
   },
   {
     "number": 63,
@@ -1764,9 +1640,7 @@
     "yearDiscovered": 1901,
     "discoveredInAntiquity": false,
     "discoverers": ["Eugène-Anatole Demarçay"],
-    "namedAfter": ["Europe"],
-    "cpkColor": "#61ffc7",
-    "wikidataId": "Q1396"
+    "namedAfter": ["Europe"]
   },
   {
     "number": 64,
@@ -1792,9 +1666,7 @@
     "yearDiscovered": 1880,
     "discoveredInAntiquity": false,
     "discoverers": ["Jean Charles Galissard de Marignac"],
-    "namedAfter": ["Johan Gadolin"],
-    "cpkColor": "#45ffc7",
-    "wikidataId": "Q1832"
+    "namedAfter": ["Johan Gadolin"]
   },
   {
     "number": 65,
@@ -1820,9 +1692,7 @@
     "yearDiscovered": 1843,
     "discoveredInAntiquity": false,
     "discoverers": ["Carl Gustaf Mosander"],
-    "namedAfter": ["Ytterby mine"],
-    "cpkColor": "#30ffc7",
-    "wikidataId": "Q1838"
+    "namedAfter": ["Ytterby mine"]
   },
   {
     "number": 66,
@@ -1848,9 +1718,7 @@
     "yearDiscovered": 1886,
     "discoveredInAntiquity": false,
     "discoverers": ["Paul-Émile Lecoq de Boisbaudran"],
-    "namedAfter": ["inaccessibility"],
-    "cpkColor": "#1fffc7",
-    "wikidataId": "Q1843"
+    "namedAfter": ["inaccessibility"]
   },
   {
     "number": 67,
@@ -1876,9 +1744,7 @@
     "yearDiscovered": 1878,
     "discoveredInAntiquity": false,
     "discoverers": ["Jacques-Louis Soret", "Marc Delafontaine", "Per Teodor Cleve"],
-    "namedAfter": ["Stockholm"],
-    "cpkColor": "#00ff9c",
-    "wikidataId": "Q1846"
+    "namedAfter": ["Stockholm"]
   },
   {
     "number": 68,
@@ -1904,9 +1770,7 @@
     "yearDiscovered": 1843,
     "discoveredInAntiquity": false,
     "discoverers": ["Carl Gustaf Mosander"],
-    "namedAfter": ["Ytterby mine"],
-    "cpkColor": null,
-    "wikidataId": "Q1849"
+    "namedAfter": ["Ytterby mine"]
   },
   {
     "number": 69,
@@ -1932,9 +1796,7 @@
     "yearDiscovered": 1879,
     "discoveredInAntiquity": false,
     "discoverers": ["Per Teodor Cleve"],
-    "namedAfter": ["Thule", "Scandinavia"],
-    "cpkColor": "#00d452",
-    "wikidataId": "Q1853"
+    "namedAfter": ["Thule", "Scandinavia"]
   },
   {
     "number": 70,
@@ -1960,9 +1822,7 @@
     "yearDiscovered": 1878,
     "discoveredInAntiquity": false,
     "discoverers": ["Jean Charles Galissard de Marignac"],
-    "namedAfter": ["Ytterby mine"],
-    "cpkColor": "#00bf38",
-    "wikidataId": "Q1855"
+    "namedAfter": ["Ytterby mine"]
   },
   {
     "number": 71,
@@ -1988,9 +1848,7 @@
     "yearDiscovered": 1907,
     "discoveredInAntiquity": false,
     "discoverers": ["Georges Urbain", "Carl Auer von Welsbach"],
-    "namedAfter": ["Lutetia"],
-    "cpkColor": "#00ab24",
-    "wikidataId": "Q1857"
+    "namedAfter": ["Lutetia"]
   },
   {
     "number": 72,
@@ -2016,9 +1874,7 @@
     "yearDiscovered": 1923,
     "discoveredInAntiquity": false,
     "discoverers": ["George de Hevesy", "Dirk Coster"],
-    "namedAfter": ["Copenhagen"],
-    "cpkColor": "#4dc2ff",
-    "wikidataId": "Q1119"
+    "namedAfter": ["Copenhagen"]
   },
   {
     "number": 73,
@@ -2044,9 +1900,7 @@
     "yearDiscovered": 1802,
     "discoveredInAntiquity": false,
     "discoverers": ["Anders Gustaf Ekeberg"],
-    "namedAfter": ["Tantalus"],
-    "cpkColor": "#4da6ff",
-    "wikidataId": "Q1123"
+    "namedAfter": ["Tantalus"]
   },
   {
     "number": 74,
@@ -2072,9 +1926,7 @@
     "yearDiscovered": 1783,
     "discoveredInAntiquity": false,
     "discoverers": ["Fausto Elhuyar", "Juan José Elhuyar"],
-    "namedAfter": ["grey wolf"],
-    "cpkColor": "#2194d6",
-    "wikidataId": "Q743"
+    "namedAfter": ["grey wolf"]
   },
   {
     "number": 75,
@@ -2100,9 +1952,7 @@
     "yearDiscovered": 1925,
     "discoveredInAntiquity": false,
     "discoverers": ["Ida Noddack", "Otto Berg", "Walter Noddack"],
-    "namedAfter": ["Rhine"],
-    "cpkColor": "#267dab",
-    "wikidataId": "Q737"
+    "namedAfter": ["Rhine"]
   },
   {
     "number": 76,
@@ -2128,9 +1978,7 @@
     "yearDiscovered": 1803,
     "discoveredInAntiquity": false,
     "discoverers": ["William Hyde Wollaston", "Smithson Tennant"],
-    "namedAfter": ["odor"],
-    "cpkColor": "#266696",
-    "wikidataId": "Q751"
+    "namedAfter": ["odor"]
   },
   {
     "number": 77,
@@ -2156,9 +2004,7 @@
     "yearDiscovered": 1803,
     "discoveredInAntiquity": false,
     "discoverers": ["Smithson Tennant"],
-    "namedAfter": ["Iris"],
-    "cpkColor": "#175487",
-    "wikidataId": "Q877"
+    "namedAfter": ["Iris"]
   },
   {
     "number": 78,
@@ -2184,9 +2030,7 @@
     "yearDiscovered": 1735,
     "discoveredInAntiquity": false,
     "discoverers": ["Julius Caesar Scaliger", "Antonio de Ulloa"],
-    "namedAfter": ["silver"],
-    "cpkColor": "#d0d0e0",
-    "wikidataId": "Q880"
+    "namedAfter": ["silver"]
   },
   {
     "number": 79,
@@ -2212,9 +2056,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": [],
-    "namedAfter": [],
-    "cpkColor": "#ffd123",
-    "wikidataId": "Q897"
+    "namedAfter": []
   },
   {
     "number": 80,
@@ -2240,9 +2082,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": [],
-    "namedAfter": ["Mercury"],
-    "cpkColor": "#b8b8d0",
-    "wikidataId": "Q925"
+    "namedAfter": ["Mercury"]
   },
   {
     "number": 81,
@@ -2268,9 +2108,7 @@
     "yearDiscovered": 1861,
     "discoveredInAntiquity": false,
     "discoverers": ["William Crookes"],
-    "namedAfter": ["thallus"],
-    "cpkColor": "#a6544d",
-    "wikidataId": "Q932"
+    "namedAfter": ["thallus"]
   },
   {
     "number": 82,
@@ -2296,9 +2134,7 @@
     "yearDiscovered": null,
     "discoveredInAntiquity": true,
     "discoverers": [],
-    "namedAfter": [],
-    "cpkColor": "#575961",
-    "wikidataId": "Q708"
+    "namedAfter": []
   },
   {
     "number": 83,
@@ -2324,9 +2160,7 @@
     "yearDiscovered": 1753,
     "discoveredInAntiquity": false,
     "discoverers": [],
-    "namedAfter": [],
-    "cpkColor": "#9e4fb5",
-    "wikidataId": "Q942"
+    "namedAfter": []
   },
   {
     "number": 84,
@@ -2352,9 +2186,7 @@
     "yearDiscovered": 1898,
     "discoveredInAntiquity": false,
     "discoverers": [],
-    "namedAfter": ["Poland"],
-    "cpkColor": "#ab5c00",
-    "wikidataId": "Q979"
+    "namedAfter": ["Poland"]
   },
   {
     "number": 85,
@@ -2380,9 +2212,7 @@
     "yearDiscovered": 1940,
     "discoveredInAntiquity": false,
     "discoverers": ["Emilio G. Segrè"],
-    "namedAfter": ["instability"],
-    "cpkColor": "#754f45",
-    "wikidataId": "Q999"
+    "namedAfter": ["instability"]
   },
   {
     "number": 86,
@@ -2408,9 +2238,7 @@
     "yearDiscovered": 1900,
     "discoveredInAntiquity": false,
     "discoverers": ["Robert Bowie Owens", "Friedrich Ernst Dorn", "Ernest Rutherford"],
-    "namedAfter": ["radium"],
-    "cpkColor": "#428296",
-    "wikidataId": "Q1133"
+    "namedAfter": ["radium"]
   },
   {
     "number": 87,
@@ -2436,9 +2264,7 @@
     "yearDiscovered": 1939,
     "discoveredInAntiquity": false,
     "discoverers": ["Marguerite Perey"],
-    "namedAfter": ["France"],
-    "cpkColor": "#420066",
-    "wikidataId": "Q671"
+    "namedAfter": ["France"]
   },
   {
     "number": 88,
@@ -2464,9 +2290,7 @@
     "yearDiscovered": 1898,
     "discoveredInAntiquity": false,
     "discoverers": [],
-    "namedAfter": ["radioactivity"],
-    "cpkColor": "#007d00",
-    "wikidataId": "Q1128"
+    "namedAfter": ["radioactivity"]
   },
   {
     "number": 89,
@@ -2492,9 +2316,7 @@
     "yearDiscovered": 1899,
     "discoveredInAntiquity": false,
     "discoverers": ["André-Louis Debierne"],
-    "namedAfter": ["light beam"],
-    "cpkColor": "#70abfa",
-    "wikidataId": "Q1121"
+    "namedAfter": ["light beam"]
   },
   {
     "number": 90,
@@ -2520,9 +2342,7 @@
     "yearDiscovered": 1828,
     "discoveredInAntiquity": false,
     "discoverers": ["Jöns Jacob Berzelius"],
-    "namedAfter": ["Thor"],
-    "cpkColor": "#00baff",
-    "wikidataId": "Q1115"
+    "namedAfter": ["Thor"]
   },
   {
     "number": 91,
@@ -2548,9 +2368,7 @@
     "yearDiscovered": 1913,
     "discoveredInAntiquity": false,
     "discoverers": ["Kazimierz Fajans", "Lise Meitner", "Otto Hahn"],
-    "namedAfter": ["actinium"],
-    "cpkColor": "#00a1ff",
-    "wikidataId": "Q1109"
+    "namedAfter": ["actinium"]
   },
   {
     "number": 92,
@@ -2576,9 +2394,7 @@
     "yearDiscovered": 1789,
     "discoveredInAntiquity": false,
     "discoverers": [],
-    "namedAfter": ["Uranus"],
-    "cpkColor": "#008fff",
-    "wikidataId": "Q1098"
+    "namedAfter": ["Uranus"]
   },
   {
     "number": 93,
@@ -2604,9 +2420,7 @@
     "yearDiscovered": 1940,
     "discoveredInAntiquity": false,
     "discoverers": ["Philip Abelson", "Edwin McMillan"],
-    "namedAfter": ["Neptune"],
-    "cpkColor": "#0080ff",
-    "wikidataId": "Q1105"
+    "namedAfter": ["Neptune"]
   },
   {
     "number": 94,
@@ -2632,9 +2446,7 @@
     "yearDiscovered": 1940,
     "discoveredInAntiquity": false,
     "discoverers": ["Joseph W. Kennedy", "Arthur Wahl", "Edwin McMillan", "Glenn Theodore Seaborg"],
-    "namedAfter": ["Pluto"],
-    "cpkColor": "#006bff",
-    "wikidataId": "Q1102"
+    "namedAfter": ["Pluto"]
   },
   {
     "number": 95,
@@ -2660,9 +2472,7 @@
     "yearDiscovered": 1944,
     "discoveredInAntiquity": false,
     "discoverers": ["Glenn Theodore Seaborg"],
-    "namedAfter": ["Americas"],
-    "cpkColor": "#545cf2",
-    "wikidataId": "Q1872"
+    "namedAfter": ["Americas"]
   },
   {
     "number": 96,
@@ -2688,9 +2498,7 @@
     "yearDiscovered": 1944,
     "discoveredInAntiquity": false,
     "discoverers": ["Glenn Theodore Seaborg"],
-    "namedAfter": [],
-    "cpkColor": "#785ce3",
-    "wikidataId": "Q1876"
+    "namedAfter": []
   },
   {
     "number": 97,
@@ -2716,9 +2524,7 @@
     "yearDiscovered": 1949,
     "discoveredInAntiquity": false,
     "discoverers": ["Stanley Gerald Thompson", "Albert Ghiorso", "Glenn Theodore Seaborg"],
-    "namedAfter": ["Berkeley"],
-    "cpkColor": "#8a4fe3",
-    "wikidataId": "Q1882"
+    "namedAfter": ["Berkeley"]
   },
   {
     "number": 98,
@@ -2749,9 +2555,7 @@
       "Albert Ghiorso",
       "Glenn Theodore Seaborg"
     ],
-    "namedAfter": ["California"],
-    "cpkColor": "#a136d4",
-    "wikidataId": "Q1888"
+    "namedAfter": ["California"]
   },
   {
     "number": 99,
@@ -2777,9 +2581,7 @@
     "yearDiscovered": 1952,
     "discoveredInAntiquity": false,
     "discoverers": ["Albert Ghiorso", "Glenn Theodore Seaborg"],
-    "namedAfter": ["Albert Einstein"],
-    "cpkColor": "#b31fd4",
-    "wikidataId": "Q1892"
+    "namedAfter": ["Albert Einstein"]
   },
   {
     "number": 100,
@@ -2805,9 +2607,7 @@
     "yearDiscovered": 1952,
     "discoveredInAntiquity": false,
     "discoverers": ["Glenn Theodore Seaborg"],
-    "namedAfter": ["Enrico Fermi"],
-    "cpkColor": "#b31fba",
-    "wikidataId": "Q1896"
+    "namedAfter": ["Enrico Fermi"]
   },
   {
     "number": 101,
@@ -2833,9 +2633,7 @@
     "yearDiscovered": 1955,
     "discoveredInAntiquity": false,
     "discoverers": ["Glenn Theodore Seaborg"],
-    "namedAfter": ["Dmitri Mendeleev"],
-    "cpkColor": "#b30da6",
-    "wikidataId": "Q1898"
+    "namedAfter": ["Dmitri Mendeleev"]
   },
   {
     "number": 102,
@@ -2861,9 +2659,7 @@
     "yearDiscovered": 1957,
     "discoveredInAntiquity": false,
     "discoverers": ["Glenn Theodore Seaborg"],
-    "namedAfter": ["Alfred Nobel"],
-    "cpkColor": "#bd0d87",
-    "wikidataId": "Q1901"
+    "namedAfter": ["Alfred Nobel"]
   },
   {
     "number": 103,
@@ -2889,9 +2685,7 @@
     "yearDiscovered": 1961,
     "discoveredInAntiquity": false,
     "discoverers": ["Albert Ghiorso"],
-    "namedAfter": ["Ernest Lawrence"],
-    "cpkColor": "#c70066",
-    "wikidataId": "Q1905"
+    "namedAfter": ["Ernest Lawrence"]
   },
   {
     "number": 104,
@@ -2917,9 +2711,7 @@
     "yearDiscovered": 1964,
     "discoveredInAntiquity": false,
     "discoverers": ["Albert Ghiorso"],
-    "namedAfter": ["Ernest Rutherford"],
-    "cpkColor": "#cc0059",
-    "wikidataId": "Q1226"
+    "namedAfter": ["Ernest Rutherford"]
   },
   {
     "number": 105,
@@ -2948,9 +2740,7 @@
       "Lawrence Berkeley National Laboratory",
       "Joint Institute for Nuclear Research"
     ],
-    "namedAfter": ["Dubna"],
-    "cpkColor": "#d1004f",
-    "wikidataId": "Q1232"
+    "namedAfter": ["Dubna"]
   },
   {
     "number": 106,
@@ -2976,9 +2766,7 @@
     "yearDiscovered": 1974,
     "discoveredInAntiquity": false,
     "discoverers": ["Yuri Oganessian"],
-    "namedAfter": ["Glenn Theodore Seaborg"],
-    "cpkColor": "#d90045",
-    "wikidataId": "Q1234"
+    "namedAfter": ["Glenn Theodore Seaborg"]
   },
   {
     "number": 107,
@@ -3004,9 +2792,7 @@
     "yearDiscovered": 1976,
     "discoveredInAntiquity": false,
     "discoverers": ["Yuri Oganessian"],
-    "namedAfter": ["Niels Bohr"],
-    "cpkColor": "#e00038",
-    "wikidataId": "Q1249"
+    "namedAfter": ["Niels Bohr"]
   },
   {
     "number": 108,
@@ -3032,9 +2818,7 @@
     "yearDiscovered": 1984,
     "discoveredInAntiquity": false,
     "discoverers": ["GSI Helmholtz Centre for Heavy Ion Research"],
-    "namedAfter": ["Hesse"],
-    "cpkColor": "#e6002e",
-    "wikidataId": "Q1252"
+    "namedAfter": ["Hesse"]
   },
   {
     "number": 109,
@@ -3060,9 +2844,7 @@
     "yearDiscovered": 1982,
     "discoveredInAntiquity": false,
     "discoverers": ["GSI Helmholtz Centre for Heavy Ion Research"],
-    "namedAfter": ["Lise Meitner"],
-    "cpkColor": "#eb0026",
-    "wikidataId": "Q1258"
+    "namedAfter": ["Lise Meitner"]
   },
   {
     "number": 110,
@@ -3088,9 +2870,7 @@
     "yearDiscovered": 1994,
     "discoveredInAntiquity": false,
     "discoverers": ["GSI Helmholtz Centre for Heavy Ion Research"],
-    "namedAfter": ["Darmstadt"],
-    "cpkColor": null,
-    "wikidataId": "Q1266"
+    "namedAfter": ["Darmstadt"]
   },
   {
     "number": 111,
@@ -3116,9 +2896,7 @@
     "yearDiscovered": 1994,
     "discoveredInAntiquity": false,
     "discoverers": ["GSI Helmholtz Centre for Heavy Ion Research"],
-    "namedAfter": ["Wilhelm Röntgen"],
-    "cpkColor": null,
-    "wikidataId": "Q1272"
+    "namedAfter": ["Wilhelm Röntgen"]
   },
   {
     "number": 112,
@@ -3144,9 +2922,7 @@
     "yearDiscovered": 1996,
     "discoveredInAntiquity": false,
     "discoverers": ["GSI Helmholtz Centre for Heavy Ion Research"],
-    "namedAfter": ["Nicolaus Copernicus"],
-    "cpkColor": null,
-    "wikidataId": "Q1278"
+    "namedAfter": ["Nicolaus Copernicus"]
   },
   {
     "number": 113,
@@ -3172,9 +2948,7 @@
     "yearDiscovered": 2004,
     "discoveredInAntiquity": false,
     "discoverers": ["Joint Institute for Nuclear Research"],
-    "namedAfter": ["Japan"],
-    "cpkColor": null,
-    "wikidataId": "Q1301"
+    "namedAfter": ["Japan"]
   },
   {
     "number": 114,
@@ -3200,9 +2974,7 @@
     "yearDiscovered": 1998,
     "discoveredInAntiquity": false,
     "discoverers": ["Joint Institute for Nuclear Research"],
-    "namedAfter": ["Flerov Laboratory of Nuclear Reactions"],
-    "cpkColor": null,
-    "wikidataId": "Q1302"
+    "namedAfter": ["Flerov Laboratory of Nuclear Reactions"]
   },
   {
     "number": 115,
@@ -3228,9 +3000,7 @@
     "yearDiscovered": 2003,
     "discoveredInAntiquity": false,
     "discoverers": ["Joint Institute for Nuclear Research"],
-    "namedAfter": ["Moscow Oblast"],
-    "cpkColor": null,
-    "wikidataId": "Q1303"
+    "namedAfter": ["Moscow Oblast"]
   },
   {
     "number": 116,
@@ -3256,9 +3026,7 @@
     "yearDiscovered": 2000,
     "discoveredInAntiquity": false,
     "discoverers": ["Joint Institute for Nuclear Research"],
-    "namedAfter": ["Lawrence Livermore National Laboratory"],
-    "cpkColor": null,
-    "wikidataId": "Q1304"
+    "namedAfter": ["Lawrence Livermore National Laboratory"]
   },
   {
     "number": 117,
@@ -3284,9 +3052,7 @@
     "yearDiscovered": 2010,
     "discoveredInAntiquity": false,
     "discoverers": ["Yuri Oganessian"],
-    "namedAfter": ["Tennessee"],
-    "cpkColor": null,
-    "wikidataId": "Q1306"
+    "namedAfter": ["Tennessee"]
   },
   {
     "number": 118,
@@ -3312,8 +3078,6 @@
     "yearDiscovered": 2006,
     "discoveredInAntiquity": false,
     "discoverers": ["Joint Institute for Nuclear Research"],
-    "namedAfter": ["Yuri Oganessian"],
-    "cpkColor": null,
-    "wikidataId": "Q1307"
+    "namedAfter": ["Yuri Oganessian"]
   }
 ]

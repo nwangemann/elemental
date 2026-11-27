@@ -6,7 +6,6 @@ import {
   groupWikidata,
   isRealLabel,
   parseConfiguration,
-  parseHexColor,
   parseNumber,
   parseOxidationStates,
   parseState,
@@ -35,12 +34,6 @@ describe('field parsers', () => {
       configuration: '[Rn]7s2 7p6 5f14 6d10',
       predicted: true,
     });
-  });
-
-  it('pads colours that lost their leading zeros', () => {
-    expect(parseHexColor('6985')).toBe('#006985');
-    expect(parseHexColor('FFD123')).toBe('#ffd123');
-    expect(parseHexColor('')).toBeNull();
   });
 
   it('drops Wikidata placeholders that are not names', () => {
@@ -78,14 +71,12 @@ describe('buildElements', () => {
       category: 'nonmetal',
       standardState: 'gas',
       discoverers: ['Henry Cavendish'],
-      wikidataId: 'Q556',
     });
   });
 
   it('keeps unknown values as null, never zero', () => {
     const og = byNumber.get(118);
     expect(og?.meltingPoint).toBeNull();
-    expect(og?.cpkColor).toBeNull();
     expect(og?.standardStateIsPredicted).toBe(true);
   });
 

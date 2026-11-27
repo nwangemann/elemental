@@ -44,12 +44,6 @@ export const elementSchema = z
     discoveredInAntiquity: z.boolean(),
     discoverers: z.array(z.string().min(1)),
     namedAfter: z.array(z.string().min(1)),
-    /** CPK colour as `#rrggbb`, or null where PubChem has none. */
-    cpkColor: z
-      .string()
-      .regex(/^#[0-9a-f]{6}$/)
-      .nullable(),
-    wikidataId: z.string().regex(/^Q\d+$/),
   })
   .strict();
 
