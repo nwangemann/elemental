@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  electronAngles,
   atomSummary,
   fillingNote,
   atomOf,
@@ -190,5 +191,27 @@ describe('atomSummary and fillingNote', () => {
       actual: '4d10',
       filling: '4d8 5s2',
     });
+  });
+});
+
+describe('electronAngles', () => {
+  const top = -Math.PI / 2;
+
+  it('spaces electrons evenly from half a gap past the top when the label already fits', () => {
+    const angles = electronAngles(2, 0.1);
+    expect(angles[0]).toBeCloseTo(0);
+    expect(angles[1]).toBeCloseTo(Math.PI);
+    expect(electronAngles(0, 0.1)).toEqual([]);
+  });
+
+  it('clears the label on a crowded ring and keeps the rest evenly spaced', () => {
+    const h = 0.14;
+    const angles = electronAngles(32, h);
+    expect(angles).toHaveLength(32);
+    expect(angles[0]! - top).toBeCloseTo(h);
+    expect(top + 2 * Math.PI - angles[31]!).toBeCloseTo(h);
+    const gaps = angles.slice(1).map((a, j) => a - angles[j]!);
+    for (const g of gaps) expect(g).toBeCloseTo(gaps[0]!);
+    expect(gaps[0]).toBeLessThan((2 * Math.PI) / 32);
   });
 });

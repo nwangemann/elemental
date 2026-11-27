@@ -176,3 +176,14 @@ test('walking a density landscape climbs small steps and stops at a cliff', asyn
   await page.keyboard.press('j');
   await expect(status).toHaveAttribute('data-tile', '35', { timeout: 10_000 });
 });
+
+test('the atom tab draws chromium and notes its filling-rule exception', async ({ page }) => {
+  await page.goto('/#/Cr');
+  const panel = page.getByRole('complementary', { name: 'Chromium' });
+  await expect(panel).toBeVisible({ timeout: 15_000 });
+  await panel.getByRole('tab', { name: 'Atom' }).click();
+  const diagram = panel.getByRole('img', { name: '2, 8, 13, 1 electrons; outer shell 1' });
+  await expect(diagram).toBeVisible();
+  await expect(diagram.locator('.atom-electron')).toHaveCount(24);
+  await expect(panel.getByText('Chromium breaks the filling rule')).toBeVisible();
+});

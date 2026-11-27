@@ -1,4 +1,4 @@
-import { atomSummary, type Atom } from '../core/atom.ts';
+import { atomSummary, electronAngles, type Atom } from '../core/atom.ts';
 
 /** Diagram units: the SVG scales to the panel width. */
 const SIZE = 240;
@@ -9,6 +9,9 @@ const FIRST_RING = 29;
 const LAST_RING = 108;
 const MAX_STEP = 22;
 const ELECTRON = 3;
+/** Count label: 9px tabular digits are about 5.4 units wide; keep this much air past the halo. */
+const DIGIT = 5.4;
+const LABEL_AIR = 2.5;
 
 /**
  * Electron shells as a flat Bohr-style diagram: the nucleus with the atomic number, one ring per
@@ -33,10 +36,8 @@ export function AtomDiagram({ atom, number }: { atom: Atom; number: number }) {
         return (
           <g key={shell.n} className={valence ? 'atom-ring atom-valence' : 'atom-ring'}>
             <circle cx={CENTRE} cy={CENTRE} r={r} className="atom-orbit" />
-            {Array.from({ length: k }, (_, j) => {
-              // Start half a gap past the top, so the count label sits between two electrons.
-              const angle = -Math.PI / 2 + ((j + 0.5) / k) * 2 * Math.PI;
-              return (
+            {electronAngles(k, (String(k).length * DIGIT) / 2 / r + (ELECTRON + LABEL_AIR) / r).map(
+              (angle, j) => (
                 <circle
                   key={j}
                   cx={CENTRE + r * Math.cos(angle)}
@@ -44,8 +45,8 @@ export function AtomDiagram({ atom, number }: { atom: Atom; number: number }) {
                   r={ELECTRON}
                   className="atom-electron"
                 />
-              );
-            })}
+              ),
+            )}
             <text x={CENTRE} y={CENTRE - r} className="atom-count" dominantBaseline="central">
               {k}
             </text>

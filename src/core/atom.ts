@@ -206,3 +206,18 @@ export function fillingNote(
       .join(' ');
   return { name, actual: text((d) => d.actual), filling: text((d) => d.filling) };
 }
+
+/**
+ * Angles (radians, screen coordinates: −π/2 is the top) for `count` electrons on a ring, evenly
+ * spaced, leaving the top clear for a label: the nearest electron sits at least `halfGap` radians
+ * either side of the top. When even spacing already clears it, electrons start half a gap past the
+ * top; otherwise they spread over the rest of the ring so both neighbours sit exactly `halfGap` out.
+ */
+export function electronAngles(count: number, halfGap: number): number[] {
+  if (count <= 0) return [];
+  const top = -Math.PI / 2;
+  if (count === 1 || Math.PI / count >= halfGap)
+    return Array.from({ length: count }, (_, j) => top + ((j + 0.5) / count) * 2 * Math.PI);
+  const step = (2 * Math.PI - 2 * halfGap) / (count - 1);
+  return Array.from({ length: count }, (_, j) => top + halfGap + j * step);
+}
