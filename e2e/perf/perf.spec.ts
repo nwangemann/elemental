@@ -286,6 +286,54 @@ test('frame work while the timeline plays', async ({ page }) => {
   expect(result.p95Ms).toBeLessThan(8);
 });
 
+test('frame work while a compound forms', async ({ page }) => {
+  await page.addInitScript(INIT);
+  await page.goto('/?perf&quality=off#/Ca');
+  const status = page.locator('#tile-status');
+  await expect(status).toHaveAttribute('data-tile', '20', { timeout: 20_000 });
+  await page.waitForTimeout(3_500);
+  // Calcium carbonate is the biggest chunk in the set (51 atoms): fly to each tile and carry it.
+  await page.keyboard.press('c');
+  for (const [symbol, number] of [
+    ['C', '6'],
+    ['O', '8'],
+  ] as const) {
+    await page.evaluate((s) => (window.location.hash = `#/${s}`), symbol);
+    await expect(status).toHaveAttribute('data-tile', number);
+    await page.keyboard.press('c');
+  }
+  const tray = page.getByRole('region', { name: 'Combine' });
+  await tray.getByRole('button', { name: 'One more oxygen' }).click();
+  await tray.getByRole('button', { name: 'One more oxygen' }).click();
+  await expect(tray.getByRole('status')).toContainText('Makes calcium carbonate');
+  await page.locator('#scene').focus();
+  await page.evaluate(() => ((window as unknown as { perfFrames: number[] }).perfFrames = []));
+  // The lattice springs and grows while the figure walks, and the table arcs draw and fade.
+  const overlay = page.locator('output.perf');
+  await page.keyboard.down('ArrowRight');
+  // Draw calls while the arcs still show (they fade after 3 s).
+  await page.waitForTimeout(1_000);
+  const drawCalls = Number(await overlay.getAttribute('data-calls'));
+  await page.waitForTimeout(3_000);
+  await page.keyboard.up('ArrowRight');
+  const frames = await page.evaluate(
+    () => (window as unknown as { perfFrames: number[] }).perfFrames,
+  );
+  const sorted = frames.toSorted((a, b) => a - b);
+  const result = {
+    frames: sorted.length,
+    medianMs: +quantile(sorted, 0.5).toFixed(2),
+    p95Ms: +quantile(sorted, 0.95).toFixed(2),
+    maxMs: +(sorted.at(-1) ?? 0).toFixed(2),
+    drawCalls,
+  };
+  console.log(`perf:form ${JSON.stringify(result)}`);
+  expect(result.frames).toBeGreaterThan(60);
+  // ADR 20: at most 15 draw calls while Combine is open.
+  expect(result.drawCalls).toBeLessThanOrEqual(15);
+  expect(result.p95Ms).toBeLessThan(8);
+});
+
 /** Idle seconds counted, after the establishing shot and the pacer's settle time. */
 const IDLE_SECONDS = 5;
 

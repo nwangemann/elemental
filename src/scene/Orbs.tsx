@@ -11,27 +11,16 @@ import {
 import { CARRY_LIMIT, carriedCounts } from '../core/carry.ts';
 import { CONFIG } from '../core/config.ts';
 import type { ControllerState } from '../core/controller.ts';
-import { ELEMENTS } from '../core/elements/index.ts';
 import { createPose, poseOf, type GaitState } from '../core/gait.ts';
 import type { LedgeState } from '../core/ledge.ts';
 import { orbSlots, snapOrbFollow, stepOrbFollow, type OrbFollow } from '../core/orbs.ts';
-import { CATEGORY_COLORS } from '../core/palette.ts';
-// Only the colour table: the shapes in the same file stay out until forming needs them.
-import { cpk } from '../data/compound-shapes.json';
+import type { FormClock } from '../core/forming.ts';
 import { useAppStore } from '../state/store.ts';
+import { FormArcs, FormedModel } from './Formed.tsx';
+import { orbColour, prefersReducedMotion } from './orbLook.ts';
+import { useFormed } from './useFormed.ts';
 
 const MAX_DT = 0.1;
-const CPK: Readonly<Record<string, string>> = cpk;
-const BY_SYMBOL = new Map(ELEMENTS.map((e) => [e.symbol, e]));
-
-/** An atom's orb colour: CPK where the compound set has it, else the element's family colour. */
-function orbColour(symbol: string): string {
-  const e = BY_SYMBOL.get(symbol);
-  return CPK[symbol] ?? (e ? CATEGORY_COLORS[e.category] : '#ffffff');
-}
-
-const prefersReducedMotion = (): boolean =>
-  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
 /**
  * Combine mode's carried atoms (ADR 20): one instanced mesh of up to 24 small spheres in CPK
@@ -39,20 +28,25 @@ const prefersReducedMotion = (): boolean =>
  * only when the carry changes; each frame the group eases after the figure's position and
  * heading (`stepOrbFollow`) and bobs with its walk (still with reduced motion). A tuning-panel
  * change remounts it, like the tiles. Hidden while Combine is closed
- * or nothing is carried. Loaded with combine's chunk on first open, so it costs a visitor who
- * never opens Combine nothing, and one draw call while it shows.
+ * or nothing is carried. When the carry forms a compound the orbs hide and `FormedModel`
+ * springs them together in the same frame (`FormArcs` draws the recipe on the table). Loaded
+ * with combine's chunk on first open, so it costs a visitor who never opens Combine nothing:
+ * one draw call while orbs show, three or four while a compound is formed.
  */
 export default function Orbs({
   controller,
   ledge,
   gait,
   follow,
+  clock,
 }: {
   controller: ControllerState;
   ledge: LedgeState;
   gait: GaitState;
   /** Parent-owned, so `FramePacer` sees when the orbs are still catching up. */
   follow: OrbFollow;
+  /** Parent-owned too: the pacer keeps frames coming while forming animates. */
+  clock: FormClock;
 }) {
   const open = useAppStore((s) => s.combine.open);
   const carry = useAppStore((s) => s.combine.carry);
@@ -62,6 +56,8 @@ export default function Orbs({
   const material = useMemo(() => new MeshStandardMaterial({ roughness: 0.35 }), []);
   const pose = useMemo(() => createPose(), []);
   const shown = open && carry.length > 0;
+  const formed = useFormed();
+  const shownFormed = shown ? formed : undefined;
 
   useEffect(
     () => () => {
@@ -101,6 +97,7 @@ export default function Orbs({
     const g = group.current;
     if (!g) return;
     g.visible = shown;
+    if (mesh.current) mesh.current.visible = !shownFormed;
     if (!shown) {
       snapOrbFollow(follow, controller.x, ledge.y, controller.z, controller.heading);
       return;
@@ -114,12 +111,16 @@ export default function Orbs({
   });
 
   return (
-    <group ref={group} visible={false}>
-      <instancedMesh
-        ref={mesh}
-        args={[geometry, material, CARRY_LIMIT.atoms]}
-        frustumCulled={false}
-      />
-    </group>
+    <>
+      <group ref={group} visible={false}>
+        <instancedMesh
+          ref={mesh}
+          args={[geometry, material, CARRY_LIMIT.atoms]}
+          frustumCulled={false}
+        />
+        <FormedModel compound={shownFormed} clock={clock} />
+      </group>
+      <FormArcs compound={shownFormed} clock={clock} />
+    </>
   );
 }

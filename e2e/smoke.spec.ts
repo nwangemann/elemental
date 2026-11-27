@@ -406,3 +406,34 @@ test('the tray suggests the nearest compounds and fills in the right amounts', a
   await expect(tray.getByRole('list', { name: 'Carried' })).toHaveText(/H 2.*O 1/s);
   await expect(tray.getByRole('status')).toContainText('Makes water.');
 });
+
+test('a matching carry forms, and one formula offers each of its compounds', async ({ page }) => {
+  await page.goto('/#/C');
+  const status = page.locator('[data-tile]');
+  await expect(status).toHaveAttribute('data-tile', '6', { timeout: 15_000 });
+  await page.keyboard.press('c');
+  await page.keyboard.press('c');
+  for (const [symbol, number] of [
+    ['H', '1'],
+    ['O', '8'],
+  ] as const) {
+    await page.evaluate((s) => (window.location.hash = `#/${s}`), symbol);
+    await expect(status).toHaveAttribute('data-tile', number);
+    await page.keyboard.press('c');
+  }
+  const tray = page.getByRole('region', { name: 'Combine' });
+  for (let i = 0; i < 5; i++) await tray.getByRole('button', { name: 'One more hydrogen' }).click();
+  await expect(tray.getByRole('status')).toContainText('Makes ethanol or dimethyl ether.');
+
+  const choice = tray.getByRole('group', { name: 'Show which compound' });
+  const ethanol = choice.getByRole('button', { name: 'Ethanol' });
+  const ether = choice.getByRole('button', { name: 'Dimethyl ether' });
+  await expect(ethanol).toHaveAttribute('aria-pressed', 'true');
+  await ether.click();
+  await expect(ether).toHaveAttribute('aria-pressed', 'true');
+  await expect(ethanol).toHaveAttribute('aria-pressed', 'false');
+
+  // One more atom and nothing forms: the choice goes away.
+  await tray.getByRole('button', { name: 'One more oxygen' }).click();
+  await expect(choice).toHaveCount(0);
+});

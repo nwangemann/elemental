@@ -18,12 +18,15 @@ export interface CarryRefusal {
 
 /**
  * Combine mode (ADR 20): whether it is open, the atoms carried, oldest first, and the last
- * pick-up the carry limit refused (cleared by the next change to the carry).
+ * pick-up the carry limit refused (cleared by the next change to the carry), and which
+ * isomer the formed model shows when one formula is several compounds (null: the most
+ * everyday; kept across carries, and ignored while it is not one of the matches).
  */
 export interface CombineState {
   open: boolean;
   carry: Carry;
   refused: CarryRefusal | null;
+  pick: string | null;
 }
 
 /** A request to put the character on a tile at once. `seq` makes repeat requests distinct. */
@@ -76,6 +79,8 @@ export interface AppState {
   dropLastAtom: () => void;
   /** Sets the whole carry (the tray's steppers, Clear and Fill in). */
   setCarry: (carry: Carry) => void;
+  /** Chooses which isomer the formed model shows (the tray's buttons when several match). */
+  setFormPick: (pick: string | null) => void;
 }
 
 /**
@@ -116,7 +121,7 @@ export const useAppStore = create<AppState>()((set) => ({
   setLensTemperature: (temperature) =>
     set((s) => (s.lens.temperature === temperature ? s : { lens: { ...s.lens, temperature } })),
   setLensYear: (year) => set((s) => (s.lens.year === year ? s : { lens: { ...s.lens, year } })),
-  combine: { open: false, carry: [], refused: null },
+  combine: { open: false, carry: [], refused: null, pick: null },
   setCombineOpen: (open) =>
     set((s) => (s.combine.open === open ? s : { combine: { ...s.combine, open } })),
   pickUpAtom: (symbol) =>
@@ -125,8 +130,8 @@ export const useAppStore = create<AppState>()((set) => ({
       return {
         combine:
           reason === 'ok'
-            ? { open: true, carry: [...s.combine.carry, symbol], refused: null }
-            : { open: true, carry: s.combine.carry, refused: { symbol, reason } },
+            ? { ...s.combine, open: true, carry: [...s.combine.carry, symbol], refused: null }
+            : { ...s.combine, open: true, refused: { symbol, reason } },
       };
     }),
   dropLastAtom: () =>
@@ -136,4 +141,6 @@ export const useAppStore = create<AppState>()((set) => ({
         : { combine: { ...s.combine, carry: dropLast(s.combine.carry), refused: null } },
     ),
   setCarry: (carry) => set((s) => ({ combine: { ...s.combine, carry, refused: null } })),
+  setFormPick: (pick) =>
+    set((s) => (s.combine.pick === pick ? s : { combine: { ...s.combine, pick } })),
 }));

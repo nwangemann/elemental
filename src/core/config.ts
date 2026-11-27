@@ -171,6 +171,24 @@ export const CONFIG_DEFAULTS = {
     orbBob: 1.6,
     /** Dim of the faintest suggested tile while carrying (0 bright … 1 as a filtered-out tile). */
     suggestDim: 0.6,
+    /** The formed model (`core/forming.ts`): its centre's height, fitted radius and scale cap. */
+    formLift: 1.3,
+    formRadius: 0.42,
+    formMaxScale: 0.26,
+    /** Atom and bond radii of the model, in ångström before scaling. */
+    formAtom: 0.38,
+    formHydrogen: 0.24,
+    formBond: 0.09,
+    /** Seconds for each atom's spring, and the extra delay lattice atoms grow in over. */
+    formTime: 0.7,
+    formGrow: 0.6,
+    /** How fast the formed model turns, rad/s. */
+    formSpin: 0.35,
+    /** Table arcs: height above the tiles, seconds to draw, seconds shown, seconds to fade. */
+    arcLift: 0.35,
+    arcDraw: 0.5,
+    arcLife: 3,
+    arcFade: 1,
   },
 };
 
@@ -288,6 +306,19 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     orbFollow: { min: 1, max: 30, step: 0.5 },
     orbBob: { min: 0, max: 4, step: 0.1 },
     suggestDim: { min: 0, max: 1, step: 0.01 },
+    formLift: { min: 0.4, max: 2.5, step: 0.01 },
+    formRadius: { min: 0.1, max: 1, step: 0.01 },
+    formMaxScale: { min: 0.02, max: 0.4, step: 0.005 },
+    formAtom: { min: 0.1, max: 1, step: 0.01 },
+    formHydrogen: { min: 0.05, max: 1, step: 0.01 },
+    formBond: { min: 0.02, max: 0.4, step: 0.005 },
+    formTime: { min: 0.1, max: 3, step: 0.05 },
+    formGrow: { min: 0, max: 3, step: 0.05 },
+    formSpin: { min: 0, max: 2, step: 0.05 },
+    arcLift: { min: 0, max: 2, step: 0.01 },
+    arcDraw: { min: 0, max: 3, step: 0.05 },
+    arcLife: { min: 0.5, max: 10, step: 0.1 },
+    arcFade: { min: 0, max: 5, step: 0.1 },
   },
 };
 

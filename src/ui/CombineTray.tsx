@@ -1,9 +1,10 @@
 import { useMemo, useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { canAdd, carriedCounts, dropOne, pickUp, withCounts, type Carry } from '../core/carry.ts';
-import { fillIn, nearest } from '../core/combine.ts';
+import { exactMatches, fillIn, nearest } from '../core/combine.ts';
 import { COMPOUNDS } from '../core/compounds/index.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
+import { pickFormed } from '../core/forming.ts';
 import { nearMissLine, ratioLine, traySummary } from '../core/trayText.ts';
 import { useAppStore } from '../state/store.ts';
 
@@ -15,7 +16,8 @@ const STARTERS = COMPOUNDS.filter((c) => c.starter);
  * is open: the carried elements with − / + steppers and Clear, or the starters when nothing is
  * carried, and a live region that says what is carried and where it leads. Below it, the
  * ratio when the carried elements are right but the amounts are not (Fill in sets them), and
- * the nearest three compounds with the atoms each needs. Close (or Esc
+ * the nearest three compounds with the atoms each needs. When the carry is several
+ * compounds at once (isomers), toggle buttons choose the one the model shows. Close (or Esc
  * inside the tray) hides it and keeps what is carried.
  */
 export default function CombineTray() {
@@ -28,6 +30,14 @@ export default function CombineTray() {
   const summary = useMemo(() => traySummary(counts, COMPOUNDS, refused), [counts, refused]);
   const near = useMemo(() => nearest(counts, COMPOUNDS), [counts]);
   const wrong = useMemo(() => fillIn(counts, COMPOUNDS), [counts]);
+  const pick = useAppStore((s) => s.combine.pick);
+  const setFormPick = useAppStore((s) => s.setFormPick);
+  // One formula, several molecules (ethanol and dimethyl ether): offer each.
+  const isomers = useMemo(
+    () => exactMatches(counts, COMPOUNDS).filter((c) => c.kind !== 'atom'),
+    [counts],
+  );
+  const shown = pickFormed(isomers, pick);
 
   const close = () => {
     const inTray = tray.current?.contains(document.activeElement) ?? false;
@@ -124,6 +134,20 @@ export default function CombineTray() {
       <p className="combine-summary" role="status">
         {summary}
       </p>
+      {isomers.length > 1 && (
+        <div className="combine-isomers" role="group" aria-label="Show which compound">
+          {isomers.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              aria-pressed={c === shown}
+              onClick={() => setFormPick(c.id)}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+      )}
       {wrong && (
         <p className="combine-ratio">
           {ratioLine(wrong, NAMES)}{' '}

@@ -30,3 +30,7 @@ The optimisation pass cut the total from 361 KB to 289 KB: the curated `three` n
 ## Amendment (2026-11-26): room for Combine mode
 
 The discovery timeline (ADR 19) brought the total to 299 KB against the 300 KB ceiling; the shell is 71 KB. Combine mode (ADR 20) is estimated at 6–10 KB of code and about 6 KB of data, gzipped, all in its own lazy chunk. The total ceiling rises to 318 KB for that phase; once it is built, the ceiling drops back to just above the measured total. The shell ceiling stays at 76 KB, and the 450 KB budget is unchanged.
+
+## Amendment (2026-11-26): forming ships the shapes
+
+Forming (the ball-and-stick models, lattice chunks and ingots) brings the baked shapes into combine's lazy chunk: about 6 KB gzipped of coordinates and bonds for 39 compounds, plus about 2 KB of code. The total reached 321 KB against the 318 KB ceiling. Rounding the coordinates to 0.1 Å would save only about 1 KB, so the shapes keep their 0.01 Å precision and the total ceiling rises to 324 KB. Nothing new loads before Combine first opens. The shell ceiling (76 KB) and the 450 KB budget are unchanged; the drop back to just above the measured total still comes when the phase is built.

@@ -38,6 +38,7 @@ import { TileStepper } from './TileStepper.tsx';
 import { Tiles } from './Tiles.tsx';
 import { useConfigVersion } from './useConfigVersion.ts';
 import { useKeyboardInput } from './useKeyboardInput.ts';
+import { createFormClock } from '../core/forming.ts';
 import { createOrbFollow } from '../core/orbs.ts';
 import { useAppStore } from '../state/store.ts';
 
@@ -81,6 +82,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
     () => createOrbFollow(controller.x, ledge.y, controller.z, controller.heading),
     [controller, ledge],
   );
+  const formClock = useMemo(() => createFormClock(), []);
   // Stays true once Combine has opened, so closing it hides the orbs without unloading them.
   const combineOpen = useAppStore((s) => s.combine.open);
   const [combineOpened, setCombineOpened] = useState(combineOpen);
@@ -149,6 +151,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
               ledge={ledge}
               gait={gait}
               follow={orbs}
+              clock={formClock}
             />
             <Suggestions layer={suggest} />
           </Suspense>
@@ -169,6 +172,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           phase={phase}
           era={era}
           orbs={orbs}
+          form={formClock}
         />
       </Canvas>
       <Joystick stick={stick} />

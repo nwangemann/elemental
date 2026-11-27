@@ -10,6 +10,7 @@ import type { EraEase } from '../core/discovery.ts';
 import type { TintEase } from '../core/lens.ts';
 import type { PhaseEase } from '../core/temperature.ts';
 import type { Stick, WalkTarget } from '../core/steering.ts';
+import type { FormClock } from '../core/forming.ts';
 import type { OrbFollow } from '../core/orbs.ts';
 import { useAppStore } from '../state/store.ts';
 
@@ -38,6 +39,7 @@ export function FramePacer({
   phase,
   era,
   orbs,
+  form,
 }: {
   pacer: Pacer;
   controller: ControllerState;
@@ -51,6 +53,8 @@ export function FramePacer({
   era: EraEase;
   /** Set by the carried orbs while they catch up with the figure. */
   orbs: OrbFollow;
+  /** Set while a compound is forming or its table arcs still show. */
+  form: FormClock;
 }) {
   const invalidate = useThree((s) => s.invalidate);
   const pose = useMemo(() => new Float64Array(7), []);
@@ -96,6 +100,7 @@ export function FramePacer({
       phase.moved ||
       phase.moving ||
       orbs.moving ||
+      form.moving ||
       era.moved ||
       era.moving;
     const wait = stepPacer(pacer, delta, busy, CONFIG.pacing);

@@ -1174,3 +1174,16 @@ body:has(.combine-tray:not([hidden])) .back-to-table {
   border-top: 1px solid #30363d;
   color: #c9d1d9;
 }
+
+/* Several compounds from one formula: toggles for the one the model shows. */
+.combine-isomers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.combine-tray .combine-isomers button[aria-pressed='true'] {
+  border-color: #79c0ff;
+  background: #1f3a5f;
+}

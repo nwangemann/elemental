@@ -24,6 +24,8 @@ The table shows 118 elements, but not what they make. Combine mode answers "what
 
 **Rendering.** Only while Combine is open: carried orbs as one instanced mesh, the formed model as two (atoms and bonds), and table arcs as one line mesh, so up to 4 more draw calls. Suggestion dimming reuses the explorer filter's surface dim (ADR 11), with no draw call added.
 
+**Forming (decided while building it).** A match forms on its own, with no button, and uses nothing up: the model shows while the carry still matches and goes back to orbs the moment an atom is added or dropped. So "leftover atoms stay carried" holds trivially, and a molecule that is also a step to a bigger one (H₂ on the way to water) shows and then keeps building. The carried orbs become the model's atoms; a lattice's other atoms grow in from the centre outward. The isomer choice is kept in the store and only applies while it is one of the matches.
+
 ## Consequences
 
 - The total JavaScript ceiling rises for this phase (ADR 3 amendment); the shell ceiling does not.

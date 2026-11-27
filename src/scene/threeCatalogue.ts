@@ -38,6 +38,7 @@ export {
   Group,
   HemisphereLight,
   InstancedMesh,
+  LineSegments,
   Mesh,
   MeshStandardMaterial,
   SphereGeometry,
