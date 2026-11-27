@@ -4,9 +4,11 @@ import {
   createCamera,
   createPose,
   introProgress,
+  sheetLift,
   skipIntro,
   snapFocus,
   stepCamera,
+  stepLift,
   zoomBy,
   zoomByFactor,
   type CameraParams,
@@ -112,5 +114,39 @@ describe('snapFocus', () => {
     ]);
     snapFocus(s, 50, -50, { minX: -10, maxX: 10, minZ: -8, maxZ: 8 });
     expect([s.focusX.value, s.focusZ.value]).toEqual([10, -8]);
+  });
+});
+
+describe('sheet lift', () => {
+  it('centres the focus in the part of the view the sheet leaves', () => {
+    // A 800 px view with a 360 px sheet: visible part is 440 px, centred at 220 from the top.
+    const lift = sheetLift(800, 360);
+    expect(800 / 2 - lift).toBe((800 - 360) / 2);
+  });
+
+  it('is zero with no sheet or no view, and never more than half the view', () => {
+    expect(sheetLift(800, 0)).toBe(0);
+    expect(sheetLift(0, 300)).toBe(0);
+    expect(sheetLift(800, -20)).toBe(0);
+    expect(sheetLift(800, 2000)).toBe(400);
+  });
+
+  it('eases toward the target and lands on it exactly', () => {
+    let lift = 0;
+    lift = stepLift(lift, 180, 6, 1 / 60, false);
+    expect(lift).toBeGreaterThan(0);
+    expect(lift).toBeLessThan(180);
+    run(240, () => {
+      lift = stepLift(lift, 180, 6, 1 / 60, false);
+    });
+    expect(lift).toBe(180);
+    run(240, () => {
+      lift = stepLift(lift, 0, 6, 1 / 60, false);
+    });
+    expect(lift).toBe(0);
+  });
+
+  it('jumps at once under reduced motion', () => {
+    expect(stepLift(0, 180, 6, 1 / 60, true)).toBe(180);
   });
 });

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- On phones, while the element sheet is open, the view shifts up so the figure sits in the middle of the visible scene instead of at the sheet's edge, and eases back when the sheet closes (a cut with reduced motion).
 - Tap-to-walk feedback: a tap or click leaves a square marker on the tile it chose (or a small one on the ground), which pulses once as the tap lands and stays faintly until the figure arrives. With reduced motion it fades in place without growing.
 
 ## 0.1.0 — 2026-11-26

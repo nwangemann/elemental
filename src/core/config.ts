@@ -108,6 +108,8 @@ export const CONFIG_DEFAULTS = {
     /** Establishing shot: seconds on the overview, then seconds to glide down. */
     introDelay: 0.5,
     introDuration: 2,
+    /** How fast the view eases up when the panel sheet opens on narrow screens, 1/s. */
+    liftRate: 6,
   },
 };
 
@@ -189,6 +191,7 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     zoomRate: { min: 1, max: 30, step: 0.5 },
     introDelay: { min: 0, max: 3, step: 0.1 },
     introDuration: { min: 0, max: 6, step: 0.1 },
+    liftRate: { min: 1, max: 30, step: 0.5 },
   },
 };
 

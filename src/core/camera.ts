@@ -158,3 +158,30 @@ export function cameraPose(
   out.target[2] = ot[2] + (tz - ot[2]) * k;
   return out;
 }
+
+/**
+ * How far to shift the rendered image up, in pixels, so the focus point sits in the middle of the
+ * part of a `viewHeight`-pixel view that a bottom sheet `coveredPx` tall leaves visible. Half the
+ * covered height, clamped to the view. The rig applies it as a projection offset
+ * (`setViewOffset`), so pointer picking still matches what is drawn.
+ */
+export function sheetLift(viewHeight: number, coveredPx: number): number {
+  if (!(viewHeight > 0) || !(coveredPx > 0)) return 0;
+  return Math.min(coveredPx, viewHeight) / 2;
+}
+
+/**
+ * Eases the current lift toward `target` at `rate` (1/s), or jumps there when `instant` (reduced
+ * motion). Snaps the last half pixel, so the rig can drop the offset once it is back to zero.
+ */
+export function stepLift(
+  current: number,
+  target: number,
+  rate: number,
+  dt: number,
+  instant: boolean,
+): number {
+  if (instant) return target;
+  const next = damp(current, target, rate, Math.max(dt, 0));
+  return Math.abs(next - target) < 0.5 ? target : next;
+}
