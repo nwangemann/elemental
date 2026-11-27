@@ -126,10 +126,17 @@ export const NO_DATA = -1;
 export interface Lens {
   height: LensKey | null;
   colour: LensKey | null;
+  /** The temperature lens's temperature in kelvin (`core/temperature.ts`), or null when off. */
+  temperature: number | null;
   filters: Filters;
 }
 
-export const NO_LENS: Readonly<Lens> = { height: null, colour: null, filters: NO_FILTERS };
+export const NO_LENS: Readonly<Lens> = {
+  height: null,
+  colour: null,
+  temperature: null,
+  filters: NO_FILTERS,
+};
 
 /**
  * An element's raw value for a lens, or null when unknown. Elements known since antiquity come

@@ -13,7 +13,7 @@ Derived in code, not fetched: period, group and block, from the atomic number (`
 
 ## Units
 
-Melting and boiling points in kelvin; density in g/cm³ for every state; atomic radius in picometres (van der Waals); ionization energy and electron affinity in eV; electronegativity on the Pauling scale. Unknown values are `null`.
+Melting and boiling points in kelvin, as normally quoted (1 atm; the temperature lens, ADR 18, corrects helium, whose melting point is at about 25 atm, and treats arsenic's boiling point below its melting point as sublimation); density in g/cm³ for every state; atomic radius in picometres (van der Waals); ionization energy and electron affinity in eV; electronegativity on the Pauling scale. Unknown values are `null`.
 
 ## Known gaps and corrections
 

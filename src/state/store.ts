@@ -45,6 +45,8 @@ export interface AppState {
   setLensHeight: (height: LensKey | null) => void;
   /** Sets the property the tiles' colours show (null = family colours); the scene eases them. */
   setLensColour: (colour: LensKey | null) => void;
+  /** Sets the temperature lens in kelvin (null = off); the scene shows each element's state there. */
+  setLensTemperature: (temperature: number | null) => void;
 }
 
 /**
@@ -73,6 +75,7 @@ export const useAppStore = create<AppState>()((set) => ({
   lens: {
     height: null,
     colour: null,
+    temperature: null,
     filters: { category: null, state: null, block: null, period: null, group: null },
   },
   setLensFilters: (filters) => set((s) => ({ lens: { ...s.lens, filters } })),
@@ -80,4 +83,6 @@ export const useAppStore = create<AppState>()((set) => ({
     set((s) => (s.lens.height === height ? s : { lens: { ...s.lens, height } })),
   setLensColour: (colour) =>
     set((s) => (s.lens.colour === colour ? s : { lens: { ...s.lens, colour } })),
+  setLensTemperature: (temperature) =>
+    set((s) => (s.lens.temperature === temperature ? s : { lens: { ...s.lens, temperature } })),
 }));

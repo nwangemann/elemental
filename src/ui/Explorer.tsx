@@ -29,6 +29,7 @@ import {
   type SortKey,
 } from '../core/explorer.ts';
 import { lensFromHash } from '../core/lens.ts';
+import { temperatureFromHash } from '../core/temperature.ts';
 import { accentTokens } from '../core/themes.ts';
 import { useAppStore } from '../state/store.ts';
 import { isTextEntry } from '../scene/useKeyboardInput.ts';
@@ -58,11 +59,15 @@ function replaceHash(hash: string): void {
  */
 function useDeepLinks(): void {
   useEffect(() => {
+    // The scene reads the height and colour lenses from the link as it loads; the temperature
+    // has no scene yet, so it is read here, before the first hash rewrite could drop it.
+    useAppStore.getState().setLensTemperature(temperatureFromHash(window.location.hash));
     const unsubscribe = useAppStore.subscribe((s, prev) => {
       if (
         s.activeTile === prev.activeTile &&
         s.lens.height === prev.lens.height &&
-        s.lens.colour === prev.lens.colour
+        s.lens.colour === prev.lens.colour &&
+        s.lens.temperature === prev.lens.temperature
       )
         return;
       // Off the table, the link keeps the element it already names (or the last one stood on).
@@ -70,7 +75,7 @@ function useDeepLinks(): void {
         (s.activeTile && elementByNumber(s.activeTile.number)) ??
         parseDeepLink(window.location.hash, ELEMENTS) ??
         (s.lastTile === null ? undefined : elementByNumber(s.lastTile));
-      if (e) replaceHash(deepLink(e, s.lens.height, s.lens.colour));
+      if (e) replaceHash(deepLink(e, s.lens.height, s.lens.colour, s.lens.temperature));
     });
     const onHash = () => {
       const e = parseDeepLink(window.location.hash, ELEMENTS);
@@ -78,9 +83,10 @@ function useDeepLinks(): void {
       const store = useAppStore.getState();
       store.setLensHeight(lensFromHash(window.location.hash));
       store.setLensColour(lensFromHash(window.location.hash, 'colour'));
+      store.setLensTemperature(temperatureFromHash(window.location.hash));
       // A hand-typed `#/gold` or `#/79` reads back as the canonical `#/Au`.
       const { lens } = useAppStore.getState();
-      replaceHash(deepLink(e, lens.height, lens.colour));
+      replaceHash(deepLink(e, lens.height, lens.colour, lens.temperature));
       if (e.number !== store.activeTile?.number) store.flyTo(e.number);
     };
     window.addEventListener('hashchange', onHash);

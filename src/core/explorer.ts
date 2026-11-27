@@ -1,6 +1,7 @@
 import { BLOCKS, CATEGORIES, STATES, type Category } from './elements/categories.ts';
 import type { Element } from './elements/schema.ts';
 import { formatDensity, formatNumber, formatTemperature, UNKNOWN } from './elementFacts.ts';
+import { TEMPERATURE_PARAM, temperatureParam } from './temperature.ts';
 
 /**
  * The explorer's logic, as pure functions: fuzzy search by name, symbol or number, sorting by a
@@ -173,14 +174,20 @@ export function sortValueLabel(e: Element, key: SortKey): string {
 
 /**
  * The hash for an element's deep link: `#/Au`, with the lenses that are on as a query:
- * `#/Au?lens=density` (height), `#/Au?colour=meltingPoint`, or both.
+ * `#/Au?lens=density` (height), `#/Au?colour=meltingPoint`, `#/Ga?t=310.15` (temperature in
+ * kelvin), or any mix of them.
  */
 export function deepLink(
   e: Pick<Element, 'symbol'>,
   lens: string | null = null,
   colour: string | null = null,
+  temperature: number | null = null,
 ): string {
-  const query = [lens === null ? '' : `lens=${lens}`, colour === null ? '' : `colour=${colour}`]
+  const query = [
+    lens === null ? '' : `lens=${lens}`,
+    colour === null ? '' : `colour=${colour}`,
+    temperature === null ? '' : `${TEMPERATURE_PARAM}=${temperatureParam(temperature)}`,
+  ]
     .filter(Boolean)
     .join('&');
   return query === '' ? `#/${e.symbol}` : `#/${e.symbol}?${query}`;
