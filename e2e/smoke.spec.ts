@@ -189,7 +189,7 @@ test('the temperature lens follows the deep link, the T key and its presets', as
   const slider = page.getByRole('slider', { name: 'Temperature' });
   await expect(slider).toHaveAttribute('aria-valuetext', '310.1 K (37 °C), body');
   await expect(page.getByRole('button', { name: 'Body' })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('.temp-counts')).toHaveText('87 solid, 4 liquid, 11 gas, 16 unknown');
+  await expect(page.locator('.scrub-summary')).toHaveText('87 solid, 4 liquid, 11 gas, 16 unknown');
 
   // A preset moves the slider and the link; the counts are announced once it settles.
   await page.getByRole('button', { name: 'Water boils' }).click();

@@ -551,25 +551,25 @@ kbd {
   background: linear-gradient(to right, var(--ramp));
 }
 
-.temp-lens {
+.scrub-lens {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-.temp-toggle {
+.scrub-toggle {
   width: 1rem;
   height: 1rem;
   margin: 0 0.3rem 0 0;
   accent-color: #79c0ff;
 }
 
-.temp-slider {
+.scrub-slider {
   position: relative;
   margin-right: 0.3rem;
 }
 
-.temp-slider input {
+.scrub-slider input {
   display: block;
   width: 100%;
   margin: 0.25rem 0;
@@ -578,14 +578,14 @@ kbd {
 
 /* The detents' ticks under the track; --at is the slider position (0–1). The thumb is about 1rem
    wide, so the track runs from half a thumb in at each end. */
-.temp-ticks {
+.scrub-ticks {
   position: absolute;
   inset: auto 0.5rem -0.15rem;
   height: 0.35rem;
   pointer-events: none;
 }
 
-.temp-tick {
+.scrub-tick {
   position: absolute;
   left: calc(var(--at) * 100%);
   width: 1px;
@@ -593,23 +593,23 @@ kbd {
   background: #9da7b3;
 }
 
-.temp-value,
-.temp-counts {
+.scrub-value,
+.scrub-summary {
   margin: 0;
   font-size: 0.8rem;
 }
 
-.temp-counts {
+.scrub-summary {
   color: #9da7b3;
 }
 
-.temp-detents {
+.scrub-detents {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
 }
 
-.temp-detents button {
+.scrub-detents button {
   padding: 0.1rem 0.45rem;
   border: 1px solid #30363d;
   border-radius: 4px;
@@ -620,14 +620,14 @@ kbd {
   cursor: pointer;
 }
 
-.temp-detents button[aria-pressed='true'] {
+.scrub-detents button[aria-pressed='true'] {
   border-color: #79c0ff;
   background: #1f2d3d;
 }
 
-.temp-detents button:focus-visible,
-.temp-slider input:focus-visible,
-.temp-toggle:focus-visible {
+.scrub-detents button:focus-visible,
+.scrub-slider input:focus-visible,
+.scrub-toggle:focus-visible {
   outline: 2px solid #79c0ff;
   outline-offset: 2px;
 }
@@ -666,33 +666,33 @@ kbd {
   }
 
   .colour-legend,
-  .temp-lens {
+  .scrub-lens {
     flex-basis: 100%;
     margin-top: 0;
   }
 
   /* Three lines instead of five, so the figure stays clear with the colour legend open too: the
      toggle beside the slider, the value beside the presets, then the counts. */
-  .temp-lens {
+  .scrub-lens {
     flex-flow: row wrap;
     gap: 0.2rem 0.6rem;
     align-items: center;
   }
 
-  .temp-lens .lens-row {
+  .scrub-lens .lens-row {
     flex: 0 0 auto;
   }
 
-  .temp-slider {
+  .scrub-slider {
     flex: 1 1 8rem;
   }
 
-  .temp-detents {
+  .scrub-detents {
     flex: 1 1 auto;
     justify-content: flex-end;
   }
 
-  .temp-counts {
+  .scrub-summary {
     flex-basis: 100%;
   }
 }

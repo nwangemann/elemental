@@ -53,7 +53,7 @@ test('the colour lens legend passes an accessibility audit', async ({ page }) =>
 test('the temperature lens row passes an accessibility audit', async ({ page }) => {
   await ready(page, '/#/Ga?t=310.15', '31');
   await expect(page.getByRole('slider', { name: 'Temperature' })).toBeVisible();
-  await expect(page.locator('.temp-counts')).toBeVisible();
+  await expect(page.locator('.scrub-summary')).toBeVisible();
   await audit(page);
 });
 
