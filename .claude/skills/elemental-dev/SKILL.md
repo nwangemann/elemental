@@ -14,6 +14,7 @@ Node 24+ must be on PATH. If `node` is not found, add your Node install's `bin` 
 - `npm run dev`: dev server at http://localhost:5173.
 - `npm run check`: types, lint, formatting, unit tests and docs. Required before finishing.
 - `npm run test:e2e`: builds, serves on port 4173 and runs the Playwright smoke test.
+- `npx playwright test --config playwright.perf.config.ts --trace off -g "lens|walking"`: runs only the frame-work perf tests (`perf:frames`, `perf:tint`, `perf:temp`), about 35 s; `npm run perf` also runs the slow load tests.
 - `npx prettier --write <files>`: fixes formatting failures.
 
 ## Preview pane
@@ -38,5 +39,6 @@ The preview pane runs `requestAnimationFrame` at about 30 Hz, so the overlay's f
 - Commits run `npm run check` in the Husky hook, so `git commit` also needs Node on PATH (`export PATH=~/.local/node/bin:$PATH &&`), or the hook fails with `npm: command not found`.
 - Tile labels draw from a committed atlas (`src/assets/label-atlas.*`). A label character the atlas lacks fails `npm test`; run `npm run atlas` (about 5 s, launches Playwright's Chromium) and commit both files.
 - `npm run check` ends with `size:check`, which builds the app (about a second) and fails above its ceilings (shell 76 KB, total 300 KB of gzipped JS).
+- In a hidden pane, lens eases (0.4 s) take seconds to finish, so a screenshot right after a hash change shows the old state. Wait about 8 s before judging a lens visually.
 - If the preview pane is hidden (`tabs_context` says so), rAF drops to 1–2 Hz and walking crawls: frame numbers are useless. Show it with the app's show-pane tool (`preview`) first. Failing that, measure headless with a throwaway Playwright spec in `e2e/` that wraps `requestAnimationFrame` with `gl.finish()` timing, then delete the spec.
 - Drive walking from the page console with `KeyboardEvent`s dispatched on `window` (keydown by `code`, wait, keyup); clicking the canvas is a tap-to-walk.
