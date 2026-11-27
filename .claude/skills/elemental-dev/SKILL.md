@@ -16,6 +16,7 @@ Node 24+ must be on PATH. If `node` is not found, add your Node install's `bin` 
 - `npm run test:e2e`: builds, serves on port 4173 and runs the Playwright smoke test.
 - `npx playwright test --config playwright.perf.config.ts --trace off -g "lens|walking"`: runs only the frame-work perf tests (`perf:frames`, `perf:tint`, `perf:temp`), about 35 s; `npm run perf` also runs the slow load tests.
 - `npx prettier --write <files>`: fixes formatting failures.
+- Lint is oxlint (`npm run lint`), not ESLint: `npx eslint` downloads an unrelated ESLint and fails for lack of a config.
 
 ## Preview pane
 
