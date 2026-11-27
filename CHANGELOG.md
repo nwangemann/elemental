@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Tap-to-walk feedback: a tap or click leaves a square marker on the tile it chose (or a small one on the ground), which pulses once as the tap lands and stays faintly until the figure arrives. With reduced motion it fades in place without growing.
+
 ## 0.1.0 — 2026-11-26
 
 The first walkable table: walk onto any of the 118 elements, read its data, and jump to others with the explorer.

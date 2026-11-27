@@ -3,14 +3,16 @@ import { useEffect } from 'react';
 import { Plane, Raycaster, Vector2, Vector3 } from 'three';
 import { CONFIG } from '../core/config.ts';
 import { isTap, setWalkTarget, type WalkTarget } from '../core/steering.ts';
+import { placeTapMarker, type TapMarker } from '../core/tapMarker.ts';
 
 /**
  * Click or tap the table to walk there. A press on the canvas that stays short and still is a
  * tap; a drag, a long press or a second finger (a pinch) is not. The tap is projected onto the
  * plane of the tile tops and becomes the walk target; `core/steering.ts` snaps it to the tile
- * under it and the character's frame steers toward it. Work happens per tap, not per frame.
+ * under it and the character's frame steers toward it, and the tap marker shows where it landed.
+ * Work happens per tap, not per frame.
  */
-export function TapToWalk({ target }: { target: WalkTarget }) {
+export function TapToWalk({ target, marker }: { target: WalkTarget; marker: TapMarker }) {
   const canvas = useThree((s) => s.gl.domElement);
   const camera = useThree((s) => s.camera);
 
@@ -43,7 +45,9 @@ export function TapToWalk({ target }: { target: WalkTarget }) {
       );
       raycaster.setFromCamera(ndc, camera);
       plane.constant = -CONFIG.tiles.height;
-      if (raycaster.ray.intersectPlane(plane, hit)) setWalkTarget(target, hit.x, hit.z);
+      if (!raycaster.ray.intersectPlane(plane, hit)) return;
+      const number = setWalkTarget(target, hit.x, hit.z);
+      placeTapMarker(marker, target, number === null ? -1 : number - 1);
     };
     const onCancel = (e: PointerEvent) => {
       active.delete(e.pointerId);
@@ -58,7 +62,7 @@ export function TapToWalk({ target }: { target: WalkTarget }) {
       canvas.removeEventListener('pointerup', onUp);
       canvas.removeEventListener('pointercancel', onCancel);
     };
-  }, [canvas, camera, target]);
+  }, [canvas, camera, target, marker]);
 
   return null;
 }

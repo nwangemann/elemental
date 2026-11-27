@@ -9,6 +9,7 @@ import { parseDeepLink } from '../core/explorer.ts';
 import { createLedge } from '../core/ledge.ts';
 import { TILES } from '../core/layout.ts';
 import { createStick, createWalkTarget } from '../core/steering.ts';
+import { createTapMarker } from '../core/tapMarker.ts';
 import { CameraRig } from './CameraRig.tsx';
 import { Character } from './Character.tsx';
 import { FlightHandler } from './FlightHandler.tsx';
@@ -16,6 +17,7 @@ import { Joystick } from './Joystick.tsx';
 import { GROUND_COLOR, SKY_COLOR } from '../core/palette.ts';
 import { Labels } from './Labels.tsx';
 import { PerfProbe, type PerfReport } from './PerfProbe.tsx';
+import { TapMarkerMesh } from './TapMarker.tsx';
 import { TapToWalk } from './TapToWalk.tsx';
 import { QualityGovernor } from './QualityGovernor.tsx';
 import { ReturnHandler } from './ReturnHandler.tsx';
@@ -50,6 +52,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
   const activation = useMemo(() => createActivation(), []);
   const stick = useMemo(() => createStick(), []);
   const target = useMemo(() => createWalkTarget(), []);
+  const marker = useMemo(() => createTapMarker(), []);
   return (
     <>
       <Canvas
@@ -74,7 +77,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           <meshStandardMaterial color={GROUND_COLOR} roughness={1} />
         </mesh>
         <CameraRig controller={controller} />
-        <TapToWalk target={target} />
+        <TapToWalk target={target} marker={marker} />
         <TileStepper controller={controller} target={target} />
         <FlightHandler controller={controller} target={target} />
         <ReturnHandler controller={controller} target={target} />
@@ -91,6 +94,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           activation={activation}
           ledge={ledge}
         />
+        <TapMarkerMesh marker={marker} target={target} activation={activation} />
         <QualityGovernor />
         {onPerf && <PerfProbe onReport={onPerf} />}
       </Canvas>

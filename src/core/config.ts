@@ -25,6 +25,9 @@ export const CONFIG_DEFAULTS = {
     /** Highlight ring on the ground around the active tile: gap from the tile edge and width. */
     ringInset: 0.015,
     ringWidth: 0.05,
+    /** Tap-to-walk marker on the target (see `core/tapMarker.ts`): pulse length s, held opacity. */
+    markerPulse: 0.45,
+    markerOpacity: 0.45,
   },
   labels: {
     /** Cap height of the element symbol, in world units. */
@@ -128,6 +131,8 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     pulseSpeed: { min: 0, max: 10, step: 0.1 },
     ringInset: { min: 0, max: 0.1, step: 0.005 },
     ringWidth: { min: 0.01, max: 0.15, step: 0.005 },
+    markerPulse: { min: 0.05, max: 1.5, step: 0.01 },
+    markerOpacity: { min: 0, max: 1, step: 0.01 },
   },
   labels: {
     symbolSize: { min: 0.1, max: 0.8, step: 0.01 },
