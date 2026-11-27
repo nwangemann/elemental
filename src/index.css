@@ -630,6 +630,35 @@ kbd {
   display: none;
 }
 
+/* The play button beside the discovery counts, styled like the presets. */
+.era-foot {
+  display: flex;
+  gap: 0.2rem 0.6rem;
+  align-items: flex-start;
+}
+
+.era-foot > :not(button) {
+  flex: 1 1 auto;
+}
+
+.era-play {
+  flex: none;
+  min-width: 3.6rem;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  background: #0d1117;
+  color: inherit;
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.era-play:focus-visible {
+  outline: 2px solid #79c0ff;
+  outline-offset: 2px;
+}
+
 .scrub-detents button[aria-pressed='true'] {
   border-color: #79c0ff;
   background: #1f2d3d;
@@ -702,7 +731,8 @@ kbd {
     justify-content: flex-end;
   }
 
-  .scrub-summary {
+  .scrub-summary,
+  .era-foot {
     flex-basis: 100%;
   }
 

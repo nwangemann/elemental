@@ -285,3 +285,26 @@ export function latestDiscoveries<E extends Dated & Pick<Element, 'number' | 'sy
   const found = discoveredIn(elements, latest - 1, latest).map((e) => e.symbol);
   return `${String(latest)}: ${symbolList(found)}`;
 }
+
+/** How long the play button takes to sweep the whole track, Antiquity to today, s. */
+export const PLAY_SECONDS = 20;
+
+/** Under reduced motion the sweep steps a decade at a time, one step this often, s. */
+export const PLAY_STEP_SECONDS = PLAY_SECONDS / 37;
+
+/**
+ * The slider position the play sweep starts from: where `year` is, or the start of the track when
+ * the lens is off or already at today, so pressing play at the end plays it again.
+ */
+export function playStart(year: number | null): number {
+  return year === null || year >= YEAR_MAX ? 0 : positionOfYear(year);
+}
+
+/**
+ * The next year of a reduced-motion sweep: Antiquity → 1650, then the next whole decade (1650 →
+ * 1660, 1869 → 1870), capped at today.
+ */
+export function nextDecade(year: number): number {
+  if (year === ANTIQUITY) return YEAR_MIN;
+  return Math.min(YEAR_MAX, Math.floor(year / 10) * 10 + 10);
+}

@@ -263,6 +263,46 @@ test('the discovery timeline follows the deep link, the Y key and its presets', 
   await expect(page.locator('#scene')).toBeFocused();
 });
 
+test('the timeline plays to today, and the slider pauses it', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto('/#/Ne?year=antiquity');
+  const slider = page.getByRole('slider', { name: 'Discovery' });
+  await expect(slider).toBeVisible({ timeout: 15_000 });
+  const status = page.locator('.lens-control [role=status]');
+  const play = page.locator('.era-play');
+
+  // Play announces its start, moves the year on, and any slider input pauses it.
+  await play.click();
+  await expect(status).toHaveText('Playing the timeline from Antiquity');
+  await expect(play).toHaveText('Pause');
+  await expect(page).toHaveURL(/year=1[6-9]\d\d$/, { timeout: 10_000 });
+  await slider.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(play).toHaveText('Play');
+  await expect(status).toHaveText(/^Timeline paused at \d{4}$/);
+
+  // Played again, it reaches today and says so; the counts stay quiet until then.
+  await play.click();
+  await expect(status).toHaveText(/^Playing the timeline from \d{4}$/);
+  await expect(page).toHaveURL(/year=2010$/, { timeout: 25_000 });
+  await expect(status).toHaveText('Timeline reached today');
+  await expect(play).toHaveText('Play');
+  await expect(page.locator('.era-lens .scrub-summary').first()).toHaveText('118 known, 0 to come');
+});
+
+test('with reduced motion the timeline plays a decade at a time', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/#/Ne?year=antiquity');
+  await expect(page.getByRole('slider', { name: 'Discovery' })).toBeVisible({ timeout: 15_000 });
+  await page.locator('.era-play').click();
+  await expect(page).toHaveURL(/year=1650$/, { timeout: 5_000 });
+  await expect(page).toHaveURL(/year=1660$/, { timeout: 5_000 });
+  await page.locator('.era-play').click();
+  await expect(page.locator('.lens-control [role=status]')).toHaveText(
+    /^Timeline paused at 16[67]0$/,
+  );
+});
+
 test('walking a density landscape climbs small steps and stops at a cliff', async ({ page }) => {
   const status = page.locator('[data-tile]');
 

@@ -9,6 +9,8 @@ import {
   discoveryNews,
   eraFact,
   latestDiscoveries,
+  nextDecade,
+  playStart,
   eraGrey,
   eraSink,
   retargetEra,
@@ -263,5 +265,29 @@ describe('the lens in words', () => {
     expect(latestDiscoveries(ELEMENTS, 1898)).toBe('1898: Ne, Kr, Xe, Po, Ra');
     expect(latestDiscoveries(ELEMENTS, ANTIQUITY)).toBeNull();
     expect(latestDiscoveries(ELEMENTS, 2010)).toBe('2010: Ts');
+  });
+});
+
+describe('the play sweep', () => {
+  it('starts where the slider is, or from the start when off or at today', () => {
+    expect(playStart(null)).toBe(0);
+    expect(playStart(YEAR_MAX)).toBe(0);
+    expect(playStart(ANTIQUITY)).toBe(0);
+    expect(playStart(1869)).toBeCloseTo(positionOfYear(1869));
+  });
+
+  it('steps a decade at a time under reduced motion, ending at today', () => {
+    expect(nextDecade(ANTIQUITY)).toBe(YEAR_MIN);
+    expect(nextDecade(1650)).toBe(1660);
+    expect(nextDecade(1869)).toBe(1870);
+    expect(nextDecade(2000)).toBe(2010);
+    expect(nextDecade(2005)).toBe(YEAR_MAX);
+    let y = ANTIQUITY;
+    let steps = 0;
+    while (y < YEAR_MAX) {
+      y = nextDecade(y);
+      steps++;
+    }
+    expect(steps).toBe(37);
   });
 });
