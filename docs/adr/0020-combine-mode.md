@@ -26,6 +26,8 @@ The table shows 118 elements, but not what they make. Combine mode answers "what
 
 **Forming (decided while building it).** A match forms on its own, with no button, and uses nothing up: the model shows while the carry still matches and goes back to orbs the moment an atom is added or dropped. So "leftover atoms stay carried" holds trivially, and a molecule that is also a step to a bigger one (H₂ on the way to water) shows and then keeps building. The carried orbs become the model's atoms; a lattice's other atoms grow in from the centre outward. The isomer choice is kept in the store and only applies while it is one of the matches.
 
+**Card, Recently made and Show me (decided while building them).** The card opens inside the Combine tray, in place of the suggestions, rather than as a second panel: the element panel already holds the right side on desktops and the bottom on phones, and the card belongs with the carry that made it. Recently made is kept in the browser's `localStorage` (ids only, at most 8, unknown ids dropped on read) and has a Clear button; nothing leaves the browser. Show me moves the figure the way a visitor would: a walk to tiles within about four tiles, the explorer's fly-to for anything further (and always with reduced motion), so a tour across the table takes seconds, not a long walk. It picks the atoms up through the same store action as `C`, so the compound forms exactly as if walked. A compound too big to carry (sucrose) is toured with one atom of each element and then shows its card, which says why it doesn't form.
+
 ## Consequences
 
 - The total JavaScript ceiling rises for this phase (ADR 3 amendment); the shell ceiling does not.

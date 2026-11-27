@@ -1187,3 +1187,99 @@ body:has(.combine-tray:not([hidden])) .back-to-table {
   border-color: #79c0ff;
   background: #1f3a5f;
 }
+
+/* The compound card, in the tray in place of the suggestions. */
+.compound-card {
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid #30363d;
+  line-height: 1.35;
+}
+
+.compound-card-head,
+.combine-recent-head {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.compound-card h3,
+.combine-recent h3 {
+  flex: 1;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.compound-card h3:focus-visible {
+  outline: 2px solid #79c0ff;
+  outline-offset: 2px;
+}
+
+.compound-card p {
+  margin: 0.3rem 0 0;
+}
+
+.bond-chip {
+  display: inline-block;
+  padding: 0 0.45rem;
+  border: 1px solid #6e7681;
+  border-radius: 999px;
+  color: #c9d1d9;
+  font-size: 0.8rem;
+}
+
+.bond-shares {
+  border-color: #79c0ff;
+}
+
+.bond-transfers {
+  border-color: #d2a8ff;
+}
+
+.bond-metal {
+  border-color: #e3b341;
+}
+
+.compound-card dl {
+  margin: 0.35rem 0 0;
+}
+
+.compound-card dt {
+  margin-top: 0.3rem;
+  color: #9da7b3;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.compound-card dd {
+  margin: 0.05rem 0 0;
+}
+
+.combine-tray .compound-chips {
+  margin-top: 0.15rem;
+}
+
+.combine-tray .compound-link {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #79c0ff;
+  text-decoration: underline;
+}
+
+.combine-recent {
+  margin-top: 0.45rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid #30363d;
+}
+
+/* Phones: the card can outgrow the top-right tray, so it scrolls. */
+@media (width < 40rem) {
+  .combine-tray:has(.compound-card) {
+    max-height: calc(50dvh - 1rem);
+    overflow-y: auto;
+  }
+}

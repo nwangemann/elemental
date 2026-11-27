@@ -449,3 +449,48 @@ test('a matching carry forms, and one formula offers each of its compounds', asy
   await tray.getByRole('button', { name: 'One more oxygen' }).click();
   await expect(choice).toHaveCount(0);
 });
+
+test('Show me gathers water, its card opens, and Recently made reopens it', async ({ page }) => {
+  await page.goto('/');
+  const status = page.locator('[data-tile]');
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
+  await page.evaluate(() => localStorage.removeItem('elemental:recent'));
+  await page.keyboard.press('c');
+  await page.keyboard.press('Backspace');
+
+  const tray = page.getByRole('region', { name: 'Combine' });
+  await tray.getByRole('button', { name: 'Show me water' }).click();
+  // The tour picks up H 2 here, then walks or flies to oxygen.
+  const card = tray.getByRole('article', { name: /Water/ });
+  await expect(card).toBeVisible({ timeout: slow(20_000) });
+  await expect(status).toHaveAttribute('data-tile', '8');
+  await expect(tray.getByRole('list', { name: 'Carried' })).toHaveText(/H 2.*O 1/);
+  await expect(card).toContainText('Shares electrons');
+  await expect(card).toContainText('Where you meet it');
+  await expect(tray.getByRole('button', { name: 'Close Combine' })).toBeFocused();
+
+  // Made of flies to a tile; the carry stays, so the card does too.
+  await card.getByRole('button', { name: 'Hydrogen, 2: go to its tile' }).click();
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(10_000) });
+  await expect(card).toBeVisible();
+
+  // Only water is remembered, not the hydrogen gas formed on the way.
+  await tray.getByRole('button', { name: 'Clear' }).click();
+  await expect(card).toBeHidden();
+  const recent = tray.getByRole('list', { name: 'Recently made' });
+  await expect(recent.getByRole('button')).toHaveText(['Water']);
+  await recent.getByRole('button', { name: 'Water' }).click();
+  await expect(tray.getByRole('heading', { name: /Water/ })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(card).toBeHidden();
+  await expect(tray).toBeVisible();
+
+  // It survives a reload, and Clear empties it.
+  await page.reload();
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: slow(15_000) });
+  await page.keyboard.press('c');
+  await page.keyboard.press('Backspace');
+  await expect(recent.getByRole('button', { name: 'Water' })).toBeVisible();
+  await tray.getByRole('button', { name: 'Clear recently made' }).click();
+  await expect(recent).toHaveCount(0);
+});

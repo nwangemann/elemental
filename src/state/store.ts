@@ -42,6 +42,9 @@ export interface AppState {
   /** The latest fly-to request from the explorer or a deep link; the scene carries it out. */
   flight: Flight | null;
   flyTo: (number: number) => void;
+  /** The latest request to walk to a tile (Combine's Show me); the scene carries it out. */
+  walk: Flight | null;
+  walkTo: (number: number) => void;
   /**
    * True when the player closed the panel (Esc) while standing on a tile. Entering another tile
    * opens it again; Enter or Space reopens it on the same tile.
@@ -98,6 +101,8 @@ export const useAppStore = create<AppState>()((set) => ({
     })),
   flight: null,
   flyTo: (number) => set((s) => ({ flight: { number, seq: (s.flight?.seq ?? 0) + 1 } })),
+  walk: null,
+  walkTo: (number) => set((s) => ({ walk: { number, seq: (s.walk?.seq ?? 0) + 1 } })),
   panelClosed: false,
   setPanelClosed: (panelClosed) => set({ panelClosed }),
   lastTile: null,
