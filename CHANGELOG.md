@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.3.0 — 2026-11-27
+
+Combine mode grows outward: contexts (your body, air, the kitchen, the Earth) to explore what things are made of, scale ladders, isomer and electron links on the cards, and a figure that holds up what it makes.
+
 - Compound cards climb a scale ladder: glucose → starch → bread (and → cellulose → wood and cotton), glycine → protein → muscle, adenine → DNA, iron and carbon → steel → bridges, copper and tin → bronze, quartz → sand → glass, limestone → quicklime → concrete. Each step has a small picture built from one repeated unit (a sugar ring, an amino acid, a DNA letter, a crystal cell, a metal atom), so you can see it is more of the same, and steps that are compounds in the set open their cards. Ethanol and dimethyl ether link to each other under "Same atoms as". "See the electrons" under why a compound holds together takes you to each element's tile with its Atom tab open, to see the shells whose electrons it shares or hands over.
 - The figure lifts things: when a compound forms over its head, it raises both arms to hold it up, and it throws its arms up and out for every hop and fall. On a height lens landscape, small steps up from tile to tile are now a quick little hop instead of a slide, with a smaller lift of the arms.
 - Combine contexts: with nothing carried, the Combine tray offers Your body, Air, Kitchen and Earth & building. Picking one lights the elements it is made of and dims the rest, raises each tile by its share of the context's mass (a 70 kg adult, dry air, the Earth's crust; on a log scale, so trace elements still show), and lists the context's compounds, each with **Show me**. The kitchen lights the elements of its compounds and keeps the table's heights. The element panel's overview adds where each element is found, with its share ("Your body: 64 % by mass", "Earth's crust: 4 parts per billion by mass"). The context goes into the link (`#/O?context=body`).
