@@ -158,6 +158,15 @@ export function wrongAmounts(carried: Carried, compounds: readonly Compound[]): 
 }
 
 /**
+ * The tray's Fill in offer: the closest "right elements, wrong amounts" compound, only while
+ * nothing forms and only for two or more elements (for O₂ or O₃ the + stepper says it all).
+ */
+export function fillIn(carried: Carried, compounds: readonly Compound[]): WrongAmounts | undefined {
+  if (exactMatches(carried, compounds).length > 0) return undefined;
+  return wrongAmounts(carried, compounds).find((w) => w.unit.size > 1);
+}
+
+/**
  * Per-tile suggestion weights (0–1, one per element in `symbols` order) for the table's
  * dimming: how much picking that element up leads somewhere. Each carryable compound the
  * carry is still part of adds its everyday weight to every element it still needs, so an
@@ -186,6 +195,23 @@ export function suggestionWeights(
     const symbol = symbols[i]!;
     const s = canAdd(carried, symbol) === 'ok' ? (score.get(symbol) ?? 0) : 0;
     out[i] = max > 0 ? s / max : 0;
+  }
+  return out;
+}
+
+/**
+ * The table's suggestion dim from `suggestionWeights` (ADR 20), written into `out`: 0 for the
+ * brightest suggestion, rising to `weakest` for the faintest, and 1 (fully dimmed, as a filtered
+ * tile) where picking the element up leads nowhere.
+ */
+export function suggestionDim(
+  weights: Float32Array,
+  weakest: number,
+  out: Float32Array,
+): Float32Array {
+  for (let i = 0; i < weights.length; i++) {
+    const w = weights[i]!;
+    out[i] = w > 0 ? weakest * (1 - w) : 1;
   }
   return out;
 }

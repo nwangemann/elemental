@@ -1156,3 +1156,21 @@ body:has(.combine-tray:not([hidden])) .back-to-table {
     bottom: 1.5rem;
   }
 }
+
+.combine-ratio {
+  margin: 0.45rem 0 0;
+  line-height: 1.35;
+}
+
+.combine-ratio button {
+  margin-left: 0.25rem;
+}
+
+.combine-tray .combine-nearest {
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid #30363d;
+  color: #c9d1d9;
+}

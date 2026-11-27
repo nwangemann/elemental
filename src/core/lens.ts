@@ -233,6 +233,43 @@ export function filterDim(
 }
 
 /**
+ * A second source of tile dim beside the explorer's filters: combine mode's suggestions (ADR 20).
+ * Whoever owns it writes `targets` and sets `changed`; the tiles merge it on their next frame.
+ * `active` false means it adds nothing.
+ */
+export interface DimLayer {
+  targets: Float32Array;
+  active: boolean;
+  changed: boolean;
+}
+
+export function createDimLayer(n: number): DimLayer {
+  return { targets: new Float32Array(n), active: false, changed: false };
+}
+
+/** Each tile's dim target from the filters and a layer: the stronger of the two. */
+export function mergeDim(filter: Float32Array, layer: DimLayer, out: Float32Array): Float32Array {
+  for (let i = 0; i < out.length; i++)
+    out[i] = layer.active ? Math.max(filter[i]!, layer.targets[i]!) : filter[i]!;
+  return out;
+}
+
+/**
+ * Merges the layer into `targets` if its owner changed it since the last call, and clears the
+ * flag. Returns true when the targets changed, so the dim starts moving.
+ */
+export function takeDimLayer(
+  filter: Float32Array,
+  layer: DimLayer,
+  targets: Float32Array,
+): boolean {
+  if (!layer.changed) return false;
+  layer.changed = false;
+  mergeDim(filter, layer, targets);
+  return true;
+}
+
+/**
  * Moves each dim level toward its target at a constant rate (a full fade takes `duration`
  * seconds; 0 snaps). Returns true while anything is still moving, so renderers can go quiet.
  */

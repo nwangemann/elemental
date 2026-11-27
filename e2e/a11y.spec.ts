@@ -86,6 +86,7 @@ test('the Combine tray passes an accessibility audit, empty and carrying', async
   await page.getByRole('button', { name: /Add to Combine/ }).click();
   const tray = page.getByRole('region', { name: 'Combine' });
   await expect(tray.getByRole('list', { name: 'Carried' })).toHaveText(/H 1/);
+  await expect(tray.getByRole('list', { name: 'Nearest compounds' })).toBeVisible();
   await audit(page);
   await tray.getByRole('button', { name: 'Clear' }).click();
   await expect(tray.getByRole('list', { name: 'Starters' })).toBeVisible();

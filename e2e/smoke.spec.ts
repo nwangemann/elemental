@@ -381,3 +381,28 @@ test('C picks up atoms into the Combine tray, which steps, clears and closes', a
   await tray.getByRole('button', { name: 'Close Combine' }).click();
   await expect(tray).toBeHidden();
 });
+
+test('the tray suggests the nearest compounds and fills in the right amounts', async ({ page }) => {
+  await page.goto('/');
+  const status = page.locator('[data-tile]');
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+  await page.keyboard.press('c');
+  const tray = page.getByRole('region', { name: 'Combine' });
+  await expect(tray.getByRole('list', { name: 'Nearest compounds' })).toContainText(
+    'Hydrogen gas — 1 more H',
+  );
+
+  // Fly to oxygen and pick one up: H 1, O 1 is water's elements in the wrong amounts.
+  await page.keyboard.press('/');
+  await page.getByRole('combobox', { name: /search/i }).fill('oxygen');
+  await expect(
+    page.getByRole('listbox', { name: 'Elements' }).getByRole('option').first(),
+  ).toContainText('Oxygen');
+  await page.keyboard.press('Enter');
+  await expect(status).toHaveAttribute('data-tile', '8', { timeout: 10_000 });
+  await page.keyboard.press('c');
+  await expect(tray).toContainText('Water is H₂O: 2 hydrogen, 1 oxygen.');
+  await tray.getByRole('button', { name: 'Fill in water' }).click();
+  await expect(tray.getByRole('list', { name: 'Carried' })).toHaveText(/H 2.*O 1/s);
+  await expect(tray.getByRole('status')).toContainText('Makes water.');
+});

@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import type { Carried } from './combine.ts';
+import { fillIn, nearest, wrongAmounts, type Carried } from './combine.ts';
 import { COMPOUNDS } from './compounds/index.ts';
 import {
   carryLine,
   countWord,
   leadsLine,
   listOf,
+  nearMissLine,
+  ratioLine,
   refusalLine,
   startersLine,
   traySummary,
@@ -78,5 +80,48 @@ describe('tray summary', () => {
     expect(
       traySummary(carry({ H: 2 }), COMPOUNDS, { symbol: 'P', reason: 'too-many-elements' }),
     ).toMatch(/^Can't pick up P: .+ Carrying H 2\./);
+  });
+});
+
+describe('tray guidance lines', () => {
+  const names = new Map([
+    ['C', 'carbon'],
+    ['H', 'hydrogen'],
+    ['O', 'oxygen'],
+  ]);
+
+  it('lists the nearest compounds with atoms to add and drop', () => {
+    expect(nearest(carry({ H: 2 }), COMPOUNDS).map(nearMissLine)).toEqual([
+      'Water — 1 more O',
+      'Hydrogen sulfide — 1 more S',
+      'Ammonia — 1 more N, 1 more H',
+    ]);
+    expect(nearest(carry({ Na: 1, Cl: 2 }), COMPOUNDS).map(nearMissLine)[0]).toBe(
+      'Table salt — 1 fewer Cl',
+    );
+  });
+
+  it('teaches the ratio for right elements in the wrong amounts', () => {
+    const glucose = wrongAmounts(carry({ C: 1, H: 2, O: 1 }), COMPOUNDS).find(
+      (w) => w.compound.id === 'glucose',
+    )!;
+    expect(ratioLine(glucose, names)).toBe(
+      'Glucose is C₆H₁₂O₆: 1 carbon, 2 hydrogen, 1 oxygen, six times over.',
+    );
+    const water = fillIn(carry({ H: 1, O: 1 }), COMPOUNDS)!;
+    expect(ratioLine(water, names)).toBe('Water is H₂O: 2 hydrogen, 1 oxygen.');
+  });
+
+  it('offers Fill in only while nothing forms, and not for one-element molecules', () => {
+    expect(fillIn(carry({ H: 1, O: 1 }), COMPOUNDS)?.compound.id).toBe('water');
+    expect(fillIn(carry({ H: 2, O: 1 }), COMPOUNDS)).toBeUndefined();
+    expect(fillIn(carry({ O: 1 }), COMPOUNDS)).toBeUndefined();
+  });
+
+  it('forms lone atoms and self-pairs', () => {
+    expect(traySummary(carry({ Ar: 1 }), COMPOUNDS)).toBe('Carrying Ar 1. Makes argon.');
+    expect(leadsLine(carry({ O: 1 }), COMPOUNDS)).toBe('Could become oxygen gas with one O.');
+    expect(leadsLine(carry({ O: 2 }), COMPOUNDS)).toMatch(/^Makes oxygen gas\./);
+    expect(leadsLine(carry({ O: 3 }), COMPOUNDS)).toMatch(/^Makes ozone\./);
   });
 });

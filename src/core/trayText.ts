@@ -3,7 +3,14 @@
 // Pure: the tray passes the carried counts and the compound list in.
 import type { Compound } from './compounds/index.ts';
 import { CARRY_LIMIT, type CarryCheck } from './carry.ts';
-import { exactMatches, nearest, nothingForms, type Carried } from './combine.ts';
+import {
+  exactMatches,
+  nearest,
+  nothingForms,
+  type Carried,
+  type NearMiss,
+  type WrongAmounts,
+} from './combine.ts';
 
 const WORDS = [
   'zero',
@@ -101,4 +108,23 @@ export function traySummary(
     if (leads) parts.push(leads);
   }
   return parts.join(' ');
+}
+
+/** One nearest compound for the tray's list: "Water — 1 more H", "Water — 1 fewer C, 1 more O". */
+export function nearMissLine(near: NearMiss): string {
+  const steps = [
+    ...[...near.extra].map(([symbol, n]) => `${n} fewer ${symbol}`),
+    ...[...near.missing].map(([symbol, n]) => `${n} more ${symbol}`),
+  ];
+  return `${near.compound.name} — ${steps.join(', ')}`;
+}
+
+/**
+ * "Right elements, wrong amounts", teaching the ratio: "Glucose is C₆H₁₂O₆: 1 carbon,
+ * 2 hydrogen, 1 oxygen, six times over." (`names` maps a symbol to its lower-case name.)
+ */
+export function ratioLine(wrong: WrongAmounts, names: ReadonlyMap<string, string>): string {
+  const unit = [...wrong.unit].map(([symbol, n]) => `${n} ${names.get(symbol) ?? symbol}`);
+  const over = wrong.times > 1 ? `, ${countWord(wrong.times)} times over` : '';
+  return `${wrong.compound.name} is ${wrong.compound.formula}: ${unit.join(', ')}${over}.`;
 }

@@ -169,6 +169,8 @@ export const CONFIG_DEFAULTS = {
     orbFollow: 6,
     /** Share of the figure's walk bob the orbs repeat (none with reduced motion). */
     orbBob: 1.6,
+    /** Dim of the faintest suggested tile while carrying (0 bright … 1 as a filtered-out tile). */
+    suggestDim: 0.6,
   },
 };
 
@@ -285,6 +287,7 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     orbRows: { min: 1, max: 8, step: 1 },
     orbFollow: { min: 1, max: 30, step: 0.5 },
     orbBob: { min: 0, max: 4, step: 0.1 },
+    suggestDim: { min: 0, max: 1, step: 0.01 },
   },
 };
 

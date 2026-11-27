@@ -23,6 +23,9 @@ import { NO_FILTERS, type Filters } from '../core/explorer.ts';
 import {
   colourTargets,
   filterDim,
+  mergeDim,
+  takeDimLayer,
+  type DimLayer,
   shownDim,
   stepDim,
   tintAt,
@@ -58,20 +61,27 @@ function writeColour(out: Float32Array, tint: TintEase, activation: Activation, 
 const prefersReducedMotion = (): boolean =>
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
-/** Each tile's filter dim: where it is now, and where the explorer's filters want it. */
+/**
+ * Each tile's dim: where it is now, what the explorer's filters want, and the target, the
+ * stronger of the filters and combine mode's suggestions (`DimLayer`).
+ */
 interface Dim {
   levels: Float32Array;
+  filter: Float32Array;
   targets: Float32Array;
   moving: boolean;
 }
 
-/** Dim state that starts at its targets: tiles already filtered out on mount appear dimmed. */
-function createDim(filters: Filters): Dim {
-  const targets = filterDim(ELEMENTS, filters);
-  return { levels: targets.slice(), targets, moving: true };
+/** Dim state that starts at its targets: tiles already dimmed on mount appear dimmed. */
+function createDim(filters: Filters, suggest: DimLayer | null): Dim {
+  const filter = filterDim(ELEMENTS, filters);
+  const targets = suggest
+    ? mergeDim(filter, suggest, new Float32Array(filter.length))
+    : filter.slice();
+  return { levels: targets.slice(), filter, targets, moving: true };
 }
 
-const EMPTY_DIM = createDim(NO_FILTERS);
+const EMPTY_DIM = createDim(NO_FILTERS, null);
 
 /**
  * Writes every tile's shown dim into the `aDim` buffer: the strongest of the filters' dim, the
@@ -163,7 +173,8 @@ function createTileGeometry(): BoxGeometry {
  * rises by stretching upward from the ground, so no gap opens under it. Only dirty tiles are
  * rewritten. Metals reflect a procedural studio environment (three's `RoomEnvironment`), set on
  * this material only, so nothing is downloaded and the rest of the scene is lit as before.
- * Tiles the explorer's filters exclude fade to a grey, darker look (`aDim`, `core/lens.ts`) over
+ * Tiles the explorer's filters exclude, and while carrying in combine mode the tiles that lead
+ * nowhere (`suggest`, partly for weak suggestions), fade to a grey, darker look (`aDim`, `core/lens.ts`) over
  * `CONFIG.tiles.dimDuration` (at once with reduced motion); the tile underfoot keeps its colour.
  * Instance colours come from the colour lens's `tint` (`ColourLens`): all of them while it eases,
  * otherwise only tiles whose activation changed, since the tile underfoot blends back to its theme.
@@ -178,11 +189,14 @@ export function Tiles({
   tint,
   phase,
   era,
+  suggest,
 }: {
   activation: Activation;
   tint: TintEase;
   phase: PhaseEase;
   era: EraEase;
+  /** Combine mode's suggestion dim, written by `Suggestions` while carrying. */
+  suggest: DimLayer;
 }) {
   const mesh = useRef<InstancedMesh>(null);
   const dummy = useMemo(() => new Object3D(), []);
@@ -194,13 +208,15 @@ export function Tiles({
 
   // Targets come from the store's filters now and whenever the player changes one; no re-render.
   useEffect(() => {
-    dimRef.current = createDim(useAppStore.getState().lens.filters);
+    dimRef.current = createDim(useAppStore.getState().lens.filters, suggest);
     return useAppStore.subscribe((s, prev) => {
       if (s.lens.filters === prev.lens.filters) return;
-      filterDim(ELEMENTS, s.lens.filters, dimRef.current.targets);
-      dimRef.current.moving = true;
+      const dim = dimRef.current;
+      filterDim(ELEMENTS, s.lens.filters, dim.filter);
+      mergeDim(dim.filter, suggest, dim.targets);
+      dim.moving = true;
     });
-  }, []);
+  }, [suggest]);
 
   useEffect(
     () => () => {
@@ -215,6 +231,7 @@ export function Tiles({
     const m = mesh.current;
     if (!m) return;
     const dim = dimRef.current;
+    if (takeDimLayer(dim.filter, suggest, dim.targets)) dim.moving = true;
     const { glowScale, pulseSpeed, envIntensity, dimStrength, dimDuration, gasFade } = CONFIG.tiles;
     const reduced = prefersReducedMotion();
     updateTileMaterial(

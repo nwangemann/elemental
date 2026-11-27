@@ -1,9 +1,10 @@
 import { useMemo, useRef } from 'react';
 import { flushSync } from 'react-dom';
-import { canAdd, carriedCounts, dropOne, pickUp, type Carry } from '../core/carry.ts';
+import { canAdd, carriedCounts, dropOne, pickUp, withCounts, type Carry } from '../core/carry.ts';
+import { fillIn, nearest } from '../core/combine.ts';
 import { COMPOUNDS } from '../core/compounds/index.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
-import { traySummary } from '../core/trayText.ts';
+import { nearMissLine, ratioLine, traySummary } from '../core/trayText.ts';
 import { useAppStore } from '../state/store.ts';
 
 const NAMES = new Map(ELEMENTS.map((e) => [e.symbol, e.name.toLowerCase()]));
@@ -12,7 +13,9 @@ const STARTERS = COMPOUNDS.filter((c) => c.starter);
 /**
  * Combine mode's tray (ADR 20), lazily loaded the first time Combine opens and shown while it
  * is open: the carried elements with − / + steppers and Clear, or the starters when nothing is
- * carried, and a live region that says what is carried and where it leads. Close (or Esc
+ * carried, and a live region that says what is carried and where it leads. Below it, the
+ * ratio when the carried elements are right but the amounts are not (Fill in sets them), and
+ * the nearest three compounds with the atoms each needs. Close (or Esc
  * inside the tray) hides it and keeps what is carried.
  */
 export default function CombineTray() {
@@ -23,6 +26,8 @@ export default function CombineTray() {
 
   const counts = useMemo(() => carriedCounts(carry), [carry]);
   const summary = useMemo(() => traySummary(counts, COMPOUNDS, refused), [counts, refused]);
+  const near = useMemo(() => nearest(counts, COMPOUNDS), [counts]);
+  const wrong = useMemo(() => fillIn(counts, COMPOUNDS), [counts]);
 
   const close = () => {
     const inTray = tray.current?.contains(document.activeElement) ?? false;
@@ -119,6 +124,25 @@ export default function CombineTray() {
       <p className="combine-summary" role="status">
         {summary}
       </p>
+      {wrong && (
+        <p className="combine-ratio">
+          {ratioLine(wrong, NAMES)}{' '}
+          <button
+            type="button"
+            aria-label={`Fill in ${wrong.compound.name.toLowerCase()}`}
+            onClick={() => edit(withCounts(carry, wrong.fill))}
+          >
+            Fill in
+          </button>
+        </p>
+      )}
+      {near.length > 0 && (
+        <ul className="combine-nearest" aria-label="Nearest compounds">
+          {near.map((n) => (
+            <li key={n.compound.id}>{nearMissLine(n)}</li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

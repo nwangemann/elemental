@@ -26,7 +26,7 @@ Budgets and how to measure them. The decisions behind them are in [ADR 3](adr/00
 - Time to first move, fast connection: 0.60 s median (scene chunk arrives at 0.32 s, first frame at 0.58 s).
 - Time to first move, slow connection: 2.27 s median. First paint at 0.73 s; the scene chunk is requested then and arrives at 2.1 s. The connection is bandwidth-bound: preloading the scene was measured and rejected ([ADR 15](adr/0015-no-preload-hints.md)).
 - Frame work while walking: 0.3 ms median, 0.4 ms p95; 11 draw calls. The same while the colour lens eases, while the temperature lens sweeps, while the discovery year sweeps and while the timeline plays (0.2–0.3 ms median, 0.4 ms p95).
-- Carrying atoms (combine mode, measured in the browser pane on the dev server, each frame timed with `gl.finish`): 0.5 ms median, 1.3 ms p95 while walking with three orbs; 12 draw calls. The orbs' chunk is 1.1 KB gzipped.
+- Carrying atoms (combine mode, measured in the browser pane on the dev server, each frame timed with `gl.finish`): 0.5 ms median, 1.3 ms p95 while walking with three orbs; 12 draw calls. The orbs' chunk is 1.1 KB gzipped. With the table's suggestion dimming (8 s walk headless, production build, picking up an atom at four tiles so the dim re-targets each time): 0.3 ms median, 0.5 ms p95, 12 draw calls, the same as walking without carrying. Suggestions are computed only when the carry changes.
 - Idle: 23 fps headless, 21 fps in a 120 Hz browser pane (was the display rate).
 - JavaScript: 72 KB shell, 301 KB total (ceilings 76 and 318 KB). Plus the 32 KB label atlas image, fetched with the scene.
 

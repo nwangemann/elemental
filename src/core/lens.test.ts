@@ -15,6 +15,7 @@ import {
 import { themeOf } from './themes.ts';
 import {
   colourTargets,
+  createDimLayer,
   createLiftEase,
   createTintEase,
   cycleLens,
@@ -23,6 +24,8 @@ import {
   LENS_KEYS,
   LENS_SCALES,
   lensDomain,
+  mergeDim,
+  takeDimLayer,
   lensFromHash,
   lensLegend,
   lensLevel,
@@ -422,5 +425,20 @@ describe('cycleLens', () => {
     expect(cycleLens(null, 1)).toBe(LENS_KEYS[0]);
     expect(cycleLens(LENS_KEYS.at(-1)!, 1)).toBeNull();
     expect(cycleLens(null, -1)).toBe(LENS_KEYS.at(-1));
+  });
+});
+
+describe('dim layers', () => {
+  it('merge as the stronger dim while active, and are taken once per change', () => {
+    const filter = new Float32Array([1, 0, 0]);
+    const layer = createDimLayer(3);
+    layer.targets.set([0, 0.4, 1]);
+    const out = new Float32Array(3);
+    expect([...mergeDim(filter, layer, out)]).toEqual([1, 0, 0]);
+    layer.active = true;
+    layer.changed = true;
+    expect(takeDimLayer(filter, layer, out)).toBe(true);
+    expect([...out]).toEqual([1, expect.closeTo(0.4), 1]);
+    expect(takeDimLayer(filter, layer, out)).toBe(false);
   });
 });

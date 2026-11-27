@@ -7,6 +7,7 @@ import {
   leftover,
   nearest,
   nothingForms,
+  suggestionDim,
   suggestionWeights,
   wrongAmounts,
   type Carried,
@@ -194,5 +195,12 @@ describe('suggestionWeights', () => {
   it('goes dark at the carry limit', () => {
     const full = carry({ C: 6, H: 12, O: 6 });
     for (const symbol of ['C', 'H', 'O', 'N']) expect(weightOf(full, symbol)).toBe(0);
+  });
+});
+
+describe('suggestionDim', () => {
+  it('keeps the strongest suggestion bright, fades weak ones, dims dead ends fully', () => {
+    const dim = suggestionDim(new Float32Array([1, 0.5, 0]), 0.6, new Float32Array(3));
+    expect([...dim]).toEqual([0, expect.closeTo(0.3), 1]);
   });
 });

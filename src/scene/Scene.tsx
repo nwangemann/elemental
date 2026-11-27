@@ -10,6 +10,7 @@ import { parseDeepLink } from '../core/explorer.ts';
 import { createLedge } from '../core/ledge.ts';
 import { createPacer } from '../core/pacer.ts';
 import { TILES } from '../core/layout.ts';
+import { createDimLayer } from '../core/lens.ts';
 import { createStick, createWalkTarget } from '../core/steering.ts';
 import { createTapMarker } from '../core/tapMarker.ts';
 import { CameraRig } from './CameraRig.tsx';
@@ -42,6 +43,8 @@ import { useAppStore } from '../state/store.ts';
 
 // Combine mode's carried orbs load with combine's chunk the first time Combine opens (ADR 20).
 const Orbs = lazy(() => import('./Orbs.tsx'));
+// The table's suggestion dim needs the compound set, so it comes with combine's chunk too.
+const Suggestions = lazy(() => import('./Suggestions.tsx'));
 
 /** The character starts on the deep-linked element (`#/Au`), or on hydrogen. */
 function spawnTile() {
@@ -73,6 +76,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
   const phase = useMemo(() => createScenePhase(), []);
   const era = useMemo(() => createSceneEra(), []);
   const gait = useMemo(() => createGait(), []);
+  const suggest = useMemo(() => createDimLayer(TILES.length), []);
   const orbs = useMemo(
     () => createOrbFollow(controller.x, ledge.y, controller.z, controller.heading),
     [controller, ledge],
@@ -123,6 +127,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           tint={tint}
           phase={phase}
           era={era}
+          suggest={suggest}
         />
         <TileRings key={`rings-${version}`} activation={activation} />
         <Labels key={`labels-${version}`} activation={activation} />
@@ -145,6 +150,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
               gait={gait}
               follow={orbs}
             />
+            <Suggestions layer={suggest} />
           </Suspense>
         )}
         <TapMarkerMesh marker={marker} target={target} activation={activation} />
