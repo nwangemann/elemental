@@ -14,7 +14,8 @@ import {
   propertyFacts,
   type Fact,
 } from '../core/elementFacts.ts';
-import { elementByNumber, type Element } from '../core/elements/index.ts';
+import { comparison, rankFacts } from '../core/elementRanks.ts';
+import { ELEMENTS, elementByNumber, type Element } from '../core/elements/index.ts';
 import { accentTokens } from '../core/themes.ts';
 import { useAppStore } from '../state/store.ts';
 
@@ -73,8 +74,13 @@ export function ElementPanel() {
   usePanelKeys(panel, focusNext);
   // Keep showing the last element while the panel slides out.
   const [shown, setShown] = useState<Element | null>(null);
+  // The element shown before this one, for the "compared with" line.
+  const [previous, setPrevious] = useState<Element | null>(null);
   const current = number === null ? null : (elementByNumber(number) ?? null);
-  if (current && current !== shown) setShown(current);
+  if (current && current !== shown) {
+    setPrevious(shown);
+    setShown(current);
+  }
 
   const open = current !== null && !closed;
   // Reopened from the keyboard: focus once `inert` is gone.
@@ -115,9 +121,30 @@ export function ElementPanel() {
           </p>
         </div>
       </header>
+      <Highlights element={element} previous={previous} />
       <Tabs element={element} />
       <p className="panel-source">Data: PubChem (NIH) and Wikidata.</p>
     </aside>
+  );
+}
+
+/** Where the element stands among the rest, and how it compares with the tile before. */
+function Highlights({ element, previous }: { element: Element; previous: Element | null }) {
+  const ranks = rankFacts(element, ELEMENTS);
+  const compared = previous && comparison(element, previous);
+  if (ranks.length === 0 && !compared) return null;
+  return (
+    <ul className="panel-highlights" aria-label="Highlights">
+      {ranks.map((r) => (
+        <li key={r}>{r}</li>
+      ))}
+      {compared && (
+        <li className="panel-compared">
+          {compared.label}: {compared.value}
+          {compared.note && <span className="fact-note"> ({compared.note})</span>}
+        </li>
+      )}
+    </ul>
   );
 }
 

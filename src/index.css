@@ -190,6 +190,21 @@ body {
   color: #9da7b3;
 }
 
+.panel-highlights {
+  margin: 0;
+  padding: 0.5rem 1.1rem 0.6rem 2rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.panel-highlights li::marker {
+  color: var(--accent);
+}
+
+.panel-compared {
+  color: #9da7b3;
+}
+
 .panel-tabs {
   display: flex;
   gap: 0.25rem;

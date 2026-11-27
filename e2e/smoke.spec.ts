@@ -10,7 +10,10 @@ test('the panel shows the element under the character', async ({ page }) => {
   const panel = page.getByRole('complementary', { name: 'Hydrogen' });
   await expect(panel).toBeVisible({ timeout: 15_000 });
   await panel.getByRole('tab', { name: 'Properties' }).click();
-  await expect(panel.getByText('Melting point')).toBeVisible();
+  await expect(panel.getByText('Melting point', { exact: true })).toBeVisible();
+  await expect(panel.getByRole('list', { name: 'Highlights' })).toContainText(
+    'Least dense of all elements',
+  );
 });
 
 test('clicking the tile below hydrogen walks onto lithium', async ({ page }) => {
@@ -80,7 +83,7 @@ test('the keyboard alone tours tiles and reads a panel', async ({ page }) => {
   await page.keyboard.press('Tab');
   await page.keyboard.press('ArrowRight');
   await expect(panel.getByRole('tab', { name: 'Properties' })).toBeFocused();
-  await expect(panel.getByText('Melting point')).toBeVisible();
+  await expect(panel.getByText('Melting point', { exact: true })).toBeVisible();
   // Esc from inside the panel returns to the table.
   await page.keyboard.press('Escape');
   await expect(scene).toBeFocused();

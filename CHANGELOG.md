@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The element panel says where an element stands out: "Densest of all elements", "3rd highest melting point of all elements", "Most electronegative in period 6". After you've seen another element it adds one comparison with it, picking the most striking difference ("Compared with Iron: 3.5× heavier").
 - Explorer filters now show on the table: tiles that don't match fade to a dim grey, so "noble gases" or "period 6" lights up its own part of the table. The dimming stays after the explorer closes, the Explore button says "Filtered" while it does, and the tile you stand on always keeps its colour.
 - `npm run size:check` prints the gzipped JavaScript by npm package, and `npm run perf` also reports time to first move on a slow connection.
 - `[` and `]` step to the previous or next element by atomic number: the figure walks there, so H → He → Li tours the table in order. They work on any keyboard layout and stop at hydrogen and oganesson.
