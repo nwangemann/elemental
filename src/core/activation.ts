@@ -2,6 +2,7 @@ import { GROUND } from './boundary.ts';
 import { CONFIG } from './config.ts';
 import { tileAtPoint, TILES } from './layout.ts';
 import { createLiftEase, stepLift, type LiftEase } from './lens.ts';
+import { eraSink, type EraEase } from './discovery.ts';
 import { gasAmount, type PhaseEase } from './temperature.ts';
 
 /**
@@ -28,7 +29,16 @@ export interface Activation {
    * Written by `stepActivationPhase`, which marks the tiles it moves dirty, like `lift`.
    */
   phaseLift: Float32Array;
+  /**
+   * How far each tile sinks under the discovery lens, not yet discovered in the chosen year
+   * (`core/discovery.ts`); negative for a moment as a rising tile settles. Written by
+   * `stepActivationEra`, which marks the tiles it moves dirty, like `lift`.
+   */
+  eraSink: Float32Array;
 }
+
+/** The lowest a tile top may sit, whatever the lenses add up to, so a tile never turns inside out. */
+const MIN_TOP = 0.01;
 
 export function createActivation(): Activation {
   return {
@@ -38,6 +48,7 @@ export function createActivation(): Activation {
     anyDirty: false,
     lift: new Float32Array(TILES.length),
     phaseLift: new Float32Array(TILES.length),
+    eraSink: new Float32Array(TILES.length),
   };
 }
 
@@ -91,12 +102,17 @@ export function easeLevel(level: number): number {
 }
 
 /**
- * Height of tile i's top above the ground: the resting height, its height-lens and gas lifts and
- * its eased rise.
+ * Height of tile i's top above the ground: the resting height, its height-lens and gas lifts, less
+ * its discovery-lens sink, plus its eased rise. Never below `MIN_TOP`.
  */
 export function tileTop(a: Activation, i: number): number {
-  return (
-    CONFIG.tiles.height + a.lift[i]! + a.phaseLift[i]! + CONFIG.tiles.rise * easeLevel(a.levels[i]!)
+  return Math.max(
+    MIN_TOP,
+    CONFIG.tiles.height +
+      a.lift[i]! +
+      a.phaseLift[i]! -
+      a.eraSink[i]! +
+      CONFIG.tiles.rise * easeLevel(a.levels[i]!),
   );
 }
 
@@ -134,6 +150,28 @@ export function stepActivationPhase(
     const next = gasLift * gasAmount(ease.levels[i]!);
     if (next === a.phaseLift[i]) continue;
     a.phaseLift[i] = next;
+    a.dirty[i] = 1;
+    a.anyDirty = true;
+  }
+}
+
+/**
+ * Writes the discovery lens's sink (`depth` × `eraSink`, with `settle`) into `a.eraSink` for every
+ * tile, marking the ones that moved dirty. Run after `stepEra`, and after `stepActivation`, which
+ * clears `dirty`. Does nothing when `place` is false and the ease did not move.
+ */
+export function stepActivationEra(
+  a: Activation,
+  ease: EraEase,
+  depth: number,
+  settle: number,
+  place = false,
+): void {
+  if (!ease.moved && !place) return;
+  for (let i = 0; i < a.eraSink.length; i++) {
+    const next = depth * eraSink(ease.levels[i]!, ease.rising[i]!, settle);
+    if (next === a.eraSink[i]) continue;
+    a.eraSink[i] = next;
     a.dirty[i] = 1;
     a.anyDirty = true;
   }

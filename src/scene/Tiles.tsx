@@ -17,6 +17,7 @@ import {
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { easeLevel, tileTop, type Activation } from '../core/activation.ts';
 import { CONFIG } from '../core/config.ts';
+import { eraGrey, type EraEase } from '../core/discovery.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
 import { NO_FILTERS, type Filters } from '../core/explorer.ts';
 import {
@@ -73,13 +74,24 @@ function createDim(filters: Filters): Dim {
 const EMPTY_DIM = createDim(NO_FILTERS);
 
 /**
- * Writes every tile's shown dim into the `aDim` buffer: the filters' dim or the temperature lens's
- * unknown dim (`CONFIG.tiles.unknownDim` of it), whichever is stronger, lifted as the tile wakes.
+ * Writes every tile's shown dim into the `aDim` buffer: the strongest of the filters' dim, the
+ * temperature lens's unknown dim (`CONFIG.tiles.unknownDim` of it) and the discovery lens's grey
+ * (`CONFIG.tiles.eraDim` of it), lifted as the tile wakes.
  */
-function writeDim(out: Float32Array, dim: Dim, phase: PhaseEase, activation: Activation): void {
-  const unknownDim = CONFIG.tiles.unknownDim;
+function writeDim(
+  out: Float32Array,
+  dim: Dim,
+  phase: PhaseEase,
+  era: EraEase,
+  activation: Activation,
+): void {
+  const { unknownDim, eraDim } = CONFIG.tiles;
   for (let i = 0; i < out.length; i++) {
-    const level = Math.max(dim.levels[i]!, phase.unknown[i]! * unknownDim);
+    const level = Math.max(
+      dim.levels[i]!,
+      phase.unknown[i]! * unknownDim,
+      eraGrey(era.levels[i]!) * eraDim,
+    );
     out[i] = shownDim(level, easeLevel(activation.levels[i]!));
   }
 }
@@ -157,16 +169,20 @@ function createTileGeometry(): BoxGeometry {
  * otherwise only tiles whose activation changed, since the tile underfoot blends back to its theme.
  * The temperature lens's `phase` (`TemperatureLens`) fills `aPhase`, which fades gas tiles by a
  * screen door and ripples liquid ones (`CONFIG.tiles.ripple`, off with reduced motion), and dims
- * tiles whose state is unknown; both attributes are rewritten only while it moves.
+ * tiles whose state is unknown; both attributes are rewritten only while it moves. The discovery
+ * lens's `era` (`DiscoveryLens`) greys tiles not yet discovered through the same dim; their sink
+ * comes through `tileTop`.
  */
 export function Tiles({
   activation,
   tint,
   phase,
+  era,
 }: {
   activation: Activation;
   tint: TintEase;
   phase: PhaseEase;
+  era: EraEase;
 }) {
   const mesh = useRef<InstancedMesh>(null);
   const dummy = useMemo(() => new Object3D(), []);
@@ -214,9 +230,9 @@ export function Tiles({
     );
     const dimChanged = dim.moving;
     if (dim.moving) dim.moving = stepDim(dim.levels, dim.targets, dt, reduced ? 0 : dimDuration);
-    if (dimChanged || phase.moved || activation.anyDirty) {
+    if (dimChanged || phase.moved || era.moved || activation.anyDirty) {
       const shown = m.geometry.getAttribute(DIM_ATTRIBUTE) as InstancedBufferAttribute;
-      writeDim(shown.array as Float32Array, dim, phase, activation);
+      writeDim(shown.array as Float32Array, dim, phase, era, activation);
       shown.needsUpdate = true;
     }
     if (phase.moved) writePhase(m.geometry.getAttribute(PHASE_ATTRIBUTE), phase);
@@ -246,14 +262,14 @@ export function Tiles({
       writeColour(m.instanceColor!.array as Float32Array, tint, activation, i);
     }
     const shown = m.geometry.getAttribute(DIM_ATTRIBUTE) as InstancedBufferAttribute;
-    writeDim(shown.array as Float32Array, dimRef.current, phase, activation);
+    writeDim(shown.array as Float32Array, dimRef.current, phase, era, activation);
     shown.needsUpdate = true;
     writePhase(m.geometry.getAttribute(PHASE_ATTRIBUTE), phase);
     m.instanceMatrix.needsUpdate = true;
     surface.needsUpdate = true;
     if (m.instanceColor) m.instanceColor.needsUpdate = true;
     m.computeBoundingSphere();
-  }, [activation, dummy, tint, phase]);
+  }, [activation, dummy, tint, phase, era]);
 
   // The height lens moves tiles after the bounds are computed; the table is always in view anyway.
   return (

@@ -4,6 +4,12 @@ import {
   YEAR_DETENTS,
   YEAR_MAX,
   YEAR_MIN,
+  SETTLE_WINDOW,
+  createEraEase,
+  eraGrey,
+  eraSink,
+  retargetEra,
+  stepEra,
   discoveredIn,
   discoveryCounts,
   discoverySummary,
@@ -165,5 +171,70 @@ describe('year deep link', () => {
     }
     expect(deepLink(ne, null, null, null, 1869)).toBe('#/Ne?year=1869');
     expect(deepLink(ne, null, null, null, ANTIQUITY)).toBe(`#/Ne?year=${yearParam(ANTIQUITY)}`);
+  });
+});
+
+describe('the discovery ease', () => {
+  const NE = 9;
+
+  it('starts in place at the year it is made with', () => {
+    const ease = createEraEase(ELEMENTS, 1869);
+    expect(ease.levels[NE]).toBe(1);
+    expect(ease.levels[0]).toBe(0);
+    expect(ease.moving).toBe(false);
+    expect(stepEra(ease, 0.1, 0.4)).toBe(false);
+  });
+
+  it('eases the whole way in the duration, then stops', () => {
+    const ease = createEraEase(ELEMENTS, null);
+    retargetEra(ease, ELEMENTS, 1869);
+    expect(stepEra(ease, 0.2, 0.4)).toBe(true);
+    expect(ease.levels[NE]).toBeCloseTo(0.5);
+    expect(ease.moving).toBe(true);
+    stepEra(ease, 0.2, 0.4);
+    expect(ease.levels[NE]).toBe(1);
+    expect(ease.moving).toBe(false);
+    expect(stepEra(ease, 0.1, 0.4)).toBe(false);
+  });
+
+  it('snaps with a zero duration', () => {
+    const ease = createEraEase(ELEMENTS, null);
+    retargetEra(ease, ELEMENTS, ANTIQUITY);
+    stepEra(ease, 0.016, 0);
+    expect(discoveryCounts(ELEMENTS, ANTIQUITY).toCome).toBe(
+      ease.levels.reduce((n, l) => n + l, 0),
+    );
+    expect(ease.moving).toBe(false);
+  });
+
+  it('marks only tiles rising from beyond the settle window, and clears them at rest', () => {
+    const ease = createEraEase(ELEMENTS, 1869);
+    retargetEra(ease, ELEMENTS, 1900);
+    expect(ease.rising[NE]).toBe(1);
+    expect(ease.rising[0]).toBe(0);
+    stepEra(ease, 1, 0.4);
+    expect(ease.rising[NE]).toBe(0);
+
+    const turning = createEraEase(ELEMENTS, 1900);
+    retargetEra(turning, ELEMENTS, 1869);
+    stepEra(turning, 0.4 * SETTLE_WINDOW * 0.5, 0.4);
+    retargetEra(turning, ELEMENTS, 1900);
+    expect(turning.rising[NE]).toBe(0);
+  });
+});
+
+describe('eraSink and eraGrey', () => {
+  it('run 0 to 1, smoothstepped, without the settle while sinking', () => {
+    expect(eraSink(0, 0, 0.3)).toBe(0);
+    expect(eraSink(1, 0, 0.3)).toBe(1);
+    expect(eraSink(0.5, 0, 0.3)).toBeCloseTo(0.5);
+    expect(eraGrey(0.25)).toBeCloseTo(eraSink(0.25, 0, 0.3));
+  });
+
+  it('overshoot only inside the settle window of a rise, continuous at its edge', () => {
+    expect(eraSink(SETTLE_WINDOW / 2, 1, 0.3)).toBeLessThan(0);
+    expect(eraSink(SETTLE_WINDOW, 1, 0.3)).toBeCloseTo(eraSink(SETTLE_WINDOW, 0, 0.3));
+    expect(eraSink(0.7, 1, 0.3)).toBe(eraSink(0.7, 0, 0.3));
+    expect(eraSink(0, 1, 0.3)).toBe(0);
   });
 });

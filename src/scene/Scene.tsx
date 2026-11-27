@@ -15,6 +15,8 @@ import { CameraRig } from './CameraRig.tsx';
 import { ColourLens } from './ColourLens.tsx';
 import { createSceneTint } from './sceneTint.ts';
 import { createScenePhase } from './scenePhase.ts';
+import { createSceneEra } from './sceneEra.ts';
+import { DiscoveryLens } from './DiscoveryLens.tsx';
 import { TemperatureLens } from './TemperatureLens.tsx';
 import { Character } from './Character.tsx';
 import { FlightHandler } from './FlightHandler.tsx';
@@ -63,6 +65,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
   const pacer = useMemo(() => createPacer(), []);
   const tint = useMemo(() => createSceneTint(), []);
   const phase = useMemo(() => createScenePhase(), []);
+  const era = useMemo(() => createSceneEra(), []);
   return (
     <>
       <Canvas
@@ -98,7 +101,14 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
         <HeightLens key={`lens-${version}`} activation={activation} />
         <ColourLens tint={tint} />
         <TemperatureLens activation={activation} phase={phase} />
-        <Tiles key={`tiles-${version}`} activation={activation} tint={tint} phase={phase} />
+        <DiscoveryLens activation={activation} era={era} />
+        <Tiles
+          key={`tiles-${version}`}
+          activation={activation}
+          tint={tint}
+          phase={phase}
+          era={era}
+        />
         <TileRings key={`rings-${version}`} activation={activation} />
         <Labels key={`labels-${version}`} activation={activation} />
         <Character
@@ -124,6 +134,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           activation={activation}
           tint={tint}
           phase={phase}
+          era={era}
         />
       </Canvas>
       <Joystick stick={stick} />

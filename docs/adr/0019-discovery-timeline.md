@@ -24,4 +24,5 @@ A fourth lens scrubs a year and shows which elements chemists knew then. The dat
 
 - The years shown in the panel and used by the height lens and explorer sort change for fluorine, aluminium and calcium; anyone comparing with PubChem sees a difference, which `docs/data-sources.md` explains.
 - Refreshing the data keeps the overrides, since they are applied in the build, not patched into the JSON.
+- In the scene an undiscovered tile sinks by `CONFIG.tiles.eraDepth` (0.1, against a 0.18 tile and a 0.45 climb limit, so it stays walkable) through its own `eraSink` channel in `tileTop`, and greys through the shared dim. A tile rising into place settles with a small overshoot; the settle is only added to a tile that had sunk past the last 40% of its ease, so reversing the slider never makes a tile jump. Reduced motion snaps and drops the settle. No draw calls are added.
 - The compressed 1650–1750 stretch makes years there coarser to pick by pointer (about one year per 0.1% of track); the keyboard still steps one year at a time.

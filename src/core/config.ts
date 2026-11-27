@@ -46,6 +46,16 @@ export const CONFIG_DEFAULTS = {
     gasLift: 0.3,
     gasFade: 0.55,
     unknownDim: 0.6,
+    /**
+     * Discovery lens (`core/discovery.ts`): how far a tile not yet discovered sinks (kept well
+     * under the character's `climbLimit`, so it can still be walked onto), how grey it goes as a
+     * share of the filters' dim, the ease, s, and the settle of a tile rising into place, as a
+     * share of the depth.
+     */
+    eraDepth: 0.1,
+    eraDim: 0.8,
+    eraDuration: 0.4,
+    eraSettle: 0.3,
     /** Liquid tiles' top-face ripple: how far it tilts the surface (slope) and its speed, rad/s. */
     ripple: 0.12,
     rippleSpeed: 4,
@@ -180,6 +190,10 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     gasLift: { min: 0, max: 1, step: 0.01 },
     gasFade: { min: 0, max: 1, step: 0.01 },
     unknownDim: { min: 0, max: 1, step: 0.01 },
+    eraDepth: { min: 0, max: 0.17, step: 0.01 },
+    eraDim: { min: 0, max: 1, step: 0.01 },
+    eraDuration: { min: 0, max: 2, step: 0.01 },
+    eraSettle: { min: 0, max: 1, step: 0.01 },
     ripple: { min: 0, max: 0.5, step: 0.01 },
     rippleSpeed: { min: 0, max: 12, step: 0.1 },
   },

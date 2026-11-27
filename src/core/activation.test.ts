@@ -3,10 +3,12 @@ import {
   createActivation,
   easeLevel,
   stepActivation,
+  stepActivationEra,
   stepActivationPhase,
   tileTop,
 } from './activation.ts';
 import { CONFIG } from './config.ts';
+import { createEraEase, retargetEra, stepEra } from './discovery.ts';
 import { ELEMENTS } from './elements/index.ts';
 import { createPhaseEase, retargetPhase, stepPhase } from './temperature.ts';
 import { LAYOUT, TILES } from './layout.ts';
@@ -131,5 +133,52 @@ describe('stepActivationPhase', () => {
     expect(a.anyDirty).toBe(false);
     stepActivationPhase(a, ease, 0.3, true);
     expect(a.phaseLift[7]).toBeCloseTo(0.3);
+  });
+});
+
+describe('stepActivationEra', () => {
+  const NE = 9; // neon, 1898
+  const FE = 25; // iron, antiquity
+
+  it('sinks tiles not yet discovered by the depth, and tileTop follows', () => {
+    const a = createActivation();
+    const ease = createEraEase(ELEMENTS, null);
+    retargetEra(ease, ELEMENTS, 1869);
+    stepEra(ease, 10, 0.4);
+    stepActivationEra(a, ease, 0.1, 0.3);
+    expect(a.eraSink[NE]).toBeCloseTo(0.1);
+    expect(a.eraSink[FE]).toBe(0);
+    expect(a.dirty[NE]).toBe(1);
+    expect(a.dirty[FE]).toBe(0);
+    expect(tileTop(a, NE)).toBeCloseTo(CONFIG.tiles.height - 0.1);
+  });
+
+  it('places a lens present at mount, and does nothing while still', () => {
+    const a = createActivation();
+    const ease = createEraEase(ELEMENTS, 1869);
+    stepActivationEra(a, ease, 0.1, 0.3);
+    expect(a.anyDirty).toBe(false);
+    stepActivationEra(a, ease, 0.1, 0.3, true);
+    expect(a.eraSink[NE]).toBeCloseTo(0.1);
+  });
+
+  it('lifts a rising tile a little above its place before it settles', () => {
+    const a = createActivation();
+    const ease = createEraEase(ELEMENTS, 1869);
+    retargetEra(ease, ELEMENTS, 1900);
+    let highest = 0;
+    for (let t = 0; t < 0.5; t += 1 / 60) {
+      stepEra(ease, 1 / 60, 0.4);
+      stepActivationEra(a, ease, 0.1, 0.3);
+      highest = Math.max(highest, tileTop(a, NE));
+    }
+    expect(highest).toBeGreaterThan(CONFIG.tiles.height + 0.01);
+    expect(tileTop(a, NE)).toBeCloseTo(CONFIG.tiles.height);
+  });
+
+  it('never puts a tile top below the floor, whatever the depth', () => {
+    const a = createActivation();
+    a.eraSink[NE] = 5;
+    expect(tileTop(a, NE)).toBeGreaterThan(0);
   });
 });

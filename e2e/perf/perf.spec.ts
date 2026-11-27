@@ -219,6 +219,41 @@ test('frame work while the temperature lens sweeps', async ({ page }) => {
   expect(result.p95Ms).toBeLessThan(8);
 });
 
+test('frame work while the discovery timeline sweeps', async ({ page }) => {
+  await page.addInitScript(INIT);
+  await page.goto('/?perf&quality=off#/H?year=antiquity');
+  await expect(page.locator('#tile-status')).toHaveAttribute('data-tile', '1', {
+    timeout: 20_000,
+  });
+  await page.waitForTimeout(3_500);
+  await page.evaluate(() => ((window as unknown as { perfFrames: number[] }).perfFrames = []));
+  // Walk with the lens on while the year sweeps forward and back: tiles rise and settle, then
+  // sink and grey again, every tile rewritten while the ease runs.
+  await page.keyboard.down('ArrowRight');
+  for (const y of [1789, 1869, 1945, 2010, 1800, 'antiquity']) {
+    await page.evaluate((k) => (window.location.hash = `#/H?year=${k}`), y);
+    await page.waitForTimeout(600);
+  }
+  await page.keyboard.up('ArrowRight');
+  await expect(page).toHaveURL(/year=antiquity/);
+  const frames = await page.evaluate(
+    () => (window as unknown as { perfFrames: number[] }).perfFrames,
+  );
+  const overlay = page.locator('output.perf');
+  const sorted = frames.toSorted((a, b) => a - b);
+  const result = {
+    frames: sorted.length,
+    medianMs: +quantile(sorted, 0.5).toFixed(2),
+    p95Ms: +quantile(sorted, 0.95).toFixed(2),
+    maxMs: +(sorted.at(-1) ?? 0).toFixed(2),
+    drawCalls: Number(await overlay.getAttribute('data-calls')),
+  };
+  console.log(`perf:era ${JSON.stringify(result)}`);
+  expect(result.frames).toBeGreaterThan(60);
+  expect(result.drawCalls).toBe(11);
+  expect(result.p95Ms).toBeLessThan(8);
+});
+
 /** Idle seconds counted, after the establishing shot and the pacer's settle time. */
 const IDLE_SECONDS = 5;
 

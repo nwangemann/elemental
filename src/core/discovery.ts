@@ -151,3 +151,87 @@ export function yearFromHash(hash: string): number | null {
 export function yearParam(year: number): string {
   return year === ANTIQUITY ? 'antiquity' : String(year);
 }
+
+/**
+ * The discovery lens as the scene draws it. `levels[i]` is how far tile i has sunk, 0 known →
+ * 1 undiscovered, easing linearly toward `targets` over `duration`; renderers shape it with
+ * `eraSink` (height) and `eraGrey` (dim). `rising[i]` is 1 while a tile that had sunk most of the
+ * way climbs back after its discovery, which adds the settle at the end of its rise; it clears
+ * once the tile reaches either end. With the lens off every target is 0. `moved` is true when
+ * the last `stepEra` changed anything, so renderers rewrite only then; `moving` while it is still
+ * on its way.
+ */
+export interface EraEase {
+  levels: Float32Array;
+  targets: Float32Array;
+  rising: Uint8Array;
+  moved: boolean;
+  moving: boolean;
+}
+
+/** The share of the rise, at its end, over which a rising tile settles (overshoots and returns). */
+export const SETTLE_WINDOW = 0.4;
+
+/** An ease resting at `year` (null = off), so a lens present at mount starts in place. */
+export function createEraEase(elements: readonly Dated[], year: number | null): EraEase {
+  const targets = discoveryTargets(elements, year, new Float32Array(elements.length));
+  return {
+    levels: targets.slice(),
+    targets,
+    rising: new Uint8Array(elements.length),
+    moved: false,
+    moving: false,
+  };
+}
+
+/**
+ * Points the ease at `year` (null = off); tiles move on from wherever they are now. A tile that
+ * now rises from beyond the settle window gets the settle; one turning back inside the window
+ * does not, so its height never jumps.
+ */
+export function retargetEra(ease: EraEase, elements: readonly Dated[], year: number | null): void {
+  discoveryTargets(elements, year, ease.targets);
+  for (let i = 0; i < ease.levels.length; i++)
+    if (ease.targets[i] === 0 && ease.levels[i]! >= SETTLE_WINDOW) ease.rising[i] = 1;
+  ease.moving = true;
+}
+
+/**
+ * Moves every tile toward its target, the whole way in `duration` seconds (0 snaps). Sets `moved`
+ * and `moving`; returns `moved`. Allocation-free.
+ */
+export function stepEra(ease: EraEase, dt: number, duration: number): boolean {
+  ease.moved = false;
+  if (!ease.moving) return false;
+  const step = duration > 0 ? dt / duration : Infinity;
+  ease.moving = false;
+  for (let i = 0; i < ease.levels.length; i++) {
+    const level = ease.levels[i]!;
+    const target = ease.targets[i]!;
+    if (level === target) continue;
+    const next = level < target ? Math.min(target, level + step) : Math.max(target, level - step);
+    ease.levels[i] = next;
+    if (next === 0 || next === 1) ease.rising[i] = 0;
+    if (next !== target) ease.moving = true;
+    ease.moved = true;
+  }
+  return ease.moved;
+}
+
+const smooth = (t: number): number => t * t * (3 - 2 * t);
+
+/**
+ * How far a tile at `level` stands below its resting height, as a share of the sink depth:
+ * smoothstepped, and for a rising tile less a bump of up to `settle` over the last
+ * `SETTLE_WINDOW` of its rise, so it overshoots its place a little and drops back.
+ */
+export function eraSink(level: number, rising: number, settle: number): number {
+  const s = smooth(level);
+  if (!rising || level >= SETTLE_WINDOW) return s;
+  return s - settle * Math.sin((Math.PI * level) / SETTLE_WINDOW);
+}
+
+/** How grey a tile at `level` is, 0–1, smoothstepped (the settle never touches colour). */
+export function eraGrey(level: number): number {
+  return smooth(level);
+}
