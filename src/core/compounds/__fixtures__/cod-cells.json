@@ -198,7 +198,15 @@
     "sites": [
       { "symbol": "Na", "x": 0, "y": 0, "z": 0, "occupancy": 1 },
       { "symbol": "Cl", "x": 0.5, "y": 0.5, "z": 0.5, "occupancy": 1 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Abrahams, S C", "Bernstein, J L"],
+      "year": 1965,
+      "journal": "Acta Crystallographica (1,1948-23,1967)",
+      "volume": "18",
+      "page": "926",
+      "doi": "10.1107/S0365110X65002244"
+    }
   },
   "calcium-carbonate": {
     "cell": { "a": 4.988, "b": 4.988, "c": 17.061, "alpha": 90, "beta": 90, "gamma": 120 },
@@ -244,7 +252,14 @@
       { "symbol": "Ca", "x": 0, "y": 0, "z": 0, "occupancy": 1 },
       { "symbol": "C", "x": 0, "y": 0, "z": 0.25, "occupancy": 1 },
       { "symbol": "O", "x": 0.2567, "y": 0, "z": 0.25, "occupancy": 1 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Markgraf, S. A.", "Reeder, R. J."],
+      "year": 1985,
+      "journal": "American Mineralogist",
+      "volume": "70",
+      "page": "590"
+    }
   },
   "quartz": {
     "cell": { "a": 4.916, "b": 4.916, "c": 5.4054, "alpha": 90, "beta": 90, "gamma": 120 },
@@ -252,7 +267,14 @@
     "sites": [
       { "symbol": "Si", "x": 0.4697, "y": 0, "z": 0, "occupancy": 1 },
       { "symbol": "O", "x": 0.4135, "y": 0.2669, "z": 0.1191, "occupancy": 1 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Levien, L.", "Prewitt, C. T.", "Weidner, D. J."],
+      "year": 1980,
+      "journal": "American Mineralogist",
+      "volume": "65",
+      "page": "920"
+    }
   },
   "rust": {
     "cell": { "a": 5.038, "b": 5.038, "c": 13.772, "alpha": 90, "beta": 90, "gamma": 120 },
@@ -297,7 +319,14 @@
     "sites": [
       { "symbol": "Fe", "x": 0, "y": 0, "z": 0.3553, "occupancy": 1 },
       { "symbol": "O", "x": 0.3059, "y": 0, "z": 0.25, "occupancy": 1 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Blake, R. L.", "Hessevick, R. E.", "Zoltai, T.", "Finger, L. W."],
+      "year": 1966,
+      "journal": "American Mineralogist",
+      "volume": "51",
+      "page": "123"
+    }
   },
   "baking-soda": {
     "cell": { "a": 7.51, "b": 9.7, "c": 3.53, "alpha": 90, "beta": 93.32, "gamma": 90 },
@@ -309,7 +338,15 @@
       { "symbol": "O", "x": 0.2, "y": 0.169, "z": 0.183, "occupancy": 1 },
       { "symbol": "O", "x": 0.939, "y": 0.169, "z": 0.444, "occupancy": 1 },
       { "symbol": "H", "x": 0.319, "y": 0.25, "z": 0.064, "occupancy": 1 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Zachariasen, W. H."],
+      "year": 1933,
+      "journal": "Journal of Chemical Physics",
+      "volume": "1",
+      "page": "634",
+      "doi": "10.1063/1.1749342"
+    }
   },
   "hydroxyapatite": {
     "cell": { "a": 9.4081, "b": 9.4081, "c": 6.8887, "alpha": 90, "beta": 90, "gamma": 120 },
@@ -336,7 +373,14 @@
       { "symbol": "O", "x": 0.3417, "y": 0.2578, "z": 0.0711, "occupancy": 1 },
       { "symbol": "O", "x": 0, "y": 0, "z": 0.1837, "occupancy": 0.5 },
       { "symbol": "H", "x": 0, "y": 0, "z": 0.0608, "occupancy": 0.5 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Wilson R M", "Elliot J C", "Dowker S E P"],
+      "year": 1999,
+      "journal": "American Mineralogist",
+      "volume": "84",
+      "page": "1406"
+    }
   },
   "lime": {
     "cell": { "a": 4.799, "b": 4.799, "c": 4.799, "alpha": 90, "beta": 90, "gamma": 90 },
@@ -537,7 +581,15 @@
     "sites": [
       { "symbol": "Ca", "x": 0, "y": 0, "z": 0, "occupancy": 1 },
       { "symbol": "O", "x": 0.5, "y": 0.5, "z": 0.5, "occupancy": 1 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Primak, W", "Kaufman, H", "Ward, R"],
+      "year": 1948,
+      "journal": "Journal of the American Chemical Society",
+      "volume": "70",
+      "page": "2043",
+      "doi": "10.1021/ja01186a018"
+    }
   },
   "titanium-dioxide": {
     "cell": { "a": 4.593, "b": 4.593, "c": 2.959, "alpha": 90, "beta": 90, "gamma": 90 },
@@ -562,7 +614,14 @@
     "sites": [
       { "symbol": "Ti", "x": 0, "y": 0, "z": 0, "occupancy": 1 },
       { "symbol": "O", "x": 0.3051, "y": 0.3051, "z": 0, "occupancy": 1 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Meagher, E. P.", "Lager, G. A."],
+      "year": 1979,
+      "journal": "The Canadian Mineralogist",
+      "volume": "17",
+      "page": "77"
+    }
   },
   "corundum": {
     "cell": { "a": 4.7606, "b": 4.7606, "c": 12.994, "alpha": 90, "beta": 90, "gamma": 120 },
@@ -607,7 +666,15 @@
     "sites": [
       { "symbol": "O", "x": 0.69365, "y": 0, "z": 0.25, "occupancy": 1 },
       { "symbol": "Al", "x": 0, "y": 0, "z": 0.35217, "occupancy": 1 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Tsirelson, V G", "Antipin, M Y", "Gerr, R G", "Ozerov, R P", "Struchkov, Y T"],
+      "year": 1985,
+      "journal": "Physica Status Solidi, Sectio A: Applied Research",
+      "volume": "87",
+      "page": "425",
+      "doi": "10.1002/pssa.2210870204"
+    }
   },
   "magnetite": {
     "cell": { "a": 8.32, "b": 8.32, "c": 8.32, "alpha": 90, "beta": 90, "gamma": 90 },
@@ -809,7 +876,15 @@
       { "symbol": "Fe", "x": 0, "y": 0, "z": 0, "occupancy": 1 },
       { "symbol": "Fe", "x": 0.625, "y": 0.625, "z": 0.625, "occupancy": 1 },
       { "symbol": "O", "x": 0.375, "y": 0.375, "z": 0.375, "occupancy": 1 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Bragg, W. H."],
+      "year": 1915,
+      "journal": "Nature (London)",
+      "volume": "95",
+      "page": "561",
+      "doi": "10.1038/095561a0"
+    }
   },
   "pyrite": {
     "cell": { "a": 5.4166, "b": 5.4166, "c": 5.4166, "alpha": 90, "beta": 90, "gamma": 90 },
@@ -842,6 +917,13 @@
     "sites": [
       { "symbol": "Fe", "x": 0, "y": 0, "z": 0, "occupancy": 1 },
       { "symbol": "S", "x": 0.3851, "y": 0.3851, "z": 0.3851, "occupancy": 1 }
-    ]
+    ],
+    "citation": {
+      "authors": ["Bayliss, P."],
+      "year": 1977,
+      "journal": "American Mineralogist",
+      "volume": "62",
+      "page": "1168"
+    }
   }
 }

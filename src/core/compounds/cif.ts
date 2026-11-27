@@ -91,6 +91,12 @@ export function parseCif(text: string): Cif {
     } else if (line.startsWith('_')) {
       const [tag, ...rest] = tokens(line);
       if (rest.length > 0) values.set(tag!, rest.join(' '));
+      else if (lines[i + 1]?.startsWith(';')) {
+        // The value is a semicolon text field on the lines that follow.
+        const field: string[] = [lines[++i]!.slice(1)];
+        while (++i < lines.length && !lines[i]!.startsWith(';')) field.push(lines[i]!);
+        values.set(tag!, field.join(' ').replace(/\s+/g, ' ').trim());
+      }
     }
   }
 
