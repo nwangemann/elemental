@@ -128,6 +128,8 @@ export interface Lens {
   colour: LensKey | null;
   /** The temperature lens's temperature in kelvin (`core/temperature.ts`), or null when off. */
   temperature: number | null;
+  /** The discovery lens's year (`core/discovery.ts`, `ANTIQUITY` for the stop), or null when off. */
+  year: number | null;
   filters: Filters;
 }
 
@@ -135,6 +137,7 @@ export const NO_LENS: Readonly<Lens> = {
   height: null,
   colour: null,
   temperature: null,
+  year: null,
   filters: NO_FILTERS,
 };
 

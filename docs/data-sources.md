@@ -18,6 +18,13 @@ Melting and boiling points in kelvin, as normally quoted (1 atm; the temperature
 ## Known gaps and corrections
 
 - Wikidata lists no discoverer for elements known since antiquity, nor yet for polonium, radium and uranium; no "named after" for curium and some ancient elements.
+- Discovery years date when an element was first recognised as a new substance. PubChem dates three by a compound's first use instead; the data script overrides them with the isolation year (`DISCOVERY_OVERRIDES` in `src/core/elements/normalize.ts`, ADR 19), each checked against the [Royal Society of Chemistry periodic table](https://www.rsc.org/periodic-table):
+  - Fluorine: PubChem 1670 (fluorspar used to etch glass); isolated by Henri Moissan in 1886 ([RSC](https://www.rsc.org/periodic-table/element/9/fluorine)).
+  - Aluminium: PubChem "Ancient" (alum); isolated by Hans Christian Ørsted in 1825 ([RSC](https://www.rsc.org/periodic-table/element/13/aluminium)).
+  - Calcium: PubChem "Ancient" (lime); isolated by Humphry Davy in 1808 ([RSC](https://www.rsc.org/periodic-table/element/20/calcium)).
+
+  Every antiquity and pre-1750 year was audited for the same problem and kept: phosphorus 1669, cobalt 1735, platinum 1735 and zinc 1746 date the element's identification, and arsenic and antimony were known as substances before 1650, where the discovery timeline starts. Years for elements first found in an oxide (beryllium 1798, uranium 1789 and others) date that identification, not the later isolation of the metal.
+
 - Values for the superheavy elements are predictions where they exist; `standardStateIsPredicted` and `electronConfigurationIsPredicted` say so.
 
 Reference values are checked against [IUPAC](https://iupac.org/) and [NIST](https://www.nist.gov/pml/atomic-spectra-database).

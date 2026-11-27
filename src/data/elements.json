@@ -228,7 +228,7 @@
     "ionizationEnergy": 17.423,
     "electronAffinity": 3.339,
     "oxidationStates": [-1],
-    "yearDiscovered": 1670,
+    "yearDiscovered": 1886,
     "discoveredInAntiquity": false,
     "discoverers": ["Henri Moissan", "André-Marie Ampère"],
     "namedAfter": ["hydrofluoric acid"]
@@ -332,8 +332,8 @@
     "ionizationEnergy": 5.986,
     "electronAffinity": 0.441,
     "oxidationStates": [3],
-    "yearDiscovered": null,
-    "discoveredInAntiquity": true,
+    "yearDiscovered": 1825,
+    "discoveredInAntiquity": false,
     "discoverers": ["Humphry Davy", "Hans Christian Ørsted"],
     "namedAfter": ["alum"]
   },
@@ -514,8 +514,8 @@
     "ionizationEnergy": 6.113,
     "electronAffinity": null,
     "oxidationStates": [2],
-    "yearDiscovered": null,
-    "discoveredInAntiquity": true,
+    "yearDiscovered": 1808,
+    "discoveredInAntiquity": false,
     "discoverers": ["Humphry Davy"],
     "namedAfter": ["lime"]
   },

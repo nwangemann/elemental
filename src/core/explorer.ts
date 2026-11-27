@@ -1,6 +1,7 @@
 import { BLOCKS, CATEGORIES, STATES, type Category } from './elements/categories.ts';
 import type { Element } from './elements/schema.ts';
 import { formatDensity, formatNumber, formatTemperature, UNKNOWN } from './elementFacts.ts';
+import { YEAR_PARAM, yearParam } from './discovery.ts';
 import { TEMPERATURE_PARAM, temperatureParam } from './temperature.ts';
 
 /**
@@ -175,18 +176,20 @@ export function sortValueLabel(e: Element, key: SortKey): string {
 /**
  * The hash for an element's deep link: `#/Au`, with the lenses that are on as a query:
  * `#/Au?lens=density` (height), `#/Au?colour=meltingPoint`, `#/Ga?t=310.15` (temperature in
- * kelvin), or any mix of them.
+ * kelvin), `#/Ne?year=1869` (discovery year, `year=antiquity` for the stop), or any mix of them.
  */
 export function deepLink(
   e: Pick<Element, 'symbol'>,
   lens: string | null = null,
   colour: string | null = null,
   temperature: number | null = null,
+  year: number | null = null,
 ): string {
   const query = [
     lens === null ? '' : `lens=${lens}`,
     colour === null ? '' : `colour=${colour}`,
     temperature === null ? '' : `${TEMPERATURE_PARAM}=${temperatureParam(temperature)}`,
+    year === null ? '' : `${YEAR_PARAM}=${yearParam(year)}`,
   ]
     .filter(Boolean)
     .join('&');

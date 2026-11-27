@@ -47,6 +47,8 @@ export interface AppState {
   setLensColour: (colour: LensKey | null) => void;
   /** Sets the temperature lens in kelvin (null = off); the scene shows each element's state there. */
   setLensTemperature: (temperature: number | null) => void;
+  /** Sets the discovery lens's year (null = off, `ANTIQUITY` for the stop); later elements sink. */
+  setLensYear: (year: number | null) => void;
 }
 
 /**
@@ -76,6 +78,7 @@ export const useAppStore = create<AppState>()((set) => ({
     height: null,
     colour: null,
     temperature: null,
+    year: null,
     filters: { category: null, state: null, block: null, period: null, group: null },
   },
   setLensFilters: (filters) => set((s) => ({ lens: { ...s.lens, filters } })),
@@ -85,4 +88,5 @@ export const useAppStore = create<AppState>()((set) => ({
     set((s) => (s.lens.colour === colour ? s : { lens: { ...s.lens, colour } })),
   setLensTemperature: (temperature) =>
     set((s) => (s.lens.temperature === temperature ? s : { lens: { ...s.lens, temperature } })),
+  setLensYear: (year) => set((s) => (s.lens.year === year ? s : { lens: { ...s.lens, year } })),
 }));

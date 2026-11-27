@@ -29,6 +29,7 @@ import {
   type SortKey,
 } from '../core/explorer.ts';
 import { lensFromHash } from '../core/lens.ts';
+import { yearFromHash } from '../core/discovery.ts';
 import { temperatureFromHash } from '../core/temperature.ts';
 import { accentTokens } from '../core/themes.ts';
 import { useAppStore } from '../state/store.ts';
@@ -59,15 +60,18 @@ function replaceHash(hash: string): void {
  */
 function useDeepLinks(): void {
   useEffect(() => {
-    // The scene reads all three lenses from the link as it loads; the temperature is also read
-    // here, since the shell mounts first and its first hash rewrite must not drop it.
+    // The scene reads the height, colour and temperature lenses from the link as it loads; the
+    // temperature and year are read here, since the shell mounts first and its first hash
+    // rewrite must not drop them.
     useAppStore.getState().setLensTemperature(temperatureFromHash(window.location.hash));
+    useAppStore.getState().setLensYear(yearFromHash(window.location.hash));
     const unsubscribe = useAppStore.subscribe((s, prev) => {
       if (
         s.activeTile === prev.activeTile &&
         s.lens.height === prev.lens.height &&
         s.lens.colour === prev.lens.colour &&
-        s.lens.temperature === prev.lens.temperature
+        s.lens.temperature === prev.lens.temperature &&
+        s.lens.year === prev.lens.year
       )
         return;
       // Off the table, the link keeps the element it already names (or the last one stood on).
@@ -75,7 +79,8 @@ function useDeepLinks(): void {
         (s.activeTile && elementByNumber(s.activeTile.number)) ??
         parseDeepLink(window.location.hash, ELEMENTS) ??
         (s.lastTile === null ? undefined : elementByNumber(s.lastTile));
-      if (e) replaceHash(deepLink(e, s.lens.height, s.lens.colour, s.lens.temperature));
+      if (e)
+        replaceHash(deepLink(e, s.lens.height, s.lens.colour, s.lens.temperature, s.lens.year));
     });
     const onHash = () => {
       // Read once: each setter below rewrites the hash through the subscription above, so a
@@ -87,9 +92,10 @@ function useDeepLinks(): void {
       store.setLensHeight(lensFromHash(hash));
       store.setLensColour(lensFromHash(hash, 'colour'));
       store.setLensTemperature(temperatureFromHash(hash));
+      store.setLensYear(yearFromHash(hash));
       // A hand-typed `#/gold` or `#/79` reads back as the canonical `#/Au`.
       const { lens } = useAppStore.getState();
-      replaceHash(deepLink(e, lens.height, lens.colour, lens.temperature));
+      replaceHash(deepLink(e, lens.height, lens.colour, lens.temperature, lens.year));
       if (e.number !== store.activeTile?.number) store.flyTo(e.number);
     };
     window.addEventListener('hashchange', onHash);

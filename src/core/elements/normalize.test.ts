@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import pubchem from './__fixtures__/pubchem.json' with { type: 'json' };
 import wikidata from './__fixtures__/wikidata.json' with { type: 'json' };
 import {
+  DISCOVERY_OVERRIDES,
   buildElements,
   groupWikidata,
   isRealLabel,
@@ -88,6 +89,14 @@ describe('buildElements', () => {
 describe('committed dataset', () => {
   it('has all 118 elements, valid and in order', () => {
     expect(validateElements(ELEMENTS)).toHaveLength(118);
+  });
+
+  it('dates the overridden elements by isolation', () => {
+    for (const [number, year] of DISCOVERY_OVERRIDES)
+      expect(ELEMENTS[number - 1]).toMatchObject({
+        yearDiscovered: year,
+        discoveredInAntiquity: false,
+      });
   });
 
   it('includes gold where expected', () => {

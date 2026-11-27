@@ -106,6 +106,20 @@ function addUnique(list: string[], label: string | undefined): void {
   if (label && isRealLabel(label) && !list.includes(label)) list.push(label);
 }
 
+/**
+ * Discovery years where PubChem dates a compound's first use, not the element. The project
+ * dates every element by when it was first recognised as a new substance; for these three
+ * that is the isolation (ADR 0019, sources in `docs/data-sources.md`). Other early years were
+ * audited and kept: they mark that recognition (P 1669, Co 1735, Pt 1735, Zn 1746, or an oxide
+ * shown to hold a new element, like Be 1798 and U 1789). As and Sb stay as antiquity: both
+ * were known before 1650, where the timeline starts.
+ */
+export const DISCOVERY_OVERRIDES: ReadonlyMap<number, number> = new Map([
+  [9, 1886], // F: PubChem 1670 (fluorspar glass etching); isolated by Moissan
+  [13, 1825], // Al: PubChem "Ancient" (alum); isolated by Ørsted
+  [20, 1808], // Ca: PubChem "Ancient" (lime); isolated by Davy
+]);
+
 /** Merges both sources into validated elements, sorted by atomic number. */
 export function buildElements(
   table: PubChemTable,
@@ -142,7 +156,8 @@ export function buildElements(
     const { period, group, block } = positionOf(number);
     const state = parseState(get(c.state));
     const config = parseConfiguration(get(c.config));
-    const year = get(c.year).trim();
+    const override = DISCOVERY_OVERRIDES.get(number);
+    const year = override === undefined ? get(c.year).trim() : String(override);
     const facts = wikidata.get(number);
     if (!facts) throw new Error(`No Wikidata facts for element ${number}`);
     const mass = parseNumber(get(c.mass));
