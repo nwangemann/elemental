@@ -81,6 +81,17 @@ test('the explorer, key map and element list pass an accessibility audit', async
   await audit(page);
 });
 
+test('the Combine tray passes an accessibility audit, empty and carrying', async ({ page }) => {
+  await ready(page);
+  await page.getByRole('button', { name: /Add to Combine/ }).click();
+  const tray = page.getByRole('region', { name: 'Combine' });
+  await expect(tray.getByRole('list', { name: 'Carried' })).toHaveText(/H 1/);
+  await audit(page);
+  await tray.getByRole('button', { name: 'Clear' }).click();
+  await expect(tray.getByRole('list', { name: 'Starters' })).toBeVisible();
+  await audit(page);
+});
+
 test('tab order runs from the title buttons to the table, then the panel', async ({ page }) => {
   await ready(page);
   const order: string[] = [];

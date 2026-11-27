@@ -1,9 +1,10 @@
-import { Suspense, lazy, useCallback, useRef } from 'react';
+import { Suspense, lazy, useCallback, useRef, useState } from 'react';
 import type { PerfReport } from './scene/PerfProbe.tsx';
 import { BackToTable } from './ui/BackToTable.tsx';
 import { CombineKeys } from './ui/CombineKeys.tsx';
 import { KeyHelp } from './ui/KeyHelp.tsx';
 import { TileStatus } from './ui/TileStatus.tsx';
+import { useAppStore } from './state/store.ts';
 
 // The scene (three, React Three Fiber, the label atlas, element data) is its own chunk. The DOM shell
 // paints first and the scene streams in behind it; see docs/adr/0003-bundle-budget.md.
@@ -27,6 +28,21 @@ const LensControl = lazy(() =>
 const ElementList = lazy(() =>
   import('./ui/ElementList.tsx').then((m) => ({ default: m.ElementList })),
 );
+
+// Combine mode's tray loads with combine's chunk (the compound set) the first time Combine
+// opens, then stays mounted and hides while closed (ADR 20).
+const CombineTray = lazy(() => import('./ui/CombineTray.tsx'));
+
+function CombineTraySlot() {
+  const open = useAppStore((s) => s.combine.open);
+  const [opened, setOpened] = useState(open);
+  if (open && !opened) setOpened(true);
+  return opened ? (
+    <Suspense>
+      <CombineTray />
+    </Suspense>
+  ) : null;
+}
 
 const params = new URLSearchParams(window.location.search);
 const showPerf = params.has('perf');
@@ -83,6 +99,7 @@ export function App() {
       </Suspense>
       <BackToTable />
       <CombineKeys />
+      <CombineTraySlot />
       <TileStatus />
       {showPerf && <output ref={perf} className="perf" aria-live="off" />}
       {TunePanel && (

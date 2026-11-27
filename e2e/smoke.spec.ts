@@ -342,3 +342,42 @@ test('the atom tab draws chromium and notes its filling-rule exception', async (
   await expect(diagram.locator('.atom-electron')).toHaveCount(24);
   await expect(panel.getByText('Chromium breaks the filling rule')).toBeVisible();
 });
+
+test('C picks up atoms into the Combine tray, which steps, clears and closes', async ({ page }) => {
+  await page.goto('/');
+  const status = page.locator('[data-tile]');
+  await expect(status).toHaveAttribute('data-tile', '1', { timeout: 15_000 });
+
+  await page.keyboard.press('c');
+  await page.keyboard.press('c');
+  const tray = page.getByRole('region', { name: 'Combine' });
+  await expect(tray).toBeVisible();
+  const carried = tray.getByRole('list', { name: 'Carried' });
+  await expect(carried).toHaveText(/H 2/);
+  await expect(tray.getByRole('status')).toHaveText(
+    'Carrying H 2. Makes hydrogen gas. Could become water with one O.',
+  );
+
+  await tray.getByRole('button', { name: 'One more hydrogen' }).click();
+  await expect(carried).toHaveText(/H 3/);
+  await tray.getByRole('button', { name: 'One fewer hydrogen' }).click();
+  await tray.getByRole('button', { name: 'One fewer hydrogen' }).click();
+  await expect(carried).toHaveText(/H 1/);
+
+  await tray.getByRole('button', { name: 'Clear' }).click();
+  await expect(tray.getByRole('list', { name: 'Starters' })).toContainText('Water');
+  await expect(tray.getByRole('status')).toHaveText(
+    'Carrying nothing. Try water, table salt or carbon dioxide.',
+  );
+
+  // Clear removed its own button, so focus moved to Close. Esc there closes the tray and
+  // returns to the table; C opens it again.
+  await expect(tray.getByRole('button', { name: 'Close Combine' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(tray).toBeHidden();
+  await expect(page.locator('#scene')).toBeFocused();
+  await page.keyboard.press('c');
+  await expect(carried).toHaveText(/H 1/);
+  await tray.getByRole('button', { name: 'Close Combine' }).click();
+  await expect(tray).toBeHidden();
+});

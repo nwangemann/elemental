@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { dropLast, pickUp, type Carry } from '../core/carry.ts';
+import { canAdd, carriedCounts, dropLast, type Carry, type CarryCheck } from '../core/carry.ts';
 import type { Filters } from '../core/explorer.ts';
 import type { Lens, LensKey } from '../core/lens.ts';
 
@@ -10,10 +10,20 @@ export interface ActiveTile {
   symbol: string;
 }
 
-/** Combine mode (ADR 20): whether it is open, and the atoms carried, oldest first. */
+/** A pick-up the carry limit refused, for the tray to explain. */
+export interface CarryRefusal {
+  symbol: string;
+  reason: Exclude<CarryCheck, 'ok'>;
+}
+
+/**
+ * Combine mode (ADR 20): whether it is open, the atoms carried, oldest first, and the last
+ * pick-up the carry limit refused (cleared by the next change to the carry).
+ */
 export interface CombineState {
   open: boolean;
   carry: Carry;
+  refused: CarryRefusal | null;
 }
 
 /** A request to put the character on a tile at once. `seq` makes repeat requests distinct. */
@@ -106,16 +116,24 @@ export const useAppStore = create<AppState>()((set) => ({
   setLensTemperature: (temperature) =>
     set((s) => (s.lens.temperature === temperature ? s : { lens: { ...s.lens, temperature } })),
   setLensYear: (year) => set((s) => (s.lens.year === year ? s : { lens: { ...s.lens, year } })),
-  combine: { open: false, carry: [] },
+  combine: { open: false, carry: [], refused: null },
   setCombineOpen: (open) =>
     set((s) => (s.combine.open === open ? s : { combine: { ...s.combine, open } })),
   pickUpAtom: (symbol) =>
-    set((s) => ({ combine: { open: true, carry: pickUp(s.combine.carry, symbol) } })),
+    set((s) => {
+      const reason = canAdd(carriedCounts(s.combine.carry), symbol);
+      return {
+        combine:
+          reason === 'ok'
+            ? { open: true, carry: [...s.combine.carry, symbol], refused: null }
+            : { open: true, carry: s.combine.carry, refused: { symbol, reason } },
+      };
+    }),
   dropLastAtom: () =>
     set((s) =>
       s.combine.carry.length === 0
         ? s
-        : { combine: { ...s.combine, carry: dropLast(s.combine.carry) } },
+        : { combine: { ...s.combine, carry: dropLast(s.combine.carry), refused: null } },
     ),
-  setCarry: (carry) => set((s) => ({ combine: { ...s.combine, carry } })),
+  setCarry: (carry) => set((s) => ({ combine: { ...s.combine, carry, refused: null } })),
 }));

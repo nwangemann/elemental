@@ -1032,3 +1032,127 @@ kbd {
   font-size: 0.8rem;
   color: #9da7b3;
 }
+
+/* Combine mode's tray (ui/CombineTray.tsx): along the bottom, centred, over the scene. */
+.combine-tray {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  z-index: 2;
+  width: min(20rem, calc(100vw - 2rem));
+  padding: 0.5rem 0.75rem 0.6rem;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  background: rgb(22 27 34 / 94%);
+  color: #e6edf3;
+  font-size: 0.875rem;
+  transform: translateX(-50%);
+}
+
+.combine-tray[hidden] {
+  display: none;
+}
+
+/* The tray takes the bottom centre, so the return button moves to the top. */
+body:has(.combine-tray:not([hidden])) .back-to-table {
+  top: 1rem;
+  bottom: auto;
+}
+
+.combine-head {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.combine-head h2 {
+  flex: 1;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.combine-tray ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+  margin: 0.45rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.combine-carry li,
+.combine-starters li {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.combine-starters {
+  flex-direction: column;
+}
+
+.combine-starters li {
+  justify-content: space-between;
+}
+
+.combine-count {
+  min-width: 2.4rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.combine-formula {
+  color: #9da7b3;
+}
+
+.combine-tray button {
+  min-width: 1.75rem;
+  min-height: 1.75rem;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid #6e7681;
+  border-radius: 5px;
+  background: #21262d;
+  color: #e6edf3;
+  font: inherit;
+  cursor: pointer;
+}
+
+.combine-tray button:hover:not(:disabled, [aria-disabled='true']) {
+  border-color: #79c0ff;
+}
+
+.combine-tray button:disabled,
+.combine-tray button[aria-disabled='true'] {
+  border-color: #30363d;
+  color: #9da7b3;
+  cursor: default;
+}
+
+.combine-tray button:focus-visible {
+  outline: 2px solid #79c0ff;
+  outline-offset: 2px;
+}
+
+.combine-summary {
+  margin: 0.5rem 0 0;
+  color: #c9d1d9;
+  line-height: 1.35;
+}
+
+/* Narrow screens: the bottom holds the element sheet and the lenses, so the tray sits top right. */
+@media (width < 40rem) {
+  .combine-tray {
+    top: 0.5rem;
+    right: 0.5rem;
+    bottom: auto;
+    left: auto;
+    width: min(15rem, calc(100vw - 9rem));
+    font-size: 0.8rem;
+    transform: none;
+  }
+
+  body:has(.combine-tray:not([hidden])) .back-to-table {
+    top: auto;
+    bottom: 1.5rem;
+  }
+}
