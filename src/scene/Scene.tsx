@@ -142,6 +142,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           activation={activation}
           ledge={ledge}
           gait={gait}
+          clock={formClock}
         />
         {combineOpened && (
           <Suspense fallback={null}>

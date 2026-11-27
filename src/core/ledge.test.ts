@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { GROUND } from './boundary.ts';
 import { CONFIG_DEFAULTS } from './config.ts';
 import {
+  airLift,
   createLedge,
   hopHeightAt,
   hopScale,
@@ -140,11 +141,43 @@ describe('stepLedge over a landscape', () => {
     expect(s.squash).toBeGreaterThan(0);
   });
 
-  it('glides over a small step up between tiles', () => {
+  it('glides over a step up between tiles no taller than microStep', () => {
     const s = createLedge(TOP, 1);
-    stepLedge(s, 2, TOP + P.stepGlide * 0.8, DT, P);
+    stepLedge(s, 2, TOP + P.microStep * 0.8, DT, P);
     expect(s.mode).toBe(LEDGE_STAND);
     expect(standingOn(s)).toBe(2);
+  });
+
+  it('micro-hops a small step up between tiles, quicker and lower than a hop', () => {
+    const s = createLedge(TOP, 1);
+    const to = TOP + P.stepGlide * 0.8;
+    stepLedge(s, 2, to, DT, P);
+    expect(s.mode).toBe(LEDGE_HOP);
+    expect(airLift(s, P)).toBeCloseTo(P.microHopHeight / P.hopHeight, 5);
+    const ys = run(s, 2, to);
+    expect(s.mode).toBe(LEDGE_STAND);
+    expect(s.y).toBe(to);
+    expect(Math.max(...ys)).toBeGreaterThan(to);
+    expect(ys.length * DT).toBeLessThanOrEqual(P.microHopDuration + 2 * DT);
+  });
+
+  it('micro-hops a lens step up even from a risen tile, where the floor is lower', () => {
+    const s = createLedge(TOP + 0.1, 1);
+    stepLedge(s, 2, TOP + 0.07, DT, P, 0.07);
+    expect(s.mode).toBe(LEDGE_HOP);
+    const ys = run(s, 2, TOP + 0.07);
+    expect(s.y).toBeCloseTo(TOP + 0.07, 5);
+    expect(Math.max(...ys)).toBeGreaterThan(TOP + 0.1);
+  });
+
+  it('lifts the arms all the way for a fall or a full hop, not at all standing', () => {
+    const s = createLedge(TOP, 1);
+    expect(airLift(s, P)).toBe(0);
+    stepLedge(s, GROUND, 0, DT, P);
+    expect(airLift(s, P)).toBe(1);
+    const h = createLedge(0, GROUND);
+    stepLedge(h, 1, TOP, DT, P);
+    expect(airLift(h, P)).toBe(1);
   });
 
   it('keeps falling past a tile edge that is still below the feet', () => {

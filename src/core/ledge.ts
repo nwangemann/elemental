@@ -7,8 +7,12 @@ import { damp } from './damp.ts';
  * (`surfaceAt`) and the height of that surface.
  *
  * - **Stand:** the feet follow the surface's height, smoothed, so a tile rising underneath is
- *   ridden and a step between tiles no taller than `stepGlide` (a raised tile and a resting one)
- *   dips or rises gently.
+ *   ridden and a step down between tiles no taller than `stepGlide` (a raised tile and a resting
+ *   one) dips gently.
+ * - **Micro-hop:** a tile-to-tile move inside `stepGlide` whose step up, as the lenses built it
+ *   (`rise`, which leaves out the wake rise of the tile being left), is taller than `microStep`
+ *   gets a small, quick hop (`microHopHeight`, `microHopDuration`), so walking over a lens
+ *   landscape steps onto each tile instead of sliding up. Lower steps still glide.
  * - **Fall:** leaving a tile for the ground, or for a tile more than `stepGlide` lower, drops
  *   under gravity, easing in like a real fall.
  * - **Hop:** moving from the ground onto a tile, or onto a tile more than `stepGlide` higher (by
@@ -37,8 +41,12 @@ export interface LedgeParams {
   hopDuration: number;
   /** Largest step that gets the base hop; taller steps scale it (see `hopShape`). */
   hopStep: number;
-  /** Tile-to-tile steps up to this height are smoothed rather than hopped or fallen. */
+  /** Tile-to-tile steps up to this height are smoothed (down) or micro-hopped (up), not fallen. */
   stepGlide: number;
+  /** Steps up between tiles taller than this get a micro-hop: its apex and length, s. */
+  microStep: number;
+  microHopHeight: number;
+  microHopDuration: number;
   /** Body squash on landing (fraction of height) and how fast it recovers, 1/s. */
   landSquash: number;
   squashRecover: number;
@@ -83,6 +91,16 @@ export function hopScale(step: number, p: LedgeParams): number {
   return p.hopStep > 0 ? Math.max(1, step / p.hopStep) : 1;
 }
 
+function startMicroHop(s: LedgeState, onto: number, p: LedgeParams): void {
+  s.mode = LEDGE_HOP;
+  s.on = onto;
+  s.hopTime = 0;
+  s.hopFrom = s.y;
+  s.hopApex = p.microHopHeight;
+  s.hopLength = p.microHopDuration;
+  s.vy = 0;
+}
+
 function startFall(s: LedgeState, onto: number): void {
   s.mode = LEDGE_FALL;
   s.on = onto;
@@ -121,6 +139,8 @@ export function hopHeightAt(from: number, to: number, t: number, apex: number): 
 /**
  * Advances the vertical state by `dt`. `support` is what is under the body this frame
  * (`surfaceAt`) and `floor` that surface's current height (a tile's top with its rise, or 0).
+ * `rise` is how much higher `support` stands than the tile being left, not counting wake rises;
+ * it decides micro-hops and defaults to the plain height difference.
  */
 export function stepLedge(
   s: LedgeState,
@@ -128,6 +148,7 @@ export function stepLedge(
   floor: number,
   dt: number,
   p: LedgeParams,
+  rise: number = floor - s.y,
 ): void {
   s.squash = damp(s.squash, 0, p.squashRecover, dt);
 
@@ -139,6 +160,8 @@ export function stepLedge(
       startHop(s, support, floor, p);
     } else if (floor < s.y - p.stepGlide) {
       startFall(s, support);
+    } else if (rise > p.microStep) {
+      startMicroHop(s, support, p);
     } else {
       s.on = support;
     }
@@ -171,6 +194,16 @@ export function stepLedge(
   }
 
   s.y = damp(s.y, floor, p.standRate, dt);
+}
+
+/**
+ * How far the arms go up for what the body is doing, 0–1: all the way for a fall or a full hop,
+ * in proportion to the apex for a smaller one (a micro-hop), 0 standing.
+ */
+export function airLift(s: LedgeState, p: LedgeParams): number {
+  if (s.mode === LEDGE_FALL) return 1;
+  if (s.mode === LEDGE_STAND) return 0;
+  return p.hopHeight > 0 ? Math.min(1, s.hopApex / p.hopHeight) : 1;
 }
 
 /** True while falling or hopping. */

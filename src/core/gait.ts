@@ -1,9 +1,11 @@
 import { damp } from './damp.ts';
 
 /**
- * Procedural body motion for the character: idle breathing and a walk cycle driven by speed.
- * Pure and allocation-free: `stepGait` advances a state object and `poseOf` writes into a pose
- * the caller reuses every frame.
+ * Procedural body motion for the character: idle breathing, a walk cycle driven by speed, and
+ * two arm gestures layered over it: holding a formed compound aloft (both hands up over the
+ * head in a narrow V) and throwing the arms up and out while hopping or falling. Pure and
+ * allocation-free: `stepGait` and `stepArms` advance a state object and `poseOf` writes into a
+ * pose the caller reuses every frame.
  */
 
 export interface GaitParams {
@@ -25,6 +27,19 @@ export interface GaitParams {
   footLift: number;
   /** Peak arm swing, radians. */
   armSwing: number;
+  /** Holding aloft: arms raised this far from hanging (radians, π is straight up) and spread out. */
+  holdRaise: number;
+  holdOut: number;
+  /** How far the shoulders ride up the body with the arms fully raised, world units. */
+  armReach: number;
+  /** How fast the hold blend follows, 1/s. */
+  holdRate: number;
+  /** In the air: arms raised this far and spread out, radians. */
+  airRaise: number;
+  airOut: number;
+  /** How fast the air blend rises on take-off and settles after landing, 1/s. */
+  airRiseRate: number;
+  airSettleRate: number;
 }
 
 export interface GaitState {
@@ -34,6 +49,10 @@ export interface GaitState {
   phase: number;
   /** 0 standing, 1 walking at full speed or faster. */
   blend: number;
+  /** 0 arms free, 1 holding a formed compound overhead. */
+  hold: number;
+  /** 0 on the ground, 1 arms up for a hop or a fall. */
+  air: number;
 }
 
 export interface Pose {
@@ -50,12 +69,17 @@ export interface Pose {
   /** Arm rotation about the sideways axis, radians, + forward. */
   leftArm: number;
   rightArm: number;
+  /** Arm rotation away from the body (about the forward axis), radians, + outward on each side. */
+  leftArmOut: number;
+  rightArmOut: number;
+  /** How far the shoulders ride up while the arms are raised, so raised hands clear the head. */
+  shoulderLift: number;
 }
 
 const TAU = Math.PI * 2;
 
 export function createGait(): GaitState {
-  return { time: 0, phase: 0, blend: 0 };
+  return { time: 0, phase: 0, blend: 0, hold: 0, air: 0 };
 }
 
 export function createPose(): Pose {
@@ -69,6 +93,9 @@ export function createPose(): Pose {
     rightFootLift: 0,
     leftArm: 0,
     rightArm: 0,
+    leftArmOut: 0,
+    rightArmOut: 0,
+    shoulderLift: 0,
   };
 }
 
@@ -78,6 +105,23 @@ export function stepGait(state: GaitState, speed: number, dt: number, p: GaitPar
   state.time += dt;
   state.phase = (state.phase + (s * dt) / p.strideLength) % 1;
   state.blend = damp(state.blend, Math.min(1, s / p.walkSpeed), p.blendRate, dt);
+}
+
+/**
+ * Eases the arm gestures toward what is happening: `holding` while a formed compound floats
+ * overhead, and `air` (0–1, `airLift` in `core/ledge.ts`) while hopping or falling: 1 for a
+ * fall or a full hop, less for a micro-hop. The air blend rises fast, so even a short hop
+ * shows the arms up, and settles more slowly after landing.
+ */
+export function stepArms(
+  state: GaitState,
+  holding: boolean,
+  air: number,
+  dt: number,
+  p: GaitParams,
+): void {
+  state.hold = damp(state.hold, holding ? 1 : 0, p.holdRate, dt);
+  state.air = damp(state.air, air, air > state.air ? p.airRiseRate : p.airSettleRate, dt);
 }
 
 /** Writes the pose for the current state into `out` and returns it. */
@@ -103,8 +147,17 @@ export function poseOf(state: GaitState, p: GaitParams, out: Pose): Pose {
   out.leftFootLift = p.footLift * Math.max(0, cos) * w;
   out.rightFootLift = p.footLift * Math.max(0, -cos) * w;
 
-  // Arms swing against the feet on the same side.
-  out.leftArm = -p.armSwing * sin * w;
-  out.rightArm = p.armSwing * sin * w;
+  // Arms swing against the feet on the same side, less the more a gesture takes them over.
+  // Holding wins over the air gesture, so a hop with a compound overhead keeps it held.
+  const hold = state.hold;
+  const air = state.air * (1 - hold);
+  const swing = p.armSwing * sin * w * (1 - hold - air);
+  const raise = -(p.holdRaise * hold + p.airRaise * air);
+  const spread = p.holdOut * hold + p.airOut * air;
+  out.leftArm = raise - swing;
+  out.rightArm = raise + swing;
+  out.leftArmOut = spread;
+  out.rightArmOut = spread;
+  out.shoulderLift = p.armReach * (hold + air * (p.airRaise / Math.PI));
   return out;
 }

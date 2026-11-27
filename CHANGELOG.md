@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The figure lifts things: when a compound forms over its head, it raises both arms to hold it up, and it throws its arms up and out for every hop and fall. On a height lens landscape, small steps up from tile to tile are now a quick little hop instead of a slide, with a smaller lift of the arms.
 - Combine contexts: with nothing carried, the Combine tray offers Your body, Air, Kitchen and Earth & building. Picking one lights the elements it is made of and dims the rest, raises each tile by its share of the context's mass (a 70 kg adult, dry air, the Earth's crust; on a log scale, so trace elements still show), and lists the context's compounds, each with **Show me**. The kitchen lights the elements of its compounds and keeps the table's heights. The element panel's overview adds where each element is found, with its share ("Your body: 64 % by mass", "Earth's crust: 4 parts per billion by mass"). The context goes into the link (`#/O?context=body`).
 
 ## 0.2.0 — 2026-11-27

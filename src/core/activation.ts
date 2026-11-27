@@ -116,6 +116,15 @@ export function tileTop(a: Activation, i: number): number {
   );
 }
 
+/**
+ * Tile i's top without its wake rise: where it stands from the lenses alone. The step between
+ * two tiles' rest tops is the step a lens built, whichever of them is awake (`core/ledge.ts`'s
+ * micro-hop reads it).
+ */
+export function restTop(a: Activation, i: number): number {
+  return Math.max(MIN_TOP, CONFIG.tiles.height + a.lift[i]! + a.phaseLift[i]! - a.eraSink[i]!);
+}
+
 /** Puts every tile at its lens lift at once (marking all dirty) and returns an ease resting there. */
 export function placeLift(a: Activation, targets: Float32Array): LiftEase {
   a.lift.set(targets);

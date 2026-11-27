@@ -7,14 +7,15 @@ import {
   type Group,
   type Mesh,
 } from 'three';
-import { tileTop, type Activation } from '../core/activation.ts';
+import { restTop, tileTop, type Activation } from '../core/activation.ts';
 import { BOUNDARY, GROUND, outerBounds, surfaceAt } from '../core/boundary.ts';
 import { blockCliffs, type SurfaceHeight } from '../core/climb.ts';
 import { CONFIG } from '../core/config.ts';
 import { speedOf, stepController, type ControllerState } from '../core/controller.ts';
-import { createPose, poseOf, stepGait, type GaitState } from '../core/gait.ts';
+import type { FormClock } from '../core/forming.ts';
+import { createPose, poseOf, stepArms, stepGait, type GaitState } from '../core/gait.ts';
 import { createIntent, moveIntent, type InputState } from '../core/input.ts';
-import { isAirborne, stepLedge, type LedgeState } from '../core/ledge.ts';
+import { airLift, isAirborne, stepLedge, type LedgeState } from '../core/ledge.ts';
 import { clearWalkTarget, steer, type Stick, type WalkTarget } from '../core/steering.ts';
 import { CHARACTER_COLOR, EYE_COLOR } from '../core/palette.ts';
 
@@ -34,10 +35,13 @@ export const CHARACTER_FRAME_PRIORITY = -1;
  * owned by the parent, so a remount (the tuning panel changing sizes) keeps the character where
  * it is. Its height comes from `core/ledge.ts` over `surfaceAt`: it rides the tile under it as it
  * rises, drops to the ground off an edge and hops back up onto a tile, squashing a little on
- * landing. The walk cycle pauses while it is in the air. `ledge` is parent-owned too, because
+ * landing, and micro-hops small steps up between tiles. The walk cycle pauses while it is in
+ * the air. `ledge` is parent-owned too, because
  * `TileActivator` reads it to wake a tile only once the character is on top. Over a height lens
  * landscape, `core/climb.ts` stops it at any step up taller than `climbLimit`; a tap's walk
  * target is dropped there, while a keyboard step or a return (`target.climb`) hops on up.
+ * The arms go up and out for each hop or fall, and hold a formed compound up over the head
+ * while Combine shows one (`stepArms`).
  */
 export function Character({
   controller,
@@ -47,6 +51,7 @@ export function Character({
   activation,
   ledge,
   gait,
+  clock,
 }: {
   controller: ControllerState;
   input: InputState;
@@ -56,6 +61,8 @@ export function Character({
   ledge: LedgeState;
   /** Parent-owned, like `controller`, so the carried orbs can bob with the walk. */
   gait: GaitState;
+  /** Combine's form clock: while a compound is formed overhead, the arms hold it up. */
+  clock: FormClock;
 }) {
   const c = CONFIG.character;
   const root = useRef<Group>(null);
@@ -131,8 +138,15 @@ export function Character({
     }
     const support = surfaceAt(controller.x, controller.z);
     const floor = heightOf(support);
-    stepLedge(ledge, support, floor, dt, p);
-    if (!isAirborne(ledge)) stepGait(gait, speedOf(controller), dt, p);
+    // The step a lens built between the tiles, so leaving an awake (risen) tile still hops up.
+    const rise =
+      support !== GROUND && ledge.on !== GROUND
+        ? restTop(activation, support - 1) - restTop(activation, ledge.on - 1)
+        : floor - ledge.y;
+    stepLedge(ledge, support, floor, dt, p, rise);
+    const airborne = isAirborne(ledge);
+    if (!airborne) stepGait(gait, speedOf(controller), dt, p);
+    stepArms(gait, clock.id !== null, airLift(ledge, p), dt, p);
     poseOf(gait, p, pose);
     // Landing squash on top of the gait's own, keeping volume.
     const squashY = pose.scaleY * (1 - ledge.squash);
@@ -148,8 +162,12 @@ export function Character({
       b.position.y = bodyY + pose.bob;
       b.scale.set(squashXZ, squashY, squashXZ);
     }
-    if (leftArm.current) leftArm.current.rotation.x = pose.leftArm;
-    if (rightArm.current) rightArm.current.rotation.x = pose.rightArm;
+    // Euler XYZ turns the hanging arm outward (z) before raising it (x); +z is outward on the
+    // left arm, at +x, and inward on the right.
+    leftArm.current?.rotation.set(pose.leftArm, 0, pose.leftArmOut);
+    rightArm.current?.rotation.set(pose.rightArm, 0, -pose.rightArmOut);
+    leftArm.current?.position.setY(shoulderY + pose.shoulderLift);
+    rightArm.current?.position.setY(shoulderY + pose.shoulderLift);
     if (leftFoot.current) {
       leftFoot.current.position.set(footX, footY + pose.leftFootLift, pose.leftFootForward);
     }

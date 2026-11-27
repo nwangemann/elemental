@@ -85,6 +85,19 @@ export const CONFIG_DEFAULTS = {
     stepSquash: 0.04,
     footLift: 0.06,
     armSwing: 0.7,
+    /**
+     * Arm gestures (see `core/gait.ts`): holding a formed compound overhead (raise from hanging,
+     * radians, π straight up; spread; blend rate 1/s), and arms up and out in a hop or fall.
+     * The shoulders ride up `armReach` units with the arms fully raised.
+     */
+    holdRaise: 3.1,
+    holdOut: 0.45,
+    armReach: 0.09,
+    holdRate: 6,
+    airRaise: 2.45,
+    airOut: 0.6,
+    airRiseRate: 22,
+    airSettleRate: 7,
     /** Controller (see `core/controller.ts`): top speed in units/s and the Shift fraction. */
     moveSpeed: 2.6,
     slowFactor: 0.4,
@@ -116,6 +129,10 @@ export const CONFIG_DEFAULTS = {
      */
     hopStep: 0.18,
     stepGlide: 0.12,
+    /** Steps up between tiles taller than `microStep` get a micro-hop: apex and length, s. */
+    microStep: 0.03,
+    microHopHeight: 0.05,
+    microHopDuration: 0.18,
     climbLimit: 0.45,
     /** Body squash on landing (fraction of height) and its recovery, 1/s. */
     landSquash: 0.12,
@@ -249,6 +266,14 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     stepSquash: { min: 0, max: 0.2, step: 0.005 },
     footLift: { min: 0, max: 0.2, step: 0.005 },
     armSwing: { min: 0, max: 1.5, step: 0.05 },
+    holdRaise: { min: 0, max: 3.14, step: 0.05 },
+    holdOut: { min: -0.8, max: 0.8, step: 0.05 },
+    armReach: { min: 0, max: 0.2, step: 0.005 },
+    holdRate: { min: 1, max: 30, step: 0.5 },
+    airRaise: { min: 0, max: 3.14, step: 0.05 },
+    airOut: { min: -0.8, max: 1.2, step: 0.05 },
+    airRiseRate: { min: 1, max: 60, step: 1 },
+    airSettleRate: { min: 1, max: 30, step: 0.5 },
     moveSpeed: { min: 0.5, max: 8, step: 0.1 },
     slowFactor: { min: 0.1, max: 1, step: 0.05 },
     accelRate: { min: 1, max: 30, step: 0.5 },
@@ -267,6 +292,9 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
     hopDuration: { min: 0.05, max: 1, step: 0.01 },
     hopStep: { min: 0.02, max: 1, step: 0.01 },
     stepGlide: { min: 0, max: 0.5, step: 0.01 },
+    microStep: { min: 0, max: 0.3, step: 0.005 },
+    microHopHeight: { min: 0, max: 0.3, step: 0.005 },
+    microHopDuration: { min: 0.05, max: 0.6, step: 0.01 },
     climbLimit: { min: 0.1, max: 2, step: 0.01 },
     landSquash: { min: 0, max: 0.4, step: 0.01 },
     squashRecover: { min: 1, max: 30, step: 0.5 },

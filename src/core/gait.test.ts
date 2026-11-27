@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CONFIG_DEFAULTS } from './config.ts';
-import { createGait, createPose, poseOf, stepGait, type GaitParams } from './gait.ts';
+import { createGait, createPose, poseOf, stepArms, stepGait, type GaitParams } from './gait.ts';
 
 const P: GaitParams = CONFIG_DEFAULTS.character;
 
@@ -64,5 +64,49 @@ describe('gait', () => {
   it('reuses the output object', () => {
     const out = createPose();
     expect(poseOf(createGait(), P, out)).toBe(out);
+  });
+
+  it('raises both arms over the head in a V, shoulders up, while holding a compound', () => {
+    const g = run(0, 1);
+    for (let i = 0; i < 60; i++) stepArms(g, true, 0, 1 / 60, P);
+    expect(g.hold).toBeGreaterThan(0.99);
+    const pose = poseOf(g, P, createPose());
+    expect(pose.leftArm).toBeCloseTo(-P.holdRaise, 1);
+    expect(pose.rightArm).toBeCloseTo(-P.holdRaise, 1);
+    expect(pose.leftArmOut).toBeCloseTo(P.holdOut, 1);
+    expect(pose.shoulderLift).toBeCloseTo(P.armReach, 2);
+  });
+
+  it('keeps held arms still while walking', () => {
+    const g = run(P.walkSpeed, 1);
+    for (let i = 0; i < 120; i++) stepArms(g, true, 0, 1 / 60, P);
+    const pose = poseOf(g, P, createPose());
+    expect(Math.abs(pose.leftArm - pose.rightArm)).toBeLessThan(0.01);
+  });
+
+  it('throws the arms up and out within a short hop, and settles after', () => {
+    const g = createGait();
+    const hop = CONFIG_DEFAULTS.character.hopDuration;
+    for (let t = 0; t < hop / 2; t += 1 / 60) stepArms(g, false, 1, 1 / 60, P);
+    expect(g.air).toBeGreaterThan(0.9);
+    const up = poseOf(g, P, createPose());
+    expect(up.leftArm).toBeLessThan(-P.airRaise * 0.9);
+    expect(up.leftArmOut).toBeGreaterThan(0);
+    for (let i = 0; i < 60; i++) stepArms(g, false, 0, 1 / 60, P);
+    expect(g.air).toBeLessThan(0.01);
+  });
+
+  it('keeps holding through a hop', () => {
+    const g = createGait();
+    for (let i = 0; i < 120; i++) stepArms(g, true, 1, 1 / 60, P);
+    const pose = poseOf(g, P, createPose());
+    expect(pose.leftArm).toBeCloseTo(-P.holdRaise, 1);
+    expect(pose.leftArmOut).toBeCloseTo(P.holdOut, 1);
+  });
+
+  it('lifts the arms only part way for a small hop', () => {
+    const g = createGait();
+    for (let i = 0; i < 30; i++) stepArms(g, false, 0.4, 1 / 60, P);
+    expect(g.air).toBeCloseTo(0.4, 2);
   });
 });
