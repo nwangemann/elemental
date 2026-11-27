@@ -43,4 +43,7 @@ The preview pane runs `requestAnimationFrame` at about 30 Hz, so the overlay's f
 - In a hidden pane, lens eases (0.4 s) take seconds to finish, so a screenshot right after a hash change shows the old state. Wait about 8 s before judging a lens visually.
 - If the preview pane is hidden (`tabs_context` says so), rAF drops to 1–2 Hz and walking crawls: frame numbers are useless. Show it with the app's show-pane tool (`preview`) first. Failing that, measure headless with a throwaway Playwright spec in `e2e/` that wraps `requestAnimationFrame` with `gl.finish()` timing, then delete the spec.
 - In the preview pane, `navigate` to the same page with a new hash only changes the hash: the page does not reload and keeps old module state. Use `location.reload()` after editing code the page read on load.
+- oxlint's React rules reject assigning to a prop or hook argument inside `useFrame` (`react(immutability)`) and reading `ref.current` during render (`react(refs)`). Mutate per-frame state through a `src/core` function (`stepOrbFollow(follow, …)`, as `stepController` does), and keep render-time flags in `useState`.
+- Vite tree-shakes named imports from JSON: `import { cpk } from '../data/compound-shapes.json'` ships only that key. A default import ships the whole file.
+- `dev/plan.md` is long (over 70 KB). Read its "Next" line and `grep -n` the current phase rather than printing the whole file.
 - Drive walking from the page console with `KeyboardEvent`s dispatched on `window` (keydown by `code`, wait, keyup); clicking the canvas is a tap-to-walk.
