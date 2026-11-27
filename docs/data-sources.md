@@ -11,6 +11,10 @@ Only fields the app reads are kept (ADR 17): PubChem's CPK colour is not taken.
 
 Derived in code, not fetched: period, group and block, from the atomic number (`src/core/elements/position.ts`). The layout follows IUPAC, with lutetium and lawrencium in group 3, so the f-block rows are La–Yb and Ac–No.
 
+## Compounds (combine mode)
+
+Combine mode ([ADR 20](adr/0020-combine-mode.md)) takes, per compound, PubChem's CID, molecular formula and computed 3D conformer (PUG-REST), and CPK colours for the elements those compounds use. These are computed by PubChem itself and fall under [NCBI's molecular data policy](https://www.ncbi.nlm.nih.gov/home/about/policies/), which places no restriction on use or redistribution. PubChem also carries text from hundreds of depositors under their own terms ([PubChem downloads, data usage and licensing](https://pubchem.ncbi.nlm.nih.gov/docs/downloads)); none of it is taken. Compound card copy is written for this project. Scripted requests stay under PubChem's rate limit.
+
 ## Units
 
 Melting and boiling points in kelvin, as normally quoted (1 atm; the temperature lens, ADR 18, corrects helium, whose melting point is at about 25 atm, and treats arsenic's boiling point below its melting point as sublimation); density in g/cm³ for every state; atomic radius in picometres (van der Waals); ionization energy and electron affinity in eV; electronegativity on the Pauling scale. Unknown values are `null`.

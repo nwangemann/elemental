@@ -7,7 +7,7 @@ Budgets and how to measure them. The decisions behind them are in [ADR 3](adr/00
 | What                                   | Budget                  | Enforced by     |
 | -------------------------------------- | ----------------------- | --------------- |
 | Shell JavaScript (gzipped)             | 100 KB (ceiling 76 KB)  | `npm run check` |
-| All JavaScript (gzipped)               | 450 KB (ceiling 300 KB) | `npm run check` |
+| All JavaScript (gzipped)               | 450 KB (ceiling 318 KB) | `npm run check` |
 | Time to first move, fast connection    | 2 s                     | `npm run perf`  |
 | Frame work while walking, p95          | 8 ms                    | `npm run perf`  |
 | Frame rate on an integrated-GPU laptop | 60 fps                  | manual check    |
@@ -27,7 +27,7 @@ Budgets and how to measure them. The decisions behind them are in [ADR 3](adr/00
 - Time to first move, slow connection: 2.27 s median. First paint at 0.73 s; the scene chunk is requested then and arrives at 2.1 s. The connection is bandwidth-bound: preloading the scene was measured and rejected ([ADR 15](adr/0015-no-preload-hints.md)).
 - Frame work while walking: 0.3 ms median, 0.4 ms p95; 11 draw calls. The same while the colour lens eases, while the temperature lens sweeps, while the discovery year sweeps and while the timeline plays (0.2–0.3 ms median, 0.4 ms p95).
 - Idle: 23 fps headless, 21 fps in a 120 Hz browser pane (was the display rate).
-- JavaScript: 71 KB shell, 294 KB total (ceilings 76 and 300 KB). Plus the 32 KB label atlas image, fetched with the scene.
+- JavaScript: 71 KB shell, 299 KB total (ceilings 76 and 318 KB). Plus the 32 KB label atlas image, fetched with the scene.
 
 Gzipped JavaScript by package (`npm run size:check`, each part gzipped alone):
 

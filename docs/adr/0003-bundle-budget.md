@@ -26,3 +26,7 @@ Alternatives considered: keeping one 350 KB budget would block bloom and the UI 
 ## Amendment (2026-11-26): ceilings lowered
 
 The optimisation pass cut the total from 361 KB to 289 KB: the curated `three` namespace (ADR 12), the baked label atlas in place of troika (ADR 13) and the trimmed element data (ADR 17). The shell is 71 KB. The ceilings now sit just above those sizes again, 76 KB for the shell and 300 KB in total, so the savings cannot drift back unnoticed. The budgets (100 KB and 450 KB) are unchanged. The element data has since moved to its own `elements` chunk, which the shell's list view can load without three.
+
+## Amendment (2026-11-26): room for Combine mode
+
+The discovery timeline (ADR 19) brought the total to 299 KB against the 300 KB ceiling; the shell is 71 KB. Combine mode (ADR 20) is estimated at 6–10 KB of code and about 6 KB of data, gzipped, all in its own lazy chunk. The total ceiling rises to 318 KB for that phase; once it is built, the ceiling drops back to just above the measured total. The shell ceiling stays at 76 KB, and the 450 KB budget is unchanged.
