@@ -17,6 +17,8 @@ import {
   stickCount,
   type FormParams,
   type FormShape,
+  crystalBonds,
+  pairKey,
 } from './forming.ts';
 
 const P: FormParams = {
@@ -33,7 +35,52 @@ const P: FormParams = {
 
 const byId = (id: string) => COMPOUNDS.find((c) => c.id === id)!;
 const WATER: FormShape = shapes.molecules.water;
-const SALT: FormShape = shapes.crystals['table-salt'];
+const SALT: FormShape = {
+  ...shapes.crystals['table-salt'],
+  bonds: crystalBonds(shapes.crystals['table-salt']),
+};
+
+describe('crystalBonds', () => {
+  it('keys a pair the same in either order', () => {
+    expect(pairKey('Na', 'Cl')).toBe('Cl Na');
+    expect(pairKey('Cl', 'Na')).toBe('Cl Na');
+  });
+  it('finds each bond its pair rule allows, once, in atom order', () => {
+    const line = {
+      elements: ['Na', 'Cl', 'Na', 'Cl'],
+      xyz: [0, 0, 0, 2.8, 0, 0, 5.6, 0, 0, 8.4, 0, 0],
+    };
+    expect(crystalBonds({ ...line, pairs: { 'Cl Na': 3 } })).toEqual([
+      [0, 1, 1],
+      [1, 2, 1],
+      [2, 3, 1],
+    ]);
+    expect(crystalBonds({ ...line, pairs: { 'Cl Na': 2 } })).toEqual([]);
+    expect(crystalBonds({ ...line, pairs: {} })).toEqual([]);
+  });
+  it('gives the baked crystals the bonds they were cut with', () => {
+    const counts = Object.fromEntries(
+      Object.entries(shapes.crystals).map(([id, c]) => [id, crystalBonds(c).length]),
+    );
+    // As baked with stored bond lists before ADR 3's 2026-11-27 trim.
+    expect(counts).toEqual({
+      'table-salt': 54,
+      'calcium-carbonate': 72,
+      quartz: 52,
+      rust: 54,
+      'baking-soda': 56,
+      bleach: 1,
+      hydroxyapatite: 63,
+      lime: 54,
+      'titanium-dioxide': 66,
+      corundum: 54,
+      magnetite: 42,
+      pyrite: 54,
+      steel: 0,
+      bronze: 0,
+    });
+  });
+});
 
 describe('pickFormed', () => {
   it('shows the pick when it is one of the matches, else the most everyday', () => {

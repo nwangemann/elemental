@@ -6,7 +6,7 @@
 // Writes src/assets/label-atlas.png and src/assets/label-atlas.json (`AtlasMetrics`).
 import { readFile, writeFile } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
-import elements from '../src/data/elements.json' with { type: 'json' };
+import { ELEMENTS as elements } from '../src/core/elements/index.ts';
 import type { AtlasMetrics, GlyphMetrics } from '../src/core/labelLayout.ts';
 import { encodeGreyPng } from './png.ts';
 import { encodeField, signedDistance } from './sdf.ts';

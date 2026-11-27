@@ -27,6 +27,7 @@ import {
   formDuration,
   formSticks,
   growDelays,
+  crystalBonds,
   stepFormClock,
   stickCount,
   type FormClock,
@@ -41,7 +42,10 @@ import { orbColour, prefersReducedMotion } from './orbLook.ts';
 
 const MAX_DT = 0.1;
 const MOLECULES: Readonly<Record<string, FormShape>> = molecules;
-const CRYSTALS: Readonly<Record<string, FormShape>> = crystals;
+// Crystals ship bond rules, not bonds (smaller); their bonds are found once, here.
+const CRYSTALS: Readonly<Record<string, FormShape>> = Object.fromEntries(
+  Object.entries(crystals).map(([id, c]) => [id, { ...c, bonds: crystalBonds(c) }]),
+);
 const SHAPES = [...Object.values(MOLECULES), ...Object.values(CRYSTALS)];
 const MAX_ATOMS = Math.max(...SHAPES.map((s) => s.elements.length));
 const MAX_STICKS = Math.max(...SHAPES.map(stickCount));

@@ -1,6 +1,6 @@
 # Data sources
 
-Element data is fetched at build time by `npm run data` (`scripts/build-elements.ts`), validated, and committed as `src/data/elements.json`. The app makes no runtime API calls. Re-run the script to refresh; the output is sorted and stable, so the diff shows exactly what changed.
+Element data is fetched at build time by `npm run data` (`scripts/build-elements.ts`), validated, and committed as `src/data/elements.json`, stored by column (one array per field, ADR 3). The app makes no runtime API calls. Re-run the script to refresh; the output is sorted and stable, so the diff shows exactly what changed.
 
 | Source                                                                                                              | Licence                    | Fields taken                                                                                                                                                                                                                      |
 | ------------------------------------------------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

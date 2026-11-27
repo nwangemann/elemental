@@ -13,6 +13,37 @@ export interface FormShape {
   bonds: readonly (readonly number[])[];
 }
 
+const distance = (xyz: readonly number[], i: number, j: number) =>
+  Math.hypot(
+    xyz[i * 3]! - xyz[j * 3]!,
+    xyz[i * 3 + 1]! - xyz[j * 3 + 1]!,
+    xyz[i * 3 + 2]! - xyz[j * 3 + 2]!,
+  );
+
+/** The `pairs` key for two elements, in either order: "Cl Na". */
+export function pairKey(a: string, b: string): string {
+  return a < b ? `${a} ${b}` : `${b} ${a}`;
+}
+
+/**
+ * A crystal chunk's bonds: every two atoms whose element pair bonds and that are no further
+ * apart than its limit, single and in atom order. Run once per crystal when the shapes load.
+ */
+export function crystalBonds(crystal: {
+  readonly elements: readonly string[];
+  readonly xyz: readonly number[];
+  readonly pairs: Readonly<Record<string, number>>;
+}): [number, number, number][] {
+  const bonds: [number, number, number][] = [];
+  const { elements } = crystal;
+  for (let i = 0; i < elements.length; i++)
+    for (let j = i + 1; j < elements.length; j++) {
+      const limit = crystal.pairs[pairKey(elements[i]!, elements[j]!)];
+      if (limit !== undefined && distance(crystal.xyz, i, j) <= limit) bonds.push([i, j, 1]);
+    }
+  return bonds;
+}
+
 export interface FormParams {
   /** Height of the model's centre above the figure's feet. */
   formLift: number;

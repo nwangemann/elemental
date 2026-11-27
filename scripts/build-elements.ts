@@ -1,5 +1,6 @@
 // Regenerates src/data/elements.json from PubChem and Wikidata. Run with `npm run data`.
 import { writeFile } from 'node:fs/promises';
+import { toColumns } from '../src/core/columns.ts';
 import {
   buildElements,
   groupWikidata,
@@ -39,5 +40,6 @@ const [pubchem, wikidata] = await Promise.all([
 ]);
 
 const elements = validateElements(buildElements(pubchem, groupWikidata(wikidata.results.bindings)));
-await writeFile(OUT, `${JSON.stringify(elements, null, 2)}\n`);
+// Stored by column, so each field name ships once (ADR 3).
+await writeFile(OUT, `${JSON.stringify(toColumns(elements), null, 2)}\n`);
 console.log(`Wrote ${elements.length} elements to src/data/elements.json`);

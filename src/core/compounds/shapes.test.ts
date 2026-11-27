@@ -1,3 +1,4 @@
+import { crystalBonds } from '../forming.ts';
 import { describe, expect, it } from 'vitest';
 import cellsFixture from './__fixtures__/cod-cells.json' with { type: 'json' };
 import shapesFixture from './__fixtures__/pubchem-shapes.json' with { type: 'json' };
@@ -150,7 +151,7 @@ describe('the crystals', () => {
     const salt = crystal('table-salt');
     expect(salt.elements).toHaveLength(27);
     expect(salt.elements.filter((e) => e === 'Na')).toHaveLength(13);
-    for (const [a, b] of salt.bonds) expect(atomDistance(salt, a, b)).toBeCloseTo(2.81, 1);
+    for (const [a, b] of crystalBonds(salt)) expect(atomDistance(salt, a, b)).toBeCloseTo(2.81, 1);
   });
 
   it('keep atoms apart and sticks at bond lengths', () => {
@@ -158,7 +159,7 @@ describe('the crystals', () => {
       for (let i = 0; i < c.elements.length; i++)
         for (let j = i + 1; j < c.elements.length; j++)
           expect(atomDistance(c, i, j), `${id} ${i}-${j}`).toBeGreaterThan(0.8);
-      for (const [a, b] of c.bonds) expect(atomDistance(c, a, b), id).toBeLessThan(3.1);
+      for (const [a, b] of crystalBonds(c)) expect(atomDistance(c, a, b), id).toBeLessThan(3.1);
     }
   });
 

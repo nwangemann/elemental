@@ -2,7 +2,8 @@
 // molecules from PubChem's computed 3D conformers, lattices as small chunks cut from
 // Crystallography Open Database structures, and a few drawn by hand where neither source
 // has one. Free of zod, so the app can import the types and helpers.
-import { cellCounts, cutChunk, chunkBonds, fillCell, type Cif } from './cif.ts';
+import { cellCounts, cutChunk, fillCell, type Cif } from './cif.ts';
+import { pairKey } from '../forming.ts';
 import type { LatticeSpec } from './source.ts';
 
 /** A molecule's atoms and bonds. Coordinates in ångström, centred on the atoms' mean. */
@@ -118,13 +119,25 @@ export function shapeCounts(shape: MoleculeShape): Map<string, number> {
 }
 
 /** Distance in Å between two atoms of a shape. */
-export function atomDistance(shape: MoleculeShape, i: number, j: number): number {
+export function atomDistance(
+  shape: { readonly xyz: readonly number[] },
+  i: number,
+  j: number,
+): number {
   const d = [0, 1, 2].map((k) => shape.xyz[i * 3 + k]! - shape.xyz[j * 3 + k]!);
   return Math.hypot(...d);
 }
 
-/** A lattice or alloy chunk: a molecule-like shape plus where it came from. */
-export interface CrystalShape extends MoleculeShape {
+/**
+ * A lattice or alloy chunk. Its bonds are not stored: `crystalBonds` (`core/forming.ts`) finds them from `pairs`,
+ * which keeps the shipped file small (a chunk's bond list is longer than its atoms).
+ */
+export interface CrystalShape {
+  elements: string[];
+  /** x, y, z per atom, flattened, rounded to 0.01 Å. */
+  xyz: number[];
+  /** The longest bond in Å for each element pair that bonds, keyed by `pairKey` (`core/forming.ts`). */
+  pairs: Record<string, number>;
   /** "COD 1000041", or "hand" for a chunk built here. */
   source: string;
 }
@@ -167,9 +180,10 @@ function cubicMetal(packing: 'bcc' | 'fcc', a: number, radius: number): [number,
 function handCrystal(
   elements: string[],
   points: [number, number, number][],
-  bonds: [number, number, number][],
+  pairs: Record<string, number>,
 ): CrystalShape {
-  return { ...centre(elements, points, bonds), source: 'hand' };
+  const { xyz } = centre(elements, points, []);
+  return { elements, xyz, pairs, source: 'hand' };
 }
 
 /**
@@ -192,13 +206,13 @@ export const HAND_CRYSTALS: Readonly<Record<string, CrystalShape>> = (() => {
         [0, 0, 0],
         [1.69, 0, 0],
       ],
-      [[1, 2, 1]],
+      { [pairKey('Cl', 'O')]: 1.7 },
     ),
-    steel: handCrystal([...iron.map(() => 'Fe'), 'C'], [...iron, [2.8665 / 2, 0, 0]], []),
+    steel: handCrystal([...iron.map(() => 'Fe'), 'C'], [...iron, [2.8665 / 2, 0, 0]], {}),
     bronze: handCrystal(
       copper.map((_, i) => (i === 5 || i === 14 ? 'Sn' : 'Cu')),
       copper,
-      [],
+      {},
     ),
   };
 })();
@@ -232,11 +246,10 @@ export function buildCrystal(
     throw new Error(`${id}: chunk misses an element; widen its radius`);
   if (chunk.length < 8 || chunk.length > 80)
     throw new Error(`${id}: chunk has ${chunk.length} atoms; aim for 8–80`);
-  const bonds = chunkBonds(chunk, spec.bonds).map(([a, b]): [number, number, number] => [a, b, 1]);
   return {
     elements: chunk.map((a) => a.symbol),
     xyz: chunk.flatMap((a) => a.p.map(round)),
-    bonds,
+    pairs: Object.fromEntries(spec.bonds.map(([a, b, limit]) => [pairKey(a, b), limit])),
     source: `COD ${spec.cod}`,
   };
 }

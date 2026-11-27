@@ -1,15 +1,346 @@
-[
-  {
-    "id": "water",
-    "name": "Water",
-    "formula": "H₂O",
-    "cid": 962,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 1,
-    "contexts": ["body", "air", "kitchen"],
-    "starter": true,
-    "elements": [
+{
+  "id": [
+    "water",
+    "table-salt",
+    "carbon-dioxide",
+    "oxygen",
+    "nitrogen",
+    "glucose",
+    "sucrose",
+    "methane",
+    "calcium-carbonate",
+    "quartz",
+    "rust",
+    "ethanol",
+    "acetic-acid",
+    "baking-soda",
+    "caffeine",
+    "citric-acid",
+    "ammonia",
+    "bleach",
+    "hydrogen",
+    "argon",
+    "ozone",
+    "lactic-acid",
+    "urea",
+    "glycine",
+    "adenine",
+    "hydroxyapatite",
+    "lime",
+    "titanium-dioxide",
+    "corundum",
+    "magnetite",
+    "pyrite",
+    "hydrogen-sulfide",
+    "steel",
+    "bronze",
+    "dimethyl-ether",
+    "hydrogen-peroxide",
+    "carbon-monoxide",
+    "nitrogen-dioxide",
+    "chlorine",
+    "sulfuric-acid"
+  ],
+  "name": [
+    "Water",
+    "Table salt",
+    "Carbon dioxide",
+    "Oxygen gas",
+    "Nitrogen gas",
+    "Glucose",
+    "Sugar (sucrose)",
+    "Methane",
+    "Calcium carbonate",
+    "Quartz",
+    "Rust",
+    "Ethanol",
+    "Acetic acid (vinegar)",
+    "Baking soda",
+    "Caffeine",
+    "Citric acid",
+    "Ammonia",
+    "Bleach (sodium hypochlorite)",
+    "Hydrogen gas",
+    "Argon",
+    "Ozone",
+    "Lactic acid",
+    "Urea",
+    "Glycine",
+    "Adenine",
+    "Hydroxyapatite (bone mineral)",
+    "Quicklime",
+    "Titanium dioxide",
+    "Corundum",
+    "Magnetite",
+    "Pyrite (fool's gold)",
+    "Hydrogen sulfide",
+    "Steel",
+    "Bronze",
+    "Dimethyl ether",
+    "Hydrogen peroxide",
+    "Carbon monoxide",
+    "Nitrogen dioxide",
+    "Chlorine gas",
+    "Sulfuric acid"
+  ],
+  "formula": [
+    "H₂O",
+    "NaCl",
+    "CO₂",
+    "O₂",
+    "N₂",
+    "C₆H₁₂O₆",
+    "C₁₂H₂₂O₁₁",
+    "CH₄",
+    "CaCO₃",
+    "SiO₂",
+    "Fe₂O₃",
+    "C₂H₆O",
+    "C₂H₄O₂",
+    "NaHCO₃",
+    "C₈H₁₀N₄O₂",
+    "C₆H₈O₇",
+    "NH₃",
+    "NaClO",
+    "H₂",
+    "Ar",
+    "O₃",
+    "C₃H₆O₃",
+    "CH₄N₂O",
+    "C₂H₅NO₂",
+    "C₅H₅N₅",
+    "Ca₅(PO₄)₃(OH)",
+    "CaO",
+    "TiO₂",
+    "Al₂O₃",
+    "Fe₃O₄",
+    "FeS₂",
+    "H₂S",
+    "Fe + C",
+    "Cu + Sn",
+    "C₂H₆O",
+    "H₂O₂",
+    "CO",
+    "NO₂",
+    "Cl₂",
+    "H₂SO₄"
+  ],
+  "cid": [
+    962,
+    5234,
+    280,
+    977,
+    947,
+    5793,
+    5988,
+    297,
+    10112,
+    24261,
+    518696,
+    702,
+    176,
+    516892,
+    2519,
+    311,
+    222,
+    23665760,
+    783,
+    23968,
+    24823,
+    612,
+    1176,
+    750,
+    190,
+    14781,
+    14778,
+    26042,
+    9989226,
+    16211978,
+    14788,
+    402,
+    null,
+    null,
+    8254,
+    784,
+    281,
+    3032552,
+    24526,
+    1118
+  ],
+  "kind": [
+    "molecule",
+    "lattice",
+    "molecule",
+    "molecule",
+    "molecule",
+    "molecule",
+    "molecule",
+    "molecule",
+    "lattice",
+    "lattice",
+    "lattice",
+    "molecule",
+    "molecule",
+    "lattice",
+    "molecule",
+    "molecule",
+    "molecule",
+    "lattice",
+    "molecule",
+    "atom",
+    "molecule",
+    "molecule",
+    "molecule",
+    "molecule",
+    "molecule",
+    "lattice",
+    "lattice",
+    "lattice",
+    "lattice",
+    "lattice",
+    "lattice",
+    "molecule",
+    "alloy",
+    "alloy",
+    "molecule",
+    "molecule",
+    "molecule",
+    "molecule",
+    "molecule",
+    "molecule"
+  ],
+  "bond": [
+    "shares",
+    "transfers",
+    "shares",
+    "shares",
+    "shares",
+    "shares",
+    "shares",
+    "shares",
+    "transfers",
+    "shares",
+    "transfers",
+    "shares",
+    "shares",
+    "transfers",
+    "shares",
+    "shares",
+    "shares",
+    "transfers",
+    "shares",
+    "none",
+    "shares",
+    "shares",
+    "shares",
+    "shares",
+    "shares",
+    "transfers",
+    "transfers",
+    "transfers",
+    "transfers",
+    "transfers",
+    "transfers",
+    "shares",
+    "metal",
+    "metal",
+    "shares",
+    "shares",
+    "shares",
+    "shares",
+    "shares",
+    "shares"
+  ],
+  "rank": [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+    27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
+  ],
+  "contexts": [
+    ["body", "air", "kitchen"],
+    ["body", "kitchen"],
+    ["body", "air"],
+    ["air"],
+    ["air"],
+    ["body"],
+    ["kitchen"],
+    ["kitchen"],
+    ["kitchen", "earth"],
+    ["earth"],
+    ["earth"],
+    ["kitchen"],
+    ["kitchen"],
+    ["kitchen"],
+    ["kitchen"],
+    ["kitchen"],
+    ["kitchen"],
+    ["kitchen"],
+    [],
+    ["air"],
+    ["air"],
+    ["body"],
+    ["body"],
+    ["body"],
+    ["body"],
+    ["body"],
+    ["earth"],
+    ["earth"],
+    ["earth"],
+    ["earth"],
+    ["earth"],
+    ["earth"],
+    ["earth"],
+    ["earth"],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "starter": [
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "elements": [
+    [
       {
         "symbol": "H",
         "count": 2
@@ -19,25 +350,7 @@
         "count": 1
       }
     ],
-    "atoms": 3,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["ice", "oceans"],
-    "where": "Every glass you drink, every cloud, and about 60 % of you.",
-    "why": "Oxygen shares a pair of electrons with each hydrogen, and its other electrons push the two hydrogens into a bent shape.",
-    "note": null
-  },
-  {
-    "id": "table-salt",
-    "name": "Table salt",
-    "formula": "NaCl",
-    "cid": 5234,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 2,
-    "contexts": ["body", "kitchen"],
-    "starter": true,
-    "elements": [
+    [
       {
         "symbol": "Na",
         "count": 1
@@ -47,25 +360,7 @@
         "count": 1
       }
     ],
-    "atoms": 2,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["the ocean", "nerve signals"],
-    "where": "On food, and dissolved in your blood, your sweat and the sea.",
-    "why": "Sodium hands one electron to chlorine; the two end up with opposite charges, and opposite charges cling.",
-    "note": "There is no single salt molecule: sodium and chloride ions (charged atoms) stack into a cube, millions at a time."
-  },
-  {
-    "id": "carbon-dioxide",
-    "name": "Carbon dioxide",
-    "formula": "CO₂",
-    "cid": 280,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 3,
-    "contexts": ["body", "air"],
-    "starter": true,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 1
@@ -75,73 +370,19 @@
         "count": 2
       }
     ],
-    "atoms": 3,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["plants", "fizzy drinks"],
-    "where": "In every breath you breathe out, and in the bubbles of a fizzy drink.",
-    "why": "Carbon shares two pairs of electrons with each oxygen (a double bond), so the three atoms sit in a straight line.",
-    "note": null
-  },
-  {
-    "id": "oxygen",
-    "name": "Oxygen gas",
-    "formula": "O₂",
-    "cid": 977,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 4,
-    "contexts": ["air"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "O",
         "count": 2
       }
     ],
-    "atoms": 2,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["breathing", "fire"],
-    "where": "About a fifth of the air: the part your lungs are after.",
-    "why": "An oxygen atom is two electrons short of a full outer shell, so two of them share two pairs and both are satisfied.",
-    "note": "An element can pair with itself: the oxygen you breathe is two oxygen atoms bonded together."
-  },
-  {
-    "id": "nitrogen",
-    "name": "Nitrogen gas",
-    "formula": "N₂",
-    "cid": 947,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 5,
-    "contexts": ["air"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "N",
         "count": 2
       }
     ],
-    "atoms": 2,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["fertiliser", "proteins"],
-    "where": "About four fifths of every breath, passing in and out unused.",
-    "why": "Two nitrogens share three pairs of electrons (a triple bond), one of the strongest bonds there is, so the gas barely reacts.",
-    "note": null
-  },
-  {
-    "id": "glucose",
-    "name": "Glucose",
-    "formula": "C₆H₁₂O₆",
-    "cid": 5793,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 6,
-    "contexts": ["body"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 6
@@ -155,25 +396,7 @@
         "count": 6
       }
     ],
-    "atoms": 24,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["starch and bread", "wood and cotton"],
-    "where": "The sugar in your blood, made by plants from sunlight, and the fuel your cells burn.",
-    "why": "Carbon atoms share electrons in a ring with one oxygen, and the hydrogens and other oxygens hang off its sides.",
-    "note": null
-  },
-  {
-    "id": "sucrose",
-    "name": "Sugar (sucrose)",
-    "formula": "C₁₂H₂₂O₁₁",
-    "cid": 5988,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 7,
-    "contexts": ["kitchen"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 12
@@ -187,25 +410,7 @@
         "count": 11
       }
     ],
-    "atoms": 45,
-    "carryable": false,
-    "isomers": [],
-    "leadsTo": ["caramel", "glucose"],
-    "where": "The white sugar in the bowl, pressed from sugar cane or beet.",
-    "why": "Two smaller sugar rings, glucose and fructose, are joined through a shared oxygen atom.",
-    "note": null
-  },
-  {
-    "id": "methane",
-    "name": "Methane",
-    "formula": "CH₄",
-    "cid": 297,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 8,
-    "contexts": ["kitchen"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 1
@@ -215,25 +420,7 @@
         "count": 4
       }
     ],
-    "atoms": 5,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["natural gas", "cow burps"],
-    "where": "The gas that burns on a gas stove, and what cows and swamps give off.",
-    "why": "Carbon shares one pair of electrons with each of four hydrogens, which spread out as far apart as they can, like a tripod with a mast.",
-    "note": null
-  },
-  {
-    "id": "calcium-carbonate",
-    "name": "Calcium carbonate",
-    "formula": "CaCO₃",
-    "cid": 10112,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 9,
-    "contexts": ["kitchen", "earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Ca",
         "count": 1
@@ -247,25 +434,7 @@
         "count": 3
       }
     ],
-    "atoms": 5,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["limestone and marble", "lime and concrete"],
-    "where": "Eggshells, seashells, chalk, limestone and marble.",
-    "why": "Calcium hands two electrons to a carbonate group (one carbon sharing electrons with three oxygens), and the charges cling.",
-    "note": "It forms a crystal, not single molecules: calcium ions and carbonate groups stack in a repeating pattern."
-  },
-  {
-    "id": "quartz",
-    "name": "Quartz",
-    "formula": "SiO₂",
-    "cid": 24261,
-    "kind": "lattice",
-    "bond": "shares",
-    "rank": 10,
-    "contexts": ["earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Si",
         "count": 1
@@ -275,25 +444,7 @@
         "count": 2
       }
     ],
-    "atoms": 3,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["sand", "glass"],
-    "where": "Most of the sand on a beach, and the raw stuff of glass.",
-    "why": "Each silicon shares electrons with four oxygens, and each oxygen bridges two silicons, so the whole crystal is one web.",
-    "note": "There is no single SiO₂ molecule: the bonds go on in every direction, which is why quartz is so hard."
-  },
-  {
-    "id": "rust",
-    "name": "Rust",
-    "formula": "Fe₂O₃",
-    "cid": 518696,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 11,
-    "contexts": ["earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Fe",
         "count": 2
@@ -303,25 +454,7 @@
         "count": 3
       }
     ],
-    "atoms": 5,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["red soil", "iron ore"],
-    "where": "On old bikes and nails, and the red in red soil and on Mars.",
-    "why": "Forms when iron meets water and air over time: iron hands electrons to oxygen, and the charged atoms pack into a crystal.",
-    "note": "Two iron to three oxygen is the ratio in which the charges balance."
-  },
-  {
-    "id": "ethanol",
-    "name": "Ethanol",
-    "formula": "C₂H₆O",
-    "cid": 702,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 12,
-    "contexts": ["kitchen"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 2
@@ -335,25 +468,7 @@
         "count": 1
       }
     ],
-    "atoms": 9,
-    "carryable": true,
-    "isomers": ["dimethyl-ether"],
-    "leadsTo": ["wine and beer", "hand gel"],
-    "where": "The alcohol in wine and beer, made by yeast eating sugar.",
-    "why": "Two carbons share a bond, and the oxygen sits at one end holding a hydrogen, which lets it mix with water.",
-    "note": "Same atoms, different shape: dimethyl ether is also C₂H₆O, with the oxygen in the middle, and it is a gas."
-  },
-  {
-    "id": "acetic-acid",
-    "name": "Acetic acid (vinegar)",
-    "formula": "C₂H₄O₂",
-    "cid": 176,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 13,
-    "contexts": ["kitchen"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 2
@@ -367,25 +482,7 @@
         "count": 2
       }
     ],
-    "atoms": 8,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["vinegar", "pickles"],
-    "where": "What makes vinegar sour: about 5 % of it, the rest is water.",
-    "why": "Two carbons share a bond; one holds two oxygens, and the hydrogen on one of them comes away easily in water, which is what makes it an acid.",
-    "note": null
-  },
-  {
-    "id": "baking-soda",
-    "name": "Baking soda",
-    "formula": "NaHCO₃",
-    "cid": 516892,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 14,
-    "contexts": ["kitchen"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Na",
         "count": 1
@@ -403,25 +500,7 @@
         "count": 3
       }
     ],
-    "atoms": 6,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["rising cakes", "carbon dioxide"],
-    "where": "In cakes and bread, where it gives off carbon dioxide bubbles when it meets an acid.",
-    "why": "Sodium hands one electron to a bicarbonate group (carbon, oxygen and hydrogen sharing electrons), and the charges cling.",
-    "note": "A crystal of sodium ions and bicarbonate groups, not single molecules."
-  },
-  {
-    "id": "caffeine",
-    "name": "Caffeine",
-    "formula": "C₈H₁₀N₄O₂",
-    "cid": 2519,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 15,
-    "contexts": ["kitchen"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 8
@@ -439,25 +518,7 @@
         "count": 2
       }
     ],
-    "atoms": 24,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["coffee and tea", "alertness"],
-    "where": "In coffee, tea and chocolate, where plants make it to put off insects.",
-    "why": "Carbon and nitrogen atoms share electrons in two joined rings, with oxygens and small carbon groups on the edges.",
-    "note": null
-  },
-  {
-    "id": "citric-acid",
-    "name": "Citric acid",
-    "formula": "C₆H₈O₇",
-    "cid": 311,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 16,
-    "contexts": ["kitchen"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 6
@@ -471,25 +532,7 @@
         "count": 7
       }
     ],
-    "atoms": 21,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["lemons", "sherbet fizz"],
-    "where": "The sour in lemons and limes.",
-    "why": "A short carbon chain shares electrons with three acid groups, each with a hydrogen that comes away in water.",
-    "note": null
-  },
-  {
-    "id": "ammonia",
-    "name": "Ammonia",
-    "formula": "NH₃",
-    "cid": 222,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 17,
-    "contexts": ["kitchen"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "N",
         "count": 1
@@ -499,25 +542,7 @@
         "count": 3
       }
     ],
-    "atoms": 4,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["fertiliser", "glass cleaner"],
-    "where": "The sharp smell in some glass cleaners, and the start of most fertiliser.",
-    "why": "Nitrogen shares one pair of electrons with each of three hydrogens; its spare pair pushes them into a low pyramid.",
-    "note": null
-  },
-  {
-    "id": "bleach",
-    "name": "Bleach (sodium hypochlorite)",
-    "formula": "NaClO",
-    "cid": 23665760,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 18,
-    "contexts": ["kitchen"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Na",
         "count": 1
@@ -531,97 +556,25 @@
         "count": 1
       }
     ],
-    "atoms": 3,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["clean water", "disinfectant"],
-    "where": "Household bleach: a few percent of it dissolved in water.",
-    "why": "Sodium hands one electron to a hypochlorite group (chlorine sharing electrons with oxygen), which grabs electrons from stains and germs.",
-    "note": "As a solid it is a crystal of ions (charged atoms); you meet it dissolved."
-  },
-  {
-    "id": "hydrogen",
-    "name": "Hydrogen gas",
-    "formula": "H₂",
-    "cid": 783,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 19,
-    "contexts": [],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "H",
         "count": 2
       }
     ],
-    "atoms": 2,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["the Sun", "water"],
-    "where": "The lightest gas; most of the Sun, and a fuel that burns to plain water.",
-    "why": "Each hydrogen has one electron; two of them share their electrons as a pair, and both are satisfied.",
-    "note": "An element can pair with itself: hydrogen gas is two hydrogen atoms bonded together."
-  },
-  {
-    "id": "argon",
-    "name": "Argon",
-    "formula": "Ar",
-    "cid": 23968,
-    "kind": "atom",
-    "bond": "none",
-    "rank": 20,
-    "contexts": ["air"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Ar",
         "count": 1
       }
     ],
-    "atoms": 1,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["light bulbs", "welding"],
-    "where": "Nearly 1 % of the air you breathe, passing through untouched.",
-    "why": "Its outer shell of electrons is already full, so it has nothing to share or hand over.",
-    "note": "Argon stays on its own: noble gases (the last column) almost never combine."
-  },
-  {
-    "id": "ozone",
-    "name": "Ozone",
-    "formula": "O₃",
-    "cid": 24823,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 21,
-    "contexts": ["air"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "O",
         "count": 3
       }
     ],
-    "atoms": 3,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["the ozone layer", "sunburn protection"],
-    "where": "High in the sky, where a thin layer of it blocks most of the Sun's harshest light.",
-    "why": "Three oxygens share electrons in a bent chain; the bonds are strained, so ozone breaks apart easily.",
-    "note": "The same element, a different count: three oxygens make ozone, two make the oxygen you breathe."
-  },
-  {
-    "id": "lactic-acid",
-    "name": "Lactic acid",
-    "formula": "C₃H₆O₃",
-    "cid": 612,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 22,
-    "contexts": ["body"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 3
@@ -635,25 +588,7 @@
         "count": 3
       }
     ],
-    "atoms": 12,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["yoghurt", "tired muscles"],
-    "where": "In working muscles, and the tang in yoghurt and sourdough.",
-    "why": "A three-carbon chain shares electrons with an acid group at one end, whose hydrogen comes away in water.",
-    "note": null
-  },
-  {
-    "id": "urea",
-    "name": "Urea",
-    "formula": "CH₄N₂O",
-    "cid": 1176,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 23,
-    "contexts": ["body"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 1
@@ -671,25 +606,7 @@
         "count": 1
       }
     ],
-    "atoms": 8,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["fertiliser", "the kidneys"],
-    "where": "How your body gets rid of spare nitrogen, in urine; also a farm fertiliser.",
-    "why": "One carbon shares a double bond with oxygen and single bonds with two nitrogens, each holding two hydrogens.",
-    "note": "The first body chemical made in a lab (1828), which showed life's molecules follow the same rules as everything else."
-  },
-  {
-    "id": "glycine",
-    "name": "Glycine",
-    "formula": "C₂H₅NO₂",
-    "cid": 750,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 24,
-    "contexts": ["body"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 2
@@ -707,25 +624,7 @@
         "count": 2
       }
     ],
-    "atoms": 10,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["proteins", "muscle and enzymes"],
-    "where": "The simplest amino acid: a building block of every protein in you.",
-    "why": "Two carbons share a bond; one carries a nitrogen group, the other an acid group, and those ends link amino acids into chains.",
-    "note": null
-  },
-  {
-    "id": "adenine",
-    "name": "Adenine",
-    "formula": "C₅H₅N₅",
-    "cid": 190,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 25,
-    "contexts": ["body"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 5
@@ -739,25 +638,7 @@
         "count": 5
       }
     ],
-    "atoms": 15,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["DNA", "energy in cells"],
-    "where": "The \"A\" of DNA's four letters, in every cell you have.",
-    "why": "Carbons and nitrogens share electrons in two joined rings, flat like a tile, which lets it stack inside DNA.",
-    "note": null
-  },
-  {
-    "id": "hydroxyapatite",
-    "name": "Hydroxyapatite (bone mineral)",
-    "formula": "Ca₅(PO₄)₃(OH)",
-    "cid": 14781,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 26,
-    "contexts": ["body"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Ca",
         "count": 5
@@ -775,25 +656,7 @@
         "count": 1
       }
     ],
-    "atoms": 22,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["bones", "tooth enamel"],
-    "where": "The hard part of your bones, and almost all of your tooth enamel.",
-    "why": "Calcium hands electrons to phosphate groups (phosphorus sharing electrons with four oxygens) and to hydroxide (an oxygen holding a hydrogen).",
-    "note": "A calcium phosphate crystal. Bone grows tiny crystals of it on a mesh of protein, which is why bone is hard but not brittle."
-  },
-  {
-    "id": "lime",
-    "name": "Quicklime",
-    "formula": "CaO",
-    "cid": 14778,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 27,
-    "contexts": ["earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Ca",
         "count": 1
@@ -803,25 +666,7 @@
         "count": 1
       }
     ],
-    "atoms": 2,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["cement", "concrete"],
-    "where": "Made by roasting limestone; the start of cement and mortar.",
-    "why": "Calcium hands two electrons to oxygen, and the two charged atoms stack like table salt.",
-    "note": "A crystal of calcium and oxide ions (charged atoms), with the same cube pattern as table salt."
-  },
-  {
-    "id": "titanium-dioxide",
-    "name": "Titanium dioxide",
-    "formula": "TiO₂",
-    "cid": 26042,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 28,
-    "contexts": ["earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Ti",
         "count": 1
@@ -831,25 +676,7 @@
         "count": 2
       }
     ],
-    "atoms": 3,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["white paint", "sunscreen"],
-    "where": "The bright white in most paint, toothpaste and mineral sunscreen.",
-    "why": "Titanium hands electrons to two oxygens, and the charged atoms pack tightly into a crystal that scatters light.",
-    "note": "A crystal, not single molecules."
-  },
-  {
-    "id": "corundum",
-    "name": "Corundum",
-    "formula": "Al₂O₃",
-    "cid": 9989226,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 29,
-    "contexts": ["earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Al",
         "count": 2
@@ -859,25 +686,7 @@
         "count": 3
       }
     ],
-    "atoms": 5,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["ruby and sapphire", "sandpaper"],
-    "where": "Ruby and sapphire are this, coloured by a trace of another metal; and the same oxide forms the thin skin on aluminium foil.",
-    "why": "Aluminium hands electrons to oxygen, and the tightly packed charged atoms make one of the hardest minerals.",
-    "note": "Two aluminium to three oxygen is the ratio in which the charges balance."
-  },
-  {
-    "id": "magnetite",
-    "name": "Magnetite",
-    "formula": "Fe₃O₄",
-    "cid": 16211978,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 30,
-    "contexts": ["earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Fe",
         "count": 3
@@ -887,25 +696,7 @@
         "count": 4
       }
     ],
-    "atoms": 7,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["compasses", "iron ore"],
-    "where": "A black iron ore that is naturally magnetic: the first compasses used it.",
-    "why": "Iron hands electrons to oxygen in two different amounts, two or three each, and the mix packs into a magnetic crystal.",
-    "note": "Like rust, but with less oxygen: three iron to four oxygen."
-  },
-  {
-    "id": "pyrite",
-    "name": "Pyrite (fool's gold)",
-    "formula": "FeS₂",
-    "cid": 14788,
-    "kind": "lattice",
-    "bond": "transfers",
-    "rank": 31,
-    "contexts": ["earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Fe",
         "count": 1
@@ -915,25 +706,7 @@
         "count": 2
       }
     ],
-    "atoms": 3,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["sulfuric acid", "sparks when struck"],
-    "where": "Shiny gold-coloured cubes in rock, called fool's gold.",
-    "why": "Iron hands electrons to pairs of sulfur atoms, which share electrons with each other, and the crystal grows as cubes.",
-    "note": "The cube-shaped crystals you can find in rock are the lattice, grown large."
-  },
-  {
-    "id": "hydrogen-sulfide",
-    "name": "Hydrogen sulfide",
-    "formula": "H₂S",
-    "cid": 402,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 32,
-    "contexts": ["earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "H",
         "count": 2
@@ -943,25 +716,7 @@
         "count": 1
       }
     ],
-    "atoms": 3,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["volcanoes", "rotten eggs"],
-    "where": "The rotten-egg smell of volcanoes and hot springs.",
-    "why": "Like water, with sulfur in oxygen's place: sulfur shares a pair of electrons with each hydrogen, in a bent shape.",
-    "note": null
-  },
-  {
-    "id": "steel",
-    "name": "Steel",
-    "formula": "Fe + C",
-    "cid": null,
-    "kind": "alloy",
-    "bond": "metal",
-    "rank": 33,
-    "contexts": ["earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Fe",
         "count": null
@@ -971,25 +726,7 @@
         "count": null
       }
     ],
-    "atoms": null,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["bridges and rails", "cutlery"],
-    "where": "Bridges, cars, rails, knives: the most used metal there is.",
-    "why": "Iron atoms share a sea of loose electrons; small carbon atoms tucked between them stop the layers sliding, so it is much harder than iron.",
-    "note": "Steel has no fixed formula: it is iron with up to about 2 % carbon. A mix of metals like this is an alloy, not a compound."
-  },
-  {
-    "id": "bronze",
-    "name": "Bronze",
-    "formula": "Cu + Sn",
-    "cid": null,
-    "kind": "alloy",
-    "bond": "metal",
-    "rank": 34,
-    "contexts": ["earth"],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Cu",
         "count": null
@@ -999,25 +736,7 @@
         "count": null
       }
     ],
-    "atoms": null,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["the Bronze Age", "bells and medals"],
-    "where": "Statues, bells and medals; the first alloy people made, about 5,000 years ago.",
-    "why": "Copper and tin atoms share a sea of loose electrons; the bigger tin atoms jam the layers, so bronze is harder than either.",
-    "note": "Bronze has no fixed formula: usually about nine parts copper to one of tin. An alloy is a mix, not a compound."
-  },
-  {
-    "id": "dimethyl-ether",
-    "name": "Dimethyl ether",
-    "formula": "C₂H₆O",
-    "cid": 8254,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 35,
-    "contexts": [],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 2
@@ -1031,25 +750,7 @@
         "count": 1
       }
     ],
-    "atoms": 9,
-    "carryable": true,
-    "isomers": ["ethanol"],
-    "leadsTo": ["spray cans", "clean fuel"],
-    "where": "A gas used to push the spray out of some aerosol cans.",
-    "why": "The oxygen sits between two carbons and holds no hydrogen of its own, so unlike ethanol it boils away below freezing.",
-    "note": "Same atoms, different shape: ethanol is also C₂H₆O, with the oxygen at the end, and it is a liquid."
-  },
-  {
-    "id": "hydrogen-peroxide",
-    "name": "Hydrogen peroxide",
-    "formula": "H₂O₂",
-    "cid": 784,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 36,
-    "contexts": [],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "H",
         "count": 2
@@ -1059,25 +760,7 @@
         "count": 2
       }
     ],
-    "atoms": 4,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["hair bleach", "cleaning cuts"],
-    "where": "A mild bleach and disinfectant, fizzing on a cut.",
-    "why": "Water with one more oxygen: two oxygens share a weak bond, which breaks easily and gives off oxygen.",
-    "note": null
-  },
-  {
-    "id": "carbon-monoxide",
-    "name": "Carbon monoxide",
-    "formula": "CO",
-    "cid": 281,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 37,
-    "contexts": [],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "C",
         "count": 1
@@ -1087,25 +770,7 @@
         "count": 1
       }
     ],
-    "atoms": 2,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["smoke alarms", "iron smelting"],
-    "where": "From fires and engines that burn without enough air; poisonous and without smell.",
-    "why": "Carbon and oxygen share three pairs of electrons; it clings to your blood more tightly than oxygen does.",
-    "note": null
-  },
-  {
-    "id": "nitrogen-dioxide",
-    "name": "Nitrogen dioxide",
-    "formula": "NO₂",
-    "cid": 3032552,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 38,
-    "contexts": [],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "N",
         "count": 1
@@ -1115,49 +780,13 @@
         "count": 2
       }
     ],
-    "atoms": 3,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["smog", "acid rain"],
-    "where": "The brown haze of city smog, from hot engines.",
-    "why": "Nitrogen shares electrons with two oxygens but is left with one unpaired electron, which makes it eager to react.",
-    "note": null
-  },
-  {
-    "id": "chlorine",
-    "name": "Chlorine gas",
-    "formula": "Cl₂",
-    "cid": 24526,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 39,
-    "contexts": [],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "Cl",
         "count": 2
       }
     ],
-    "atoms": 2,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["clean pools", "table salt"],
-    "where": "A yellow-green gas used to keep pools and tap water free of germs.",
-    "why": "Each chlorine is one electron short of a full outer shell, so two of them share one pair.",
-    "note": "An element can pair with itself: chlorine gas is two chlorine atoms bonded together."
-  },
-  {
-    "id": "sulfuric-acid",
-    "name": "Sulfuric acid",
-    "formula": "H₂SO₄",
-    "cid": 1118,
-    "kind": "molecule",
-    "bond": "shares",
-    "rank": 40,
-    "contexts": [],
-    "starter": false,
-    "elements": [
+    [
       {
         "symbol": "H",
         "count": 2
@@ -1170,13 +799,300 @@
         "symbol": "O",
         "count": 4
       }
-    ],
-    "atoms": 7,
-    "carryable": true,
-    "isomers": [],
-    "leadsTo": ["car batteries", "fertiliser"],
-    "where": "In car batteries, and the most made chemical in industry.",
-    "why": "Sulfur shares electrons with four oxygens; two of them hold hydrogens that come away in water, which makes it a strong acid.",
-    "note": null
-  }
-]
+    ]
+  ],
+  "atoms": [
+    3,
+    2,
+    3,
+    2,
+    2,
+    24,
+    45,
+    5,
+    5,
+    3,
+    5,
+    9,
+    8,
+    6,
+    24,
+    21,
+    4,
+    3,
+    2,
+    1,
+    3,
+    12,
+    8,
+    10,
+    15,
+    22,
+    2,
+    3,
+    5,
+    7,
+    3,
+    3,
+    null,
+    null,
+    9,
+    4,
+    2,
+    3,
+    2,
+    7
+  ],
+  "carryable": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "isomers": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    ["dimethyl-ether"],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    ["ethanol"],
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "leadsTo": [
+    ["ice", "oceans"],
+    ["the ocean", "nerve signals"],
+    ["plants", "fizzy drinks"],
+    ["breathing", "fire"],
+    ["fertiliser", "proteins"],
+    ["starch and bread", "wood and cotton"],
+    ["caramel", "glucose"],
+    ["natural gas", "cow burps"],
+    ["limestone and marble", "lime and concrete"],
+    ["sand", "glass"],
+    ["red soil", "iron ore"],
+    ["wine and beer", "hand gel"],
+    ["vinegar", "pickles"],
+    ["rising cakes", "carbon dioxide"],
+    ["coffee and tea", "alertness"],
+    ["lemons", "sherbet fizz"],
+    ["fertiliser", "glass cleaner"],
+    ["clean water", "disinfectant"],
+    ["the Sun", "water"],
+    ["light bulbs", "welding"],
+    ["the ozone layer", "sunburn protection"],
+    ["yoghurt", "tired muscles"],
+    ["fertiliser", "the kidneys"],
+    ["proteins", "muscle and enzymes"],
+    ["DNA", "energy in cells"],
+    ["bones", "tooth enamel"],
+    ["cement", "concrete"],
+    ["white paint", "sunscreen"],
+    ["ruby and sapphire", "sandpaper"],
+    ["compasses", "iron ore"],
+    ["sulfuric acid", "sparks when struck"],
+    ["volcanoes", "rotten eggs"],
+    ["bridges and rails", "cutlery"],
+    ["the Bronze Age", "bells and medals"],
+    ["spray cans", "clean fuel"],
+    ["hair bleach", "cleaning cuts"],
+    ["smoke alarms", "iron smelting"],
+    ["smog", "acid rain"],
+    ["clean pools", "table salt"],
+    ["car batteries", "fertiliser"]
+  ],
+  "where": [
+    "Every glass you drink, every cloud, and about 60 % of you.",
+    "On food, and dissolved in your blood, your sweat and the sea.",
+    "In every breath you breathe out, and in the bubbles of a fizzy drink.",
+    "About a fifth of the air: the part your lungs are after.",
+    "About four fifths of every breath, passing in and out unused.",
+    "The sugar in your blood, made by plants from sunlight, and the fuel your cells burn.",
+    "The white sugar in the bowl, pressed from sugar cane or beet.",
+    "The gas that burns on a gas stove, and what cows and swamps give off.",
+    "Eggshells, seashells, chalk, limestone and marble.",
+    "Most of the sand on a beach, and the raw stuff of glass.",
+    "On old bikes and nails, and the red in red soil and on Mars.",
+    "The alcohol in wine and beer, made by yeast eating sugar.",
+    "What makes vinegar sour: about 5 % of it, the rest is water.",
+    "In cakes and bread, where it gives off carbon dioxide bubbles when it meets an acid.",
+    "In coffee, tea and chocolate, where plants make it to put off insects.",
+    "The sour in lemons and limes.",
+    "The sharp smell in some glass cleaners, and the start of most fertiliser.",
+    "Household bleach: a few percent of it dissolved in water.",
+    "The lightest gas; most of the Sun, and a fuel that burns to plain water.",
+    "Nearly 1 % of the air you breathe, passing through untouched.",
+    "High in the sky, where a thin layer of it blocks most of the Sun's harshest light.",
+    "In working muscles, and the tang in yoghurt and sourdough.",
+    "How your body gets rid of spare nitrogen, in urine; also a farm fertiliser.",
+    "The simplest amino acid: a building block of every protein in you.",
+    "The \"A\" of DNA's four letters, in every cell you have.",
+    "The hard part of your bones, and almost all of your tooth enamel.",
+    "Made by roasting limestone; the start of cement and mortar.",
+    "The bright white in most paint, toothpaste and mineral sunscreen.",
+    "Ruby and sapphire are this, coloured by a trace of another metal; and the same oxide forms the thin skin on aluminium foil.",
+    "A black iron ore that is naturally magnetic: the first compasses used it.",
+    "Shiny gold-coloured cubes in rock, called fool's gold.",
+    "The rotten-egg smell of volcanoes and hot springs.",
+    "Bridges, cars, rails, knives: the most used metal there is.",
+    "Statues, bells and medals; the first alloy people made, about 5,000 years ago.",
+    "A gas used to push the spray out of some aerosol cans.",
+    "A mild bleach and disinfectant, fizzing on a cut.",
+    "From fires and engines that burn without enough air; poisonous and without smell.",
+    "The brown haze of city smog, from hot engines.",
+    "A yellow-green gas used to keep pools and tap water free of germs.",
+    "In car batteries, and the most made chemical in industry."
+  ],
+  "why": [
+    "Oxygen shares a pair of electrons with each hydrogen, and its other electrons push the two hydrogens into a bent shape.",
+    "Sodium hands one electron to chlorine; the two end up with opposite charges, and opposite charges cling.",
+    "Carbon shares two pairs of electrons with each oxygen (a double bond), so the three atoms sit in a straight line.",
+    "An oxygen atom is two electrons short of a full outer shell, so two of them share two pairs and both are satisfied.",
+    "Two nitrogens share three pairs of electrons (a triple bond), one of the strongest bonds there is, so the gas barely reacts.",
+    "Carbon atoms share electrons in a ring with one oxygen, and the hydrogens and other oxygens hang off its sides.",
+    "Two smaller sugar rings, glucose and fructose, are joined through a shared oxygen atom.",
+    "Carbon shares one pair of electrons with each of four hydrogens, which spread out as far apart as they can, like a tripod with a mast.",
+    "Calcium hands two electrons to a carbonate group (one carbon sharing electrons with three oxygens), and the charges cling.",
+    "Each silicon shares electrons with four oxygens, and each oxygen bridges two silicons, so the whole crystal is one web.",
+    "Forms when iron meets water and air over time: iron hands electrons to oxygen, and the charged atoms pack into a crystal.",
+    "Two carbons share a bond, and the oxygen sits at one end holding a hydrogen, which lets it mix with water.",
+    "Two carbons share a bond; one holds two oxygens, and the hydrogen on one of them comes away easily in water, which is what makes it an acid.",
+    "Sodium hands one electron to a bicarbonate group (carbon, oxygen and hydrogen sharing electrons), and the charges cling.",
+    "Carbon and nitrogen atoms share electrons in two joined rings, with oxygens and small carbon groups on the edges.",
+    "A short carbon chain shares electrons with three acid groups, each with a hydrogen that comes away in water.",
+    "Nitrogen shares one pair of electrons with each of three hydrogens; its spare pair pushes them into a low pyramid.",
+    "Sodium hands one electron to a hypochlorite group (chlorine sharing electrons with oxygen), which grabs electrons from stains and germs.",
+    "Each hydrogen has one electron; two of them share their electrons as a pair, and both are satisfied.",
+    "Its outer shell of electrons is already full, so it has nothing to share or hand over.",
+    "Three oxygens share electrons in a bent chain; the bonds are strained, so ozone breaks apart easily.",
+    "A three-carbon chain shares electrons with an acid group at one end, whose hydrogen comes away in water.",
+    "One carbon shares a double bond with oxygen and single bonds with two nitrogens, each holding two hydrogens.",
+    "Two carbons share a bond; one carries a nitrogen group, the other an acid group, and those ends link amino acids into chains.",
+    "Carbons and nitrogens share electrons in two joined rings, flat like a tile, which lets it stack inside DNA.",
+    "Calcium hands electrons to phosphate groups (phosphorus sharing electrons with four oxygens) and to hydroxide (an oxygen holding a hydrogen).",
+    "Calcium hands two electrons to oxygen, and the two charged atoms stack like table salt.",
+    "Titanium hands electrons to two oxygens, and the charged atoms pack tightly into a crystal that scatters light.",
+    "Aluminium hands electrons to oxygen, and the tightly packed charged atoms make one of the hardest minerals.",
+    "Iron hands electrons to oxygen in two different amounts, two or three each, and the mix packs into a magnetic crystal.",
+    "Iron hands electrons to pairs of sulfur atoms, which share electrons with each other, and the crystal grows as cubes.",
+    "Like water, with sulfur in oxygen's place: sulfur shares a pair of electrons with each hydrogen, in a bent shape.",
+    "Iron atoms share a sea of loose electrons; small carbon atoms tucked between them stop the layers sliding, so it is much harder than iron.",
+    "Copper and tin atoms share a sea of loose electrons; the bigger tin atoms jam the layers, so bronze is harder than either.",
+    "The oxygen sits between two carbons and holds no hydrogen of its own, so unlike ethanol it boils away below freezing.",
+    "Water with one more oxygen: two oxygens share a weak bond, which breaks easily and gives off oxygen.",
+    "Carbon and oxygen share three pairs of electrons; it clings to your blood more tightly than oxygen does.",
+    "Nitrogen shares electrons with two oxygens but is left with one unpaired electron, which makes it eager to react.",
+    "Each chlorine is one electron short of a full outer shell, so two of them share one pair.",
+    "Sulfur shares electrons with four oxygens; two of them hold hydrogens that come away in water, which makes it a strong acid."
+  ],
+  "note": [
+    null,
+    "There is no single salt molecule: sodium and chloride ions (charged atoms) stack into a cube, millions at a time.",
+    null,
+    "An element can pair with itself: the oxygen you breathe is two oxygen atoms bonded together.",
+    null,
+    null,
+    null,
+    null,
+    "It forms a crystal, not single molecules: calcium ions and carbonate groups stack in a repeating pattern.",
+    "There is no single SiO₂ molecule: the bonds go on in every direction, which is why quartz is so hard.",
+    "Two iron to three oxygen is the ratio in which the charges balance.",
+    "Same atoms, different shape: dimethyl ether is also C₂H₆O, with the oxygen in the middle, and it is a gas.",
+    null,
+    "A crystal of sodium ions and bicarbonate groups, not single molecules.",
+    null,
+    null,
+    null,
+    "As a solid it is a crystal of ions (charged atoms); you meet it dissolved.",
+    "An element can pair with itself: hydrogen gas is two hydrogen atoms bonded together.",
+    "Argon stays on its own: noble gases (the last column) almost never combine.",
+    "The same element, a different count: three oxygens make ozone, two make the oxygen you breathe.",
+    null,
+    "The first body chemical made in a lab (1828), which showed life's molecules follow the same rules as everything else.",
+    null,
+    null,
+    "A calcium phosphate crystal. Bone grows tiny crystals of it on a mesh of protein, which is why bone is hard but not brittle.",
+    "A crystal of calcium and oxide ions (charged atoms), with the same cube pattern as table salt.",
+    "A crystal, not single molecules.",
+    "Two aluminium to three oxygen is the ratio in which the charges balance.",
+    "Like rust, but with less oxygen: three iron to four oxygen.",
+    "The cube-shaped crystals you can find in rock are the lattice, grown large.",
+    null,
+    "Steel has no fixed formula: it is iron with up to about 2 % carbon. A mix of metals like this is an alloy, not a compound.",
+    "Bronze has no fixed formula: usually about nine parts copper to one of tin. An alloy is a mix, not a compound.",
+    "Same atoms, different shape: ethanol is also C₂H₆O, with the oxygen at the end, and it is a liquid.",
+    null,
+    null,
+    null,
+    "An element can pair with itself: chlorine gas is two chlorine atoms bonded together.",
+    null
+  ]
+}

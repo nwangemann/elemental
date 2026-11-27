@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- About 3.5 KB less JavaScript to download: the element and compound data are stored more compactly, and crystal models work out their bonds instead of shipping them. Nothing on screen changes.
+
 ## 0.3.0 — 2026-11-27
 
 Combine mode grows outward: contexts (your body, air, the kitchen, the Earth) to explore what things are made of, scale ladders, isomer and electron links on the cards, and a figure that holds up what it makes.

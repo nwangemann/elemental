@@ -38,3 +38,12 @@ Forming (the ball-and-stick models, lattice chunks and ingots) brings the baked 
 ## Amendment (2026-11-27): contexts
 
 Combine's contexts (Your body, Air, Kitchen, Earth & building) light their elements, raise tiles by each element's share by mass, and give the element panel a "Found in" list. The composition tables and the code that reads them are about 2 KB gzipped, in a small `contexts` chunk shared by the panel, the scene, the explorer's deep links and the tray, since all four need it. The total reached 326 KB against the 324 KB ceiling; the ceiling rises to 327 KB. Formula parsing moved out of the compound normaliser on the way, so this chunk does not pull in zod (which would have added 23 KB). The shell ceiling (76 KB) and the 450 KB budget are unchanged; the drop back to just above the measured total comes when the phase is built.
+
+## Amendment (2026-11-27): data trim, headroom for the next phase
+
+Combine's scale ladder left the total at 327 KB, exactly the ceiling. The generated data was trimmed rather than the ceiling raised, without changing a value the app reads:
+
+- **Tables by column.** `elements.json` and `compounds.json` store one array per field instead of one object per row (`core/columns.ts`), so each field name ships once, not 118 or 40 times. The app turns them back into rows as their chunks load. Element data 8.9 → 6.6 KB, compound set 5.8 → 5.4 KB.
+- **Crystal bonds found, not stored.** A crystal chunk's bond list was longer than its atoms. `compound-shapes.json` now stores, per crystal, the longest bond for each element pair (the same rules the data script cut with), and `crystalBonds` (`core/forming.ts`) finds the bonds once when the forming chunk loads; a test checks every crystal gets the same bonds it was baked with. Shapes 6.3 → 5.0 KB.
+
+The total is 324 KB. The ceiling stays at 327 KB on purpose: the 3 KB between them is room for the next phase, which lowers the ceiling to just above its measured total when it is built. The shell ceiling (76 KB) and the 450 KB budget are unchanged.

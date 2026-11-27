@@ -4,6 +4,7 @@
 // saved PubChem rows.
 // The PubChem rows are saved as the test fixture, so tests check the committed file offline.
 import { readFile, writeFile } from 'node:fs/promises';
+import { toColumns } from '../src/core/columns.ts';
 import { ELEMENTS } from '../src/core/elements/index.ts';
 import { buildCompounds, type PubChemCompoundRow } from '../src/core/compounds/normalize.ts';
 import { parseCif, type Cif } from '../src/core/compounds/cif.ts';
@@ -107,7 +108,8 @@ const rows: Record<string, PubChemCompoundRow> = offline
 if (!offline) await writeFile(FIXTURE, `${JSON.stringify(rows, null, 2)}\n`);
 
 const compounds = buildCompounds(COMPOUND_SOURCES, new Map(Object.entries(rows)));
-await writeFile(OUT, `${JSON.stringify(compounds, null, 2)}\n`);
+// Stored by column, so each field name ships once (ADR 3).
+await writeFile(OUT, `${JSON.stringify(toColumns(compounds), null, 2)}\n`);
 console.log(`Wrote ${compounds.length} compounds to src/data/compounds.json`);
 
 const shapeRows: ShapeRows = offline

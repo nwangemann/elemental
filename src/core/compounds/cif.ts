@@ -283,22 +283,3 @@ export function cutChunk(
       p: a.p.map((v, n) => v - middle[n]!) as [number, number, number],
     }));
 }
-
-/** Bonds between chunk atoms whose element pair is listed, when no further apart than its limit. */
-export function chunkBonds(
-  chunk: readonly ChunkAtom[],
-  pairs: readonly (readonly [string, string, number])[],
-): [number, number][] {
-  const bonds: [number, number][] = [];
-  for (let i = 0; i < chunk.length; i++)
-    for (let j = i + 1; j < chunk.length; j++) {
-      const a = chunk[i]!;
-      const b = chunk[j]!;
-      const limit = pairs.find(
-        ([s, t]) => (s === a.symbol && t === b.symbol) || (s === b.symbol && t === a.symbol),
-      )?.[2];
-      if (limit !== undefined && Math.hypot(...a.p.map((v, n) => v - b.p[n]!)) <= limit)
-        bonds.push([i, j]);
-    }
-  return bonds;
-}
