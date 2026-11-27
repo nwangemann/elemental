@@ -268,6 +268,34 @@ body {
   font-size: 0.8rem;
 }
 
+.panel-actions {
+  margin: 0;
+  padding: 0 1.1rem 0.6rem;
+}
+
+.panel-add {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  background: rgb(22 27 34 / 90%);
+  color: #e6edf3;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.panel-add:hover {
+  border-color: var(--accent);
+}
+
+.panel-add:focus-visible {
+  outline: 2px solid #79c0ff;
+  outline-offset: 2px;
+}
+
 .panel-source {
   margin: 0;
   padding: 0.5rem 1.1rem 0.75rem;

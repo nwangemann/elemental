@@ -84,7 +84,7 @@ test('the explorer, key map and element list pass an accessibility audit', async
 test('tab order runs from the title buttons to the table, then the panel', async ({ page }) => {
   await ready(page);
   const order: string[] = [];
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < 10; i++) {
     await page.keyboard.press('Tab');
     order.push(
       await page.evaluate(() => {
@@ -105,8 +105,9 @@ test('tab order runs from the title buttons to the table, then the panel', async
     'lens',
     'scene',
   ]);
-  // After the table, focus moves into the open panel (its selected tab).
-  expect(order[8]).toBe('Overview');
+  // After the table, focus moves into the open panel: Add to Combine, then its selected tab.
+  expect(order[8]).toMatch(/^Add to Combine/);
+  expect(order[9]).toBe('Overview');
 });
 
 test('the element list reads the table as text and walks to a choice', async ({ page }) => {

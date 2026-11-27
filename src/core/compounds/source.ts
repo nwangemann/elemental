@@ -10,8 +10,8 @@ export type CompoundKind = 'molecule' | 'lattice' | 'alloy' | 'atom';
 /** The bond chip: shares electrons, hands one over, metal mix, or none (stays alone). */
 export type Bond = 'shares' | 'transfers' | 'metal' | 'none';
 
-/** What one person can carry at once: glucose (24 atoms) fits, sucrose (45) is Show me only. */
-export const CARRY_LIMIT = { elements: 5, atoms: 24 } as const;
+// The carry limit lives with the carry rules, so the shell can use it without the compounds.
+export { CARRY_LIMIT } from '../carry.ts';
 
 export const CONTEXTS = ['body', 'air', 'kitchen', 'earth'] as const;
 export type Context = (typeof CONTEXTS)[number];

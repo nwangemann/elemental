@@ -32,6 +32,13 @@ const KEY_GROUPS: readonly { title: string; rows: readonly [keys: string[], acti
         [['?'], 'Show or hide this list'],
       ],
     },
+    {
+      title: 'Combine',
+      rows: [
+        [['C'], 'Pick up one atom of the element underfoot (opens Combine)'],
+        [['Backspace'], 'Drop the last atom picked up'],
+      ],
+    },
   ];
 
 /**

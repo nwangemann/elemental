@@ -12,7 +12,7 @@ import { BOUNDARY, GROUND, outerBounds, surfaceAt } from '../core/boundary.ts';
 import { blockCliffs, type SurfaceHeight } from '../core/climb.ts';
 import { CONFIG } from '../core/config.ts';
 import { speedOf, stepController, type ControllerState } from '../core/controller.ts';
-import { createGait, createPose, poseOf, stepGait } from '../core/gait.ts';
+import { createPose, poseOf, stepGait, type GaitState } from '../core/gait.ts';
 import { createIntent, moveIntent, type InputState } from '../core/input.ts';
 import { isAirborne, stepLedge, type LedgeState } from '../core/ledge.ts';
 import { clearWalkTarget, steer, type Stick, type WalkTarget } from '../core/steering.ts';
@@ -46,6 +46,7 @@ export function Character({
   target,
   activation,
   ledge,
+  gait,
 }: {
   controller: ControllerState;
   input: InputState;
@@ -53,6 +54,8 @@ export function Character({
   target: WalkTarget;
   activation: Activation;
   ledge: LedgeState;
+  /** Parent-owned, like `controller`, so the carried orbs can bob with the walk. */
+  gait: GaitState;
 }) {
   const c = CONFIG.character;
   const root = useRef<Group>(null);
@@ -63,7 +66,6 @@ export function Character({
   const leftFoot = useRef<Mesh>(null);
   const rightFoot = useRef<Mesh>(null);
 
-  const gait = useMemo(() => createGait(), []);
   const pose = useMemo(() => createPose(), []);
   const intent = useMemo(() => createIntent(), []);
   const bounds = useMemo(() => outerBounds(BOUNDARY.margin, c.radius), [c.radius]);

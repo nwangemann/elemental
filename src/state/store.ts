@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { dropLast, pickUp, type Carry } from '../core/carry.ts';
 import type { Filters } from '../core/explorer.ts';
 import type { Lens, LensKey } from '../core/lens.ts';
 
@@ -6,6 +7,13 @@ import type { Lens, LensKey } from '../core/lens.ts';
 export interface ActiveTile {
   number: number;
   name: string;
+  symbol: string;
+}
+
+/** Combine mode (ADR 20): whether it is open, and the atoms carried, oldest first. */
+export interface CombineState {
+  open: boolean;
+  carry: Carry;
 }
 
 /** A request to put the character on a tile at once. `seq` makes repeat requests distinct. */
@@ -49,6 +57,15 @@ export interface AppState {
   setLensTemperature: (temperature: number | null) => void;
   /** Sets the discovery lens's year (null = off, `ANTIQUITY` for the stop); later elements sink. */
   setLensYear: (year: number | null) => void;
+  /** Combine mode. Opening it the first time loads its chunk; closing keeps what is carried. */
+  combine: CombineState;
+  setCombineOpen: (open: boolean) => void;
+  /** Picks up one atom of `symbol` (C or the panel's Add), opening Combine; the carry limit may refuse it. */
+  pickUpAtom: (symbol: string) => void;
+  /** Drops the last atom picked up (Backspace). */
+  dropLastAtom: () => void;
+  /** Sets the whole carry (the tray's steppers, Clear and Fill in). */
+  setCarry: (carry: Carry) => void;
 }
 
 /**
@@ -89,4 +106,16 @@ export const useAppStore = create<AppState>()((set) => ({
   setLensTemperature: (temperature) =>
     set((s) => (s.lens.temperature === temperature ? s : { lens: { ...s.lens, temperature } })),
   setLensYear: (year) => set((s) => (s.lens.year === year ? s : { lens: { ...s.lens, year } })),
+  combine: { open: false, carry: [] },
+  setCombineOpen: (open) =>
+    set((s) => (s.combine.open === open ? s : { combine: { ...s.combine, open } })),
+  pickUpAtom: (symbol) =>
+    set((s) => ({ combine: { open: true, carry: pickUp(s.combine.carry, symbol) } })),
+  dropLastAtom: () =>
+    set((s) =>
+      s.combine.carry.length === 0
+        ? s
+        : { combine: { ...s.combine, carry: dropLast(s.combine.carry) } },
+    ),
+  setCarry: (carry) => set((s) => ({ combine: { ...s.combine, carry } })),
 }));

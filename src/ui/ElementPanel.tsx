@@ -129,6 +129,16 @@ export function ElementPanel() {
         </div>
       </header>
       <Highlights element={element} previous={previous} />
+      <p className="panel-actions">
+        <button
+          type="button"
+          className="panel-add"
+          onClick={() => useAppStore.getState().pickUpAtom(element.symbol)}
+          aria-keyshortcuts="C"
+        >
+          Add to Combine <kbd>C</kbd>
+        </button>
+      </p>
       <Tabs element={element} />
       <p className="panel-source">Data: PubChem (NIH) and Wikidata.</p>
     </aside>

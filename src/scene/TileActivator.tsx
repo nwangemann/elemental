@@ -17,7 +17,9 @@ function publish(number: number | null): void {
   const element = number === null ? undefined : ELEMENTS[number - 1];
   useAppStore
     .getState()
-    .setActiveTile(element ? { number: element.number, name: element.name } : null);
+    .setActiveTile(
+      element ? { number: element.number, name: element.name, symbol: element.symbol } : null,
+    );
 }
 
 /**

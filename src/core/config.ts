@@ -156,6 +156,20 @@ export const CONFIG_DEFAULTS = {
     /** Seconds of stillness before the idle rate starts. */
     settle: 1.5,
   },
+  combine: {
+    /** Carried atoms' orbs (`core/orbs.ts`): radius, and where the stacks float. */
+    orbRadius: 0.05,
+    orbDistance: 0.36,
+    orbCurve: 0.9,
+    orbLift: 0.62,
+    orbSpacing: 0.11,
+    orbGap: 0.05,
+    orbRows: 4,
+    /** How fast the orbs catch up with the figure, 1/s; lower trails further behind. */
+    orbFollow: 6,
+    /** Share of the figure's walk bob the orbs repeat (none with reduced motion). */
+    orbBob: 1.6,
+  },
 };
 
 export type Config = typeof CONFIG_DEFAULTS;
@@ -260,6 +274,17 @@ export const CONFIG_RANGES: { [G in ConfigGroup]: { [K in keyof Config[G]]: Rang
   pacing: {
     idleFps: { min: 0, max: 60, step: 1 },
     settle: { min: 0.1, max: 5, step: 0.1 },
+  },
+  combine: {
+    orbRadius: { min: 0.02, max: 0.15, step: 0.005 },
+    orbDistance: { min: 0, max: 1.5, step: 0.01 },
+    orbCurve: { min: 0, max: 4, step: 0.05 },
+    orbLift: { min: 0, max: 1.5, step: 0.01 },
+    orbSpacing: { min: 0.04, max: 0.3, step: 0.005 },
+    orbGap: { min: 0, max: 0.3, step: 0.005 },
+    orbRows: { min: 1, max: 8, step: 1 },
+    orbFollow: { min: 1, max: 30, step: 0.5 },
+    orbBob: { min: 0, max: 4, step: 0.1 },
   },
 };
 

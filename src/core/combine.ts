@@ -3,7 +3,9 @@
 // counts match it exactly, and an alloy when the set of elements matches. Pure: the store
 // (8.4) owns what is carried and in which order; the compound list comes in as an argument.
 import type { Compound } from './compounds/index.ts';
-import { CARRY_LIMIT } from './compounds/source.ts';
+import { atomsIn, canAdd } from './carry.ts';
+
+export { atomsIn, canAdd, fitsCarry, type CarryCheck } from './carry.ts';
 
 /** What the figure carries: element symbol → count (every count ≥ 1). */
 export type Carried = ReadonlyMap<string, number>;
@@ -32,8 +34,6 @@ export interface WrongAmounts {
   times: number;
 }
 
-export type CarryCheck = 'ok' | 'too-many-elements' | 'too-many-atoms';
-
 const COUNTS = new WeakMap<Compound, ReadonlyMap<string, number | null>>();
 
 /** A compound's element counts (null counts for alloys), cached per compound. */
@@ -44,25 +44,6 @@ export function countsOf(compound: Compound): ReadonlyMap<string, number | null>
     COUNTS.set(compound, counts);
   }
   return counts;
-}
-
-/** Total atoms carried. */
-export function atomsIn(carried: Carried): number {
-  let n = 0;
-  for (const count of carried.values()) n += count;
-  return n;
-}
-
-/** Whether one more `symbol` fits the carry limit (5 elements, 24 atoms). */
-export function canAdd(carried: Carried, symbol: string): CarryCheck {
-  if (!carried.has(symbol) && carried.size >= CARRY_LIMIT.elements) return 'too-many-elements';
-  if (atomsIn(carried) >= CARRY_LIMIT.atoms) return 'too-many-atoms';
-  return 'ok';
-}
-
-/** Whether a count map fits the carry limit, as Fill in must before it sets counts. */
-export function fitsCarry(counts: ReadonlyMap<string, number>): boolean {
-  return counts.size <= CARRY_LIMIT.elements && atomsIn(counts) <= CARRY_LIMIT.atoms;
 }
 
 const sameSet = (a: ReadonlyMap<string, unknown>, b: ReadonlyMap<string, unknown>) =>

@@ -11,6 +11,7 @@ A walkable periodic table. A small figure strolls across a 3D table of the eleme
 - Step by atomic number: `[` and `]` (previous and next element, stopping at H and Og).
 - Back to the table: R or Home walks the figure back to the last tile it stood on; after a couple of seconds on the ground a "Back to the table" button appears too.
 - Element panel: Enter or Space opens it and moves focus into it; Esc closes it. Its tabs show an overview, the properties and the atom: the electron shells drawn from the measured configuration, with a note when the element breaks the usual filling order (chromium, copper and 17 others).
+- Combine (being built): `C` or the panel's **Add to Combine** picks up one atom of the element underfoot, and the atoms float after the figure as small coloured orbs, stacked by element (up to 5 elements and 24 atoms). `Backspace` drops the last one.
 - All keys: press `?` or the Keys button.
 - Walk somewhere: click or tap a tile and the figure walks to it. Any key or the joystick takes over.
 - Touch: drag the joystick at the bottom left (shown on touch screens).

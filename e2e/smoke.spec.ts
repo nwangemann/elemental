@@ -80,6 +80,9 @@ test('the keyboard alone tours tiles and reads a panel', async ({ page }) => {
   await page.keyboard.press('Enter');
   await expect(panel).toHaveAttribute('data-open', 'true');
   await expect(panel).toBeFocused();
+  // Add to Combine comes first, then the tabs.
+  await page.keyboard.press('Tab');
+  await expect(panel.getByRole('button', { name: /Add to Combine/ })).toBeFocused();
   await page.keyboard.press('Tab');
   await page.keyboard.press('ArrowRight');
   await expect(panel.getByRole('tab', { name: 'Properties' })).toBeFocused();

@@ -1,9 +1,10 @@
 import { Canvas } from '@react-three/fiber';
-import { useMemo } from 'react';
+import { Suspense, lazy, useMemo, useState } from 'react';
 import { createActivation } from '../core/activation.ts';
 import { BOUNDARY, outerBounds } from '../core/boundary.ts';
 import { CONFIG } from '../core/config.ts';
 import { createController } from '../core/controller.ts';
+import { createGait } from '../core/gait.ts';
 import { ELEMENTS } from '../core/elements/index.ts';
 import { parseDeepLink } from '../core/explorer.ts';
 import { createLedge } from '../core/ledge.ts';
@@ -36,6 +37,11 @@ import { TileStepper } from './TileStepper.tsx';
 import { Tiles } from './Tiles.tsx';
 import { useConfigVersion } from './useConfigVersion.ts';
 import { useKeyboardInput } from './useKeyboardInput.ts';
+import { createOrbFollow } from '../core/orbs.ts';
+import { useAppStore } from '../state/store.ts';
+
+// Combine mode's carried orbs load with combine's chunk the first time Combine opens (ADR 20).
+const Orbs = lazy(() => import('./Orbs.tsx'));
 
 /** The character starts on the deep-linked element (`#/Au`), or on hydrogen. */
 function spawnTile() {
@@ -66,6 +72,15 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
   const tint = useMemo(() => createSceneTint(), []);
   const phase = useMemo(() => createScenePhase(), []);
   const era = useMemo(() => createSceneEra(), []);
+  const gait = useMemo(() => createGait(), []);
+  const orbs = useMemo(
+    () => createOrbFollow(controller.x, ledge.y, controller.z, controller.heading),
+    [controller, ledge],
+  );
+  // Stays true once Combine has opened, so closing it hides the orbs without unloading them.
+  const combineOpen = useAppStore((s) => s.combine.open);
+  const [combineOpened, setCombineOpened] = useState(combineOpen);
+  if (combineOpen && !combineOpened) setCombineOpened(true);
   return (
     <>
       <Canvas
@@ -119,7 +134,19 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           target={target}
           activation={activation}
           ledge={ledge}
+          gait={gait}
         />
+        {combineOpened && (
+          <Suspense fallback={null}>
+            <Orbs
+              key={`orbs-${version}`}
+              controller={controller}
+              ledge={ledge}
+              gait={gait}
+              follow={orbs}
+            />
+          </Suspense>
+        )}
         <TapMarkerMesh marker={marker} target={target} activation={activation} />
         <QualityGovernor pacer={pacer} />
         {onPerf && <PerfProbe onReport={onPerf} />}
@@ -135,6 +162,7 @@ export function Scene({ onPerf }: { onPerf?: (report: Readonly<PerfReport>) => v
           tint={tint}
           phase={phase}
           era={era}
+          orbs={orbs}
         />
       </Canvas>
       <Joystick stick={stick} />
