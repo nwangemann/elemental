@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Atom tab in the element panel: the electron shells drawn as rings around the nucleus, the outer shell in the family's colour, with the electron configuration and electrons per shell. It draws the measured configuration, so chromium shows 2, 8, 13, 1, and a short note says when an element breaks the usual filling order and what the rule would have predicted.
 - Lighter on the battery: when nothing moves for a moment the scene draws about 20 frames a second instead of the display's full rate, enough for the figure's breathing and the glowing tile to keep moving. Any key, tap, drag or scroll brings it straight back to full speed.
 - Climbing the height lens landscape: the figure hops up small steps (a bigger step gets a bigger, slower hop), falls down onto lower tiles, and stops at cliffs taller than about two and a half tiles, sliding along the face. A tap that would walk into a cliff stops there; I J K L, `[` `]` and R still climb it, so the keyboard reaches every tile. Taps pick the raised tile you actually see, and the camera rises with the figure.
 - Height lens: the Lens menu (or `H`, `Shift H` backward) raises every tile by a property, so density, melting point, electronegativity, radius or discovery year becomes a landscape you can walk across. Tiles ease to their new heights in about half a second (at once with reduced motion), labels ride along, and elements with no known value stay flat. The element list gains a column for the property, and the lens goes into the link (`#/Au?lens=density`).

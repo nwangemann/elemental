@@ -181,3 +181,28 @@ export function atomOf(configuration: string): Atom {
     differences: diff,
   };
 }
+
+/** Electrons per shell and the outer shell, for a screen reader: "2, 8, 13, 1 electrons; outer shell 1". */
+export function atomSummary(atom: Atom): string {
+  const counts = atom.shells.map((s) => String(s.electrons)).join(', ');
+  const outer = atom.shells[atom.valenceShell - 1]?.electrons ?? 0;
+  return `${counts} electrons; outer shell ${String(outer)}`;
+}
+
+/**
+ * The exception note in plain words, or null when the element fills in the usual order. Counts
+ * come as configuration text (`3d5 4s1`) for the panel to format: "Chromium breaks the filling
+ * rule: it has 3d5 4s1 where the rule predicts 3d4 4s2."
+ */
+export function fillingNote(
+  name: string,
+  atom: Atom,
+): { name: string; actual: string; filling: string } | null {
+  if (!atom.breaksFillingRule) return null;
+  const text = (pick: (d: SubshellDifference) => number) =>
+    atom.differences
+      .filter((d) => pick(d) > 0)
+      .map((d) => `${d.subshell}${String(pick(d))}`)
+      .join(' ');
+  return { name, actual: text((d) => d.actual), filling: text((d) => d.filling) };
+}

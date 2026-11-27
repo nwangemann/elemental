@@ -696,3 +696,62 @@ kbd {
 .element-list tr[aria-current] {
   background: #1f2a37;
 }
+
+/* Atom tab (ui/AtomDiagram.tsx). The valence ring takes the family accent. */
+.atom-diagram {
+  display: block;
+  width: min(100%, 15rem);
+  margin: 0 auto 0.5rem;
+}
+
+.atom-orbit {
+  fill: none;
+  stroke: #30363d;
+  stroke-width: 1;
+}
+
+.atom-electron {
+  fill: #9da7b3;
+}
+
+.atom-valence .atom-orbit {
+  stroke: var(--accent);
+  stroke-opacity: 0.6;
+}
+
+.atom-valence .atom-electron {
+  fill: var(--accent);
+}
+
+.atom-count {
+  fill: #9da7b3;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  text-anchor: middle;
+  /* A halo in the panel colour keeps the count readable over its ring. */
+  paint-order: stroke;
+  stroke: #161b22;
+  stroke-width: 3px;
+}
+
+.atom-valence .atom-count {
+  fill: var(--accent);
+}
+
+.atom-nucleus {
+  fill: #21262d;
+  stroke: #484f58;
+}
+
+.atom-z {
+  fill: #e6edf3;
+  font-size: 12px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.atom-note {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: #9da7b3;
+}

@@ -5,10 +5,13 @@ import {
   useState,
   type CSSProperties,
   type KeyboardEvent,
+  type ReactNode,
   type RefObject,
 } from 'react';
+import { atomOf, fillingNote } from '../core/atom.ts';
 import {
   CATEGORY_LABELS,
+  formatConfiguration,
   overviewFacts,
   placement,
   propertyFacts,
@@ -18,11 +21,13 @@ import { comparison, rankFacts } from '../core/elementRanks.ts';
 import { ELEMENTS, elementByNumber, type Element } from '../core/elements/index.ts';
 import { accentTokens } from '../core/themes.ts';
 import { useAppStore } from '../state/store.ts';
+import { AtomDiagram } from './AtomDiagram.tsx';
 
-const TABS = [
-  { id: 'overview', label: 'Overview', facts: overviewFacts },
-  { id: 'properties', label: 'Properties', facts: propertyFacts },
-] as const;
+const TABS: readonly { id: string; label: string; render: (e: Element) => ReactNode }[] = [
+  { id: 'overview', label: 'Overview', render: (e) => <FactList facts={overviewFacts(e)} /> },
+  { id: 'properties', label: 'Properties', render: (e) => <FactList facts={propertyFacts(e)} /> },
+  { id: 'atom', label: 'Atom', render: (e) => <AtomTab element={e} /> },
+];
 
 /** True when a key press is aimed at the table rather than a control: nothing, or the scene, has focus. */
 function onTable(target: EventTarget | null): boolean {
@@ -178,7 +183,7 @@ function Tabs({ element }: { element: Element }) {
     tabs.current[next]?.focus();
   };
 
-  const tab = TABS[active] ?? TABS[0];
+  const tab = TABS[active] ?? TABS[0]!;
   return (
     <>
       <div className="panel-tabs" role="tablist" aria-label="Element details">
@@ -208,7 +213,7 @@ function Tabs({ element }: { element: Element }) {
         aria-labelledby={`${base}-${tab.id}-tab`}
         tabIndex={0}
       >
-        <FactList facts={tab.facts(element)} />
+        {tab.render(element)}
       </div>
     </>
   );
@@ -227,5 +232,42 @@ function FactList({ facts }: { facts: readonly Fact[] }) {
         </div>
       ))}
     </dl>
+  );
+}
+
+/** The electron shells drawn from the stored configuration, the configuration itself, and the exception note. */
+function AtomTab({ element }: { element: Element }) {
+  const atom = atomOf(element.electronConfiguration);
+  const note = fillingNote(element.name, atom);
+  return (
+    <div className="atom">
+      <AtomDiagram atom={atom} number={element.number} />
+      <dl className="facts">
+        <div>
+          <dt>Electron configuration</dt>
+          <dd>
+            {formatConfiguration(element.electronConfiguration)}
+            {element.electronConfigurationIsPredicted && (
+              <span className="fact-note"> (predicted)</span>
+            )}
+          </dd>
+        </div>
+        <div>
+          <dt>Electrons per shell</dt>
+          <dd>{atom.shells.map((s) => s.electrons).join(', ')}</dd>
+        </div>
+      </dl>
+      <p className="atom-note">
+        {note ? (
+          <>
+            {note.name} breaks the filling rule: it has {formatConfiguration(note.actual)} where the
+            rule predicts {formatConfiguration(note.filling)}. The rule is a guide; in this atom
+            that arrangement has lower energy.
+          </>
+        ) : (
+          <>Its electrons fill the subshells in the usual order (the Aufbau, or filling, rule).</>
+        )}
+      </p>
+    </div>
   );
 }

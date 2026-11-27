@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  atomSummary,
+  fillingNote,
   atomOf,
   capacity,
   fillingConfiguration,
@@ -163,5 +165,30 @@ describe('atomOf', () => {
       'Np',
       'Cm',
     ]);
+  });
+});
+
+describe('atomSummary and fillingNote', () => {
+  it('summarises shells for a screen reader', () => {
+    expect(atomSummary(atomOf('[Ar]3d5 4s1'))).toBe('2, 8, 13, 1 electrons; outer shell 1');
+    expect(atomSummary(atomOf('1s1'))).toBe('1 electrons; outer shell 1');
+  });
+
+  it('says nothing for an element that follows the rule', () => {
+    expect(fillingNote('Iron', atomOf('[Ar]3d6 4s2'))).toBeNull();
+  });
+
+  it('names what an exception has and what the rule predicts', () => {
+    expect(fillingNote('Chromium', atomOf('[Ar]3d5 4s1'))).toEqual({
+      name: 'Chromium',
+      actual: '3d5 4s1',
+      filling: '3d4 4s2',
+    });
+    // Palladium has no 5s electrons at all; only the rule's 5s2 shows.
+    expect(fillingNote('Palladium', atomOf('[Kr]4d10'))).toEqual({
+      name: 'Palladium',
+      actual: '4d10',
+      filling: '4d8 5s2',
+    });
   });
 });
