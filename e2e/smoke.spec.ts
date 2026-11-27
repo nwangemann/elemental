@@ -54,7 +54,7 @@ test('the keyboard alone tours tiles and reads a panel', async ({ page }) => {
 
   // Tab reaches the focusable table.
   const scene = page.getByRole('application', { name: /periodic table/i });
-  for (let i = 0; i < 5 && (await page.locator('#scene:focus').count()) === 0; i++)
+  for (let i = 0; i < 8 && (await page.locator('#scene:focus').count()) === 0; i++)
     await page.keyboard.press('Tab');
   await expect(scene).toBeFocused();
 

@@ -36,6 +36,8 @@ function usePanelKeys(panel: RefObject<HTMLElement | null>, focusNext: { current
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      // A modal dialog (explorer, key map, list) owns the keys, even when focus fell to the body.
+      if (document.querySelector('dialog:modal')) return;
       const { activeTile, panelClosed, setPanelClosed } = useAppStore.getState();
       if ((e.key === 'Enter' || e.key === ' ') && onTable(e.target)) {
         if (!activeTile) return;

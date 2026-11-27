@@ -17,6 +17,11 @@ const ElementPanel = lazy(() =>
 // The explorer shares that chunk: it needs the element data too.
 const Explorer = lazy(() => import('./ui/Explorer.tsx').then((m) => ({ default: m.Explorer })));
 
+// The plain-text list of every element, for use without the 3D scene; same chunk again.
+const ElementList = lazy(() =>
+  import('./ui/ElementList.tsx').then((m) => ({ default: m.ElementList })),
+);
+
 const params = new URLSearchParams(window.location.search);
 const showPerf = params.has('perf');
 
@@ -43,6 +48,18 @@ export function App() {
 
   return (
     <>
+      {/* DOM order is tab order: the title and HUD buttons come before the table, the panel after. */}
+      <header className="hud">
+        <h1>elemental</h1>
+        <p>A walkable periodic table.</p>
+      </header>
+      <Suspense>
+        <Explorer />
+      </Suspense>
+      <KeyHelp />
+      <Suspense>
+        <ElementList />
+      </Suspense>
       <Suspense
         fallback={
           <p className="loading" role="status">
@@ -52,17 +69,9 @@ export function App() {
       >
         <Scene {...(showPerf ? { onPerf } : {})} />
       </Suspense>
-      <header className="hud">
-        <h1>elemental</h1>
-        <p>A walkable periodic table.</p>
-      </header>
-      <Suspense>
-        <Explorer />
-      </Suspense>
       <Suspense>
         <ElementPanel />
       </Suspense>
-      <KeyHelp />
       <BackToTable />
       <TileStatus />
       {showPerf && <output ref={perf} className="perf" aria-live="off" />}

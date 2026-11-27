@@ -5,7 +5,7 @@
 - `src/core`: pure TypeScript. Maths, layout, data shaping, rules. No React, no three, no DOM, so everything here is unit-tested in Node.
 - `src/scene`: React Three Fiber components (see [ADR 2](adr/0002-scene-rendering.md)). Per-frame work happens in `useFrame` and mutates refs; it never sets React state.
 - `src/state`: the app store (zustand, [ADR 4](adr/0004-app-state.md)), shared by the scene and the DOM interface. `activeTile` is the tile under the character (number and name), or null; the scene writes it only when that changes. `flight` is the latest fly-to request (`flyTo(number)`), from the explorer or a deep link. `panelClosed` is true while the player has closed the panel with Esc on the current tile; entering another tile resets it. `lastTile` is the last tile stood on (kept while off the table) and `offTable` is true while the character is on the ground (ADR 0009); both change only on change. `returnSeq` counts return requests (`requestReturn()`).
-- `src/ui`: DOM interface. The element panel (`ElementPanel.tsx`), a screen-reader status that announces the tile under the character (`TileStatus.tsx`, "Standing on Hydrogen") the explorer (`Explorer.tsx`), the key map overlay (`KeyHelp.tsx`), the return key and button (`BackToTable.tsx`) and the dev-only tuning panel; settings follow in milestone 1.
+- `src/ui`: DOM interface. The element panel (`ElementPanel.tsx`), a screen-reader status that announces the tile under the character (`TileStatus.tsx`, "Standing on Hydrogen") the explorer (`Explorer.tsx`), the key map overlay (`KeyHelp.tsx`), the plain-text element list (`ElementList.tsx`), the return key and button (`BackToTable.tsx`) and the dev-only tuning panel; settings follow in milestone 1.
 - `src/data`: generated element data (`elements.json`), committed. Built by `scripts/build-elements.ts`; see [data sources](data-sources.md).
 
 ## Core modules
@@ -73,6 +73,14 @@
 
 The same module keeps the address on the element under the character (`#/Au`, with `history.replaceState`) and flies to an element when the hash is edited, rewriting hand-typed forms to the canonical symbol.
 
+## Element list
+
+`ui/ElementList.tsx` is the non-3D way through the table, lazily loaded in the same data chunk as the panel and explorer. The List button under Keys opens a native modal `<dialog>` with an HTML `<table>` of every element in atomic-number order (number, symbol, name as a row header, family, period, group); the row the character stands on carries `aria-current="location"`. Each name is a button that closes the list and calls `flyTo`. Key events stop at the dialog.
+
+## Focus and tab order
+
+DOM order in `App.tsx` is the tab order: title, Explore, Keys and List come first, then the focusable scene, then the element panel. While any modal dialog is open, the panel's Enter, Space and Esc handling stands aside, so Esc always closes the dialog, even if focus has fallen to the page body.
+
 ## Tuning panel
 
 With `?tune` in the URL, the dev server shows a [leva](https://github.com/pmndrs/leva) panel with a slider per `CONFIG` value (`src/ui/TunePanel.tsx`). It writes through `setConfig`, so the scene changes live. "Copy as defaults" puts the current values on the clipboard as JSON to paste into `config.ts`; "reset" restores the defaults. The panel is loaded with a dynamic import guarded by `import.meta.env.DEV`, so a production build contains neither the panel nor leva, and `?tune` does nothing there.
@@ -83,3 +91,4 @@ With `?tune` in the URL, the dev server shows a [leva](https://github.com/pmndrs
 - `scripts/size-check.mjs` builds the app and fails `npm run check` if the gzipped JavaScript passes either ceiling: 80 KB for the shell (the entry chunk and its static imports, read from the Vite manifest) and 380 KB for all chunks together.
 - `npm run perf` runs `e2e/perf/perf.spec.ts` with `playwright.perf.config.ts` (the smoke run ignores `e2e/perf`): time to first move and frame work, see [performance](performance.md).
 - `e2e/smoke.spec.ts` builds the app, serves it with `vite preview` and checks in Chromium that it loads, that the panel shows hydrogen, where the character starts, with its properties tab, that clicking a tile walks there, that a deep link starts on its element, and that the explorer finds neon and flies there, and that the keyboard alone tabs to the scene, steps H → Li → Be → B → C, closes and reopens the panel with Esc and Enter, moves through its tabs and opens the key map.
+- `e2e/a11y.spec.ts` runs axe (WCAG 2.2 A/AA and best practice) on the hydrogen and gold panels, the explorer, the key map and the element list, and checks that Tab runs Explore → Keys → List → scene → panel and that the list has all 118 rows and walks to gold. axe cannot judge text drawn over the canvas, so `e2e/contrast.ts` also screenshots the scene with the interface hidden, composites each text element's backgrounds over the lightest and darkest scene pixel behind it and fails below 4.5:1 (3:1 for large text).

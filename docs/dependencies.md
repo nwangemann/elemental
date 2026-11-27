@@ -12,6 +12,7 @@
 | `zod`                             | Element schema: validates the generated data (data script and tests) and gives the `Element` type; not in the app bundle                                                 |
 | `@commitlint/cli`                 | Checks commit messages                                                                                                                                                   |
 | `@commitlint/config-conventional` | Conventional Commits rules for commitlint                                                                                                                                |
+| `@axe-core/playwright`            | Accessibility audit (axe) in the Playwright tests                                                                                                                        |
 | `@playwright/test`                | Browser smoke test                                                                                                                                                       |
 | `@types/node`                     | Node types for config files and scripts                                                                                                                                  |
 | `@types/three`                    | three.js types                                                                                                                                                           |

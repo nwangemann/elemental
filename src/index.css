@@ -26,6 +26,8 @@ body {
   position: fixed;
   top: 1rem;
   left: 1.25rem;
+  /* The scene comes later in the DOM (tab order), so the title must sit above it. */
+  z-index: 1;
   pointer-events: none;
 }
 
@@ -444,7 +446,8 @@ kbd {
   outline-offset: -2px;
 }
 
-.keys-open {
+.keys-open,
+.list-open {
   position: fixed;
   top: 6.75rem;
   left: 1.25rem;
@@ -462,7 +465,12 @@ kbd {
   cursor: pointer;
 }
 
-.keys-open:hover {
+.list-open {
+  top: 9.25rem;
+}
+
+.keys-open:hover,
+.list-open:hover {
   border-color: #6e7681;
 }
 
@@ -490,13 +498,16 @@ kbd {
 
 .explore-open:focus-visible,
 .keys-open:focus-visible,
+.list-open:focus-visible,
+.element-list button:focus-visible,
 .back-to-table:focus-visible,
 .keyhelp button:focus-visible {
   outline: 2px solid #79c0ff;
   outline-offset: 2px;
 }
 
-.keyhelp {
+.keyhelp,
+.element-list {
   width: min(30rem, calc(100vw - 2rem));
   max-height: calc(100dvh - 4rem);
   padding: 0 1.25rem 1rem;
@@ -507,7 +518,8 @@ kbd {
   box-shadow: 0 12px 48px rgb(0 0 0 / 55%);
 }
 
-.keyhelp::backdrop {
+.keyhelp::backdrop,
+.element-list::backdrop {
   background: rgb(1 4 9 / 55%);
 }
 
@@ -522,7 +534,8 @@ kbd {
   font-size: 1rem;
 }
 
-.keyhelp-head button {
+.keyhelp-head button,
+.element-list-scroll button {
   padding: 0.1rem 0.5rem;
   border: 0;
   border-radius: 4px;
@@ -568,4 +581,49 @@ kbd {
   margin: 1rem 0 0;
   font-size: 0.75rem;
   color: #9da7b3;
+}
+
+/* The plain-text element list (ui/ElementList.tsx); shares the key map's dialog look. */
+.element-list {
+  width: min(40rem, calc(100vw - 2rem));
+}
+
+.element-list-scroll {
+  max-height: calc(100dvh - 9rem);
+  overflow: auto;
+}
+
+.element-list table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.element-list th,
+.element-list td {
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid #21262d;
+  text-align: left;
+  font-weight: normal;
+}
+
+.element-list thead th {
+  position: sticky;
+  top: 0;
+  background: #161b22;
+  color: #9da7b3;
+  font-size: 0.75rem;
+}
+
+.element-list tbody th button {
+  padding: 0;
+  color: #e6edf3;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.element-list tr[aria-current] {
+  background: #1f2a37;
 }
