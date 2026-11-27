@@ -1,0 +1,154 @@
+{
+  "water": {
+    "CID": 962,
+    "MolecularFormula": "H2O"
+  },
+  "table-salt": {
+    "CID": 5234,
+    "MolecularFormula": "ClNa"
+  },
+  "carbon-dioxide": {
+    "CID": 280,
+    "MolecularFormula": "CO2"
+  },
+  "oxygen": {
+    "CID": 977,
+    "MolecularFormula": "O2"
+  },
+  "nitrogen": {
+    "CID": 947,
+    "MolecularFormula": "N2"
+  },
+  "glucose": {
+    "CID": 5793,
+    "MolecularFormula": "C6H12O6"
+  },
+  "sucrose": {
+    "CID": 5988,
+    "MolecularFormula": "C12H22O11"
+  },
+  "methane": {
+    "CID": 297,
+    "MolecularFormula": "CH4"
+  },
+  "calcium-carbonate": {
+    "CID": 10112,
+    "MolecularFormula": "CCaO3"
+  },
+  "quartz": {
+    "CID": 24261,
+    "MolecularFormula": "O2Si"
+  },
+  "rust": {
+    "CID": 518696,
+    "MolecularFormula": "Fe2O3"
+  },
+  "ethanol": {
+    "CID": 702,
+    "MolecularFormula": "C2H6O"
+  },
+  "acetic-acid": {
+    "CID": 176,
+    "MolecularFormula": "C2H4O2"
+  },
+  "baking-soda": {
+    "CID": 516892,
+    "MolecularFormula": "CHNaO3"
+  },
+  "caffeine": {
+    "CID": 2519,
+    "MolecularFormula": "C8H10N4O2"
+  },
+  "citric-acid": {
+    "CID": 311,
+    "MolecularFormula": "C6H8O7"
+  },
+  "ammonia": {
+    "CID": 222,
+    "MolecularFormula": "H3N"
+  },
+  "bleach": {
+    "CID": 23665760,
+    "MolecularFormula": "ClNaO"
+  },
+  "hydrogen": {
+    "CID": 783,
+    "MolecularFormula": "H2"
+  },
+  "argon": {
+    "CID": 23968,
+    "MolecularFormula": "Ar"
+  },
+  "ozone": {
+    "CID": 24823,
+    "MolecularFormula": "O3"
+  },
+  "lactic-acid": {
+    "CID": 612,
+    "MolecularFormula": "C3H6O3"
+  },
+  "urea": {
+    "CID": 1176,
+    "MolecularFormula": "CH4N2O"
+  },
+  "glycine": {
+    "CID": 750,
+    "MolecularFormula": "C2H5NO2"
+  },
+  "adenine": {
+    "CID": 190,
+    "MolecularFormula": "C5H5N5"
+  },
+  "calcium-phosphate": {
+    "CID": 24456,
+    "MolecularFormula": "Ca3O8P2"
+  },
+  "lime": {
+    "CID": 14778,
+    "MolecularFormula": "CaO"
+  },
+  "titanium-dioxide": {
+    "CID": 26042,
+    "MolecularFormula": "O2Ti"
+  },
+  "corundum": {
+    "CID": 9989226,
+    "MolecularFormula": "Al2O3"
+  },
+  "magnetite": {
+    "CID": 16211978,
+    "MolecularFormula": "Fe3O4"
+  },
+  "pyrite": {
+    "CID": 14788,
+    "MolecularFormula": "FeS2"
+  },
+  "hydrogen-sulfide": {
+    "CID": 402,
+    "MolecularFormula": "H2S"
+  },
+  "dimethyl-ether": {
+    "CID": 8254,
+    "MolecularFormula": "C2H6O"
+  },
+  "hydrogen-peroxide": {
+    "CID": 784,
+    "MolecularFormula": "H2O2"
+  },
+  "carbon-monoxide": {
+    "CID": 281,
+    "MolecularFormula": "CO"
+  },
+  "nitrogen-dioxide": {
+    "CID": 3032552,
+    "MolecularFormula": "NO2"
+  },
+  "chlorine": {
+    "CID": 24526,
+    "MolecularFormula": "Cl2"
+  },
+  "sulfuric-acid": {
+    "CID": 1118,
+    "MolecularFormula": "H2O4S"
+  }
+}

@@ -13,7 +13,7 @@ Derived in code, not fetched: period, group and block, from the atomic number (`
 
 ## Compounds (combine mode)
 
-Combine mode ([ADR 20](adr/0020-combine-mode.md)) takes, per compound, PubChem's CID, molecular formula and computed 3D conformer (PUG-REST), and CPK colours for the elements those compounds use. These are computed by PubChem itself and fall under [NCBI's molecular data policy](https://www.ncbi.nlm.nih.gov/home/about/policies/), which places no restriction on use or redistribution. PubChem also carries text from hundreds of depositors under their own terms ([PubChem downloads, data usage and licensing](https://pubchem.ncbi.nlm.nih.gov/docs/downloads)); none of it is taken. Compound card copy is written for this project. Scripted requests stay under PubChem's rate limit.
+Combine mode's compound set ([ADR 20](adr/0020-combine-mode.md)) is built by `npm run data:compounds` (`scripts/build-compounds.ts`) and committed as `src/data/compounds.json`. The list, display formulas and card copy are curated in `src/core/compounds/source.ts`; the script looks each compound up by name and fails if PubChem's formula disagrees with the display formula. It takes, per compound, PubChem's CID and molecular formula (PUG-REST). These are computed by PubChem itself and fall under [NCBI's molecular data policy](https://www.ncbi.nlm.nih.gov/home/about/policies/), which places no restriction on use or redistribution. PubChem also carries text from hundreds of depositors under their own terms ([PubChem downloads, data usage and licensing](https://pubchem.ncbi.nlm.nih.gov/docs/downloads)); none of it is taken. Compound card copy is written for this project. Scripted requests stay under PubChem's rate limit.
 
 ## Units
 

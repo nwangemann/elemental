@@ -19,6 +19,7 @@
     "perf": "playwright test --config playwright.perf.config.ts --trace off",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run docs:check && npm run size:check",
     "data": "node scripts/build-elements.ts && prettier --write src/data/elements.json",
+    "data:compounds": "node scripts/build-compounds.ts && prettier --write src/data/compounds.json src/core/compounds/__fixtures__/pubchem-compounds.json",
     "prepare": "husky || true",
     "atlas": "node scripts/build-label-atlas.ts && prettier --write src/assets/label-atlas.json"
   },
